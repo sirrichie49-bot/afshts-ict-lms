@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>AFSHTS Interactive ICT Skills LMS v4 — Deployment Ready</title>
+<title>AFSHTS Practical ICT Skills Lab — Interactive LMS Final Prototype</title>
 <style>
 :root{--n:#17365d;--b:#2f5597;--p:#eef3f8;--g:#2e7d32;--a:#a15c00;--r:#b42318;--line:#d8dee8}
 *{box-sizing:border-box}body{margin:0;font:15px Arial;background:#f6f8fb;color:#202938}
@@ -45,7 +45,7 @@ img, video, iframe { max-width:100%; }
 
 </head>
 <body>
-<header><h1>AFSHTS Practical ICT Skills Lab</h1><div id="top">Interactive LMS v3</div></header>
+<header><h1>AFSHTS Practical ICT Skills Lab</h1><div id="top">Interactive LMS — Final Prototype</div></header>
 <div class="layout"><aside><nav id="nav"></nav></aside><main id="app"></main></div>
 <script>
 const M=[
@@ -67,7 +67,7 @@ const pct=()=>Math.round(S.done.length/total*100);
 function status(){return S.mastery===true?["green","GREEN — MASTERED"]:S.mastery===false?["red","RED — REMEDIATION"]:["amber","AMBER — IN PROGRESS"]}
 function xp(n=10){S.xp+=n;save();updateTop()}
 function done(k,n=10){if(!S.done.includes(k)){S.done.push(k);xp(n)}else save();updateTop()}
-function updateTop(){let s=status();document.getElementById("top").textContent=`Interactive LMS v3 • ${pct()}% complete • ${S.xp} XP • ${s[1]}`}
+function updateTop(){let s=status();document.getElementById("top").textContent=`Interactive LMS — Final Prototype • ${pct()}% complete • ${S.xp} XP • ${s[1]}`}
 function buildNav(){let n=document.getElementById("nav");n.innerHTML='<button data-p="home">🏠 Dashboard</button>';
 M.forEach(m=>n.innerHTML+=`<button data-p="${m[0]}">${m[1]}</button>`);
 n.innerHTML+=`<hr><button data-p="peer">🤝 Peer Collaboration</button><button data-p="analytics">📊 Analytics</button><button data-p="badges">🏅 Achievements</button><button data-p="about">ℹ️ Design Notes</button><button id="reset">↺ Reset</button>`;
