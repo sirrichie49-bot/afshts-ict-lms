@@ -61,7 +61,7 @@ const supabaseClient = supabase.createClient(
 async function saveProgress(learnerName, moduleId, activityId, xp) {
     const { error } = await supabaseClient
         .from("learner_progress")
-        .insert({
+        .upsert({
             learner_name: learnerName,
             module_id: moduleId,
             activity_id: activityId,
