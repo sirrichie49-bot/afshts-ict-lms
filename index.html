@@ -58,6 +58,26 @@ const supabaseClient = supabase.createClient(
   SUPABASE_KEY
 );
 
+async function saveProgress(learnerName, moduleId, activityId, xp) {
+    const { error } = await supabaseClient
+        .from("learner_progress")
+        .insert({
+            learner_name: learnerName,
+            module_id: moduleId,
+            activity_id: activityId,
+            completed: true,
+            xp: xp
+        });
+
+    if (error) {
+        console.error("Progress save error:", error);
+        return false;
+    }
+
+    console.log("Progress saved successfully!");
+    return true;
+}
+
 const M=[
 ["M0","🎯 Orientation & Diagnostic",["Welcome","How the course works","Digital safety","Adaptive diagnostic","Self-rating","Mouse & keyboard warm-up"]],
 ["M1","🌐 Browser Foundations",["Meet the browser","Icon challenge","Address bar vs search","Guided practice","Independence check"]],
@@ -76,7 +96,32 @@ const save=()=>localStorage.setItem("afshts_v3",JSON.stringify(S));
 const pct=()=>Math.round(S.done.length/total*100);
 function status(){return S.mastery===true?["green","GREEN — MASTERED"]:S.mastery===false?["red","RED — REMEDIATION"]:["amber","AMBER — IN PROGRESS"]}
 function xp(n=10){S.xp+=n;save();updateTop()}
-function done(k,n=10){if(!S.done.includes(k)){S.done.push(k);xp(n)}else save();updateTop()}
+  
+async function done(k,n=10){
+  if(!S.done.includes(k)){
+    S.done.push(k);
+    xp(n);
+
+    const [moduleId, activityId] = k.split("-");
+    const learnerName = S.learnerName || "Demo Learner";
+
+    const saved = await saveProgress(
+      learnerName,
+      moduleId,
+      activityId,
+      n
+    );
+
+    if(!saved){
+      console.error("Supabase progress was not saved.");
+    }
+  }else{
+    save();
+  }
+
+  updateTop();
+}
+  
 function updateTop(){let s=status();document.getElementById("top").textContent=`Interactive LMS — Final Prototype • ${pct()}% complete • ${S.xp} XP • ${s[1]}`}
 function buildNav(){let n=document.getElementById("nav");n.innerHTML='<button data-p="home">🏠 Dashboard</button>';
 M.forEach(m=>n.innerHTML+=`<button data-p="${m[0]}">${m[1]}</button>`);
