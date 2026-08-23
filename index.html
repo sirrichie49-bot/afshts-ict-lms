@@ -118,11 +118,46 @@ async function done(k,n=10){
   }else{
     save();
   }
-
+  buildNav();
   updateTop();
 }
   
-function updateTop(){
+function function updateTop(){
+    const s = status();
+    const top = document.getElementById("top");
+
+    if(top){
+        top.innerHTML = `
+            <div style="display:flex;align-items:center;gap:12px;">
+                <span>
+                    XP: <strong>${s.xp}</strong>
+                </span>
+
+                <span>
+                    Progress: <strong>${pct()}%</strong>
+                </span>
+
+                <span>
+                    ${s}
+                </span>
+            </div>
+
+            <div class="progress" style="margin-top:8px;">
+                <div class="progress-bar"
+                     style="width:${pct()}%">
+                </div>
+            </div>
+        `;
+    }
+
+    // Refresh dashboard numbers if the learner is currently on Home
+    const dashboard = document.getElementById("dashboardModules");
+
+    if(dashboard){
+        home();
+    }
+}
+  {
   const s = status();
   const top = document.getElementById("top");
 
@@ -138,7 +173,82 @@ n.innerHTML+=`<hr><button data-p="peer">🤝 Peer Collaboration</button><button 
 n.querySelectorAll("[data-p]").forEach(b=>b.onclick=()=>{n.querySelectorAll("button").forEach(x=>x.classList.remove("sel"));b.classList.add("sel");route(b.dataset.p)});
 document.getElementById("reset").onclick=()=>{if(confirm("Reset local learner data?")){localStorage.removeItem("afshts_v3");location.reload()}}}
 function route(p){p==="home"?home():p==="peer"?peer():p==="analytics"?analytics():p==="badges"?badges():p==="about"?about():module(p)}
-function home(){let s=status();app.innerHTML=`<div class="card"><h2>Welcome back</h2><p>Learn by doing: observe → practise → feedback → independent performance.</p><span class="badge ${s[0]}">${s[1]}</span><p>${pct()}% complete • ${S.xp} XP</p><div class="progress"><div style="width:${pct()}%"></div></div></div>
+function home(){
+    const s = status();
+
+    app.innerHTML = `
+        <div class="card">
+            <h2>🎓 Learner Dashboard</h2>
+            <p>Welcome, <strong>${s.learnerName || "Demo Learner"}</strong></p>
+
+            <div class="grid">
+
+                <div class="card">
+                    <h3>📊 Overall Progress</h3>
+                    <div class="progress">
+                        <div class="progress-bar" style="width:${pct()}%"></div>
+                    </div>
+                    <p><strong>${pct()}%</strong> completed</p>
+                </div>
+
+                <div class="card">
+                    <h3>⭐ XP Points</h3>
+                    <p style="font-size:32px;font-weight:bold;">
+                        ${s.xp}
+                    </p>
+                </div>
+
+                <div class="card">
+                    <h3>✅ Activities Completed</h3>
+                    <p style="font-size:32px;font-weight:bold;">
+                        ${s.done.length}
+                    </p>
+                </div>
+
+                <div class="card">
+                    <h3>🏆 Mastery Status</h3>
+                    <p>${status()}</p>
+                </div>
+
+            </div>
+
+            <div class="card">
+                <h3>📚 Learning Modules</h3>
+                <p>Select a module below to continue learning.</p>
+                <div id="dashboardModules"></div>
+            </div>
+        </div>
+    `;
+
+    const moduleBox = document.getElementById("dashboardModules");
+
+    M.forEach(m => {
+        const completed = s.done.filter(k => k.startsWith(m[0] + "-")).length;
+        const total = m[2].length;
+        const progress = total
+            ? Math.round((completed / total) * 100)
+            : 0;
+
+        moduleBox.innerHTML += `
+            <div class="card">
+                <h3>${m[1]}</h3>
+
+                <div class="progress">
+                    <div class="progress-bar"
+                         style="width:${progress}%"></div>
+                </div>
+
+                <p>${completed} of ${total} activities completed</p>
+
+                <button class="primary"
+                        onclick="module('${m[0]}')">
+                    Open Module
+                </button>
+            </div>
+        `;
+    });
+}
+">${s[1]}</span><p>${pct()}% complete • ${S.xp} XP</p><div class="progress"><div style="width:${pct()}%"></div></div></div>
 <div class="grid"><div class="kpi"><b>Primary task</b><br>Compose, attach, send and verify an email.</div><div class="kpi"><b>High-priority skill</b><br>File attachment.</div><div class="kpi"><b>Mastery</b><br>16/20 + no critical failure.</div><div class="kpi"><b>Adaptive assessment</b><br>Difficulty changes with performance.</div></div>
 <div class="card"><h3>Gamified learning loop</h3><div class="grid"><div class="step">🎮 XP + levels</div><div class="step">🏅 Achievement badges</div><div class="step">🤝 Peer troubleshooting</div><div class="step">🧠 Adaptive quizzes</div><div class="step">🎬 Interactive media</div><div class="step">📊 Analytics</div></div></div>
 <div class="card"><h3>Start</h3><button class="primary" onclick="module('M0')">Open diagnostic</button></div>`}
