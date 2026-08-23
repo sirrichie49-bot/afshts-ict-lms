@@ -174,34 +174,36 @@ n.querySelectorAll("[data-p]").forEach(b=>b.onclick=()=>{n.querySelectorAll("but
 document.getElementById("reset").onclick=()=>{if(confirm("Reset local learner data?")){localStorage.removeItem("afshts_v3");location.reload()}}}
 function route(p){p==="home"?home():p==="peer"?peer():p==="analytics"?analytics():p==="badges"?badges():p==="about"?about():module(p)}
 function home(){
-    const s = status();
-
     app.innerHTML = `
         <div class="card">
             <h2>🎓 Learner Dashboard</h2>
-            <p>Welcome, <strong>${s.learnerName || "Demo Learner"}</strong></p>
+            <p>Welcome, <strong>${S.learnerName || "Demo Learner"}</strong></p>
 
             <div class="grid">
 
                 <div class="card">
                     <h3>📊 Overall Progress</h3>
+
                     <div class="progress">
-                        <div class="progress-bar" style="width:${pct()}%"></div>
+                        <div class="progress-bar"
+                             style="width:${pct()}%">
+                        </div>
                     </div>
+
                     <p><strong>${pct()}%</strong> completed</p>
                 </div>
 
                 <div class="card">
                     <h3>⭐ XP Points</h3>
                     <p style="font-size:32px;font-weight:bold;">
-                        ${s.xp}
+                        ${S.xp}
                     </p>
                 </div>
 
                 <div class="card">
                     <h3>✅ Activities Completed</h3>
                     <p style="font-size:32px;font-weight:bold;">
-                        ${s.done.length}
+                        ${S.done.length}
                     </p>
                 </div>
 
@@ -220,6 +222,41 @@ function home(){
         </div>
     `;
 
+    const moduleBox = document.getElementById("dashboardModules");
+
+    M.forEach(m => {
+        const completed = S.done.filter(
+            k => k.startsWith(m[0] + "-")
+        ).length;
+
+        const total = m[2].length;
+
+        const progress = total
+            ? Math.round((completed / total) * 100)
+            : 0;
+
+        moduleBox.innerHTML += `
+            <div class="card">
+                <h3>${m[1]}</h3>
+
+                <div class="progress">
+                    <div class="progress-bar"
+                         style="width:${progress}%">
+                    </div>
+                </div>
+
+                <p>
+                    ${completed} of ${total} activities completed
+                </p>
+
+                <button class="primary"
+                        onclick="module('${m[0]}')">
+                    Open Module
+                </button>
+            </div>
+        `;
+    });
+}
     const moduleBox = document.getElementById("dashboardModules");
 
     M.forEach(m => {
