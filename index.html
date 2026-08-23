@@ -122,7 +122,16 @@ async function done(k,n=10){
   updateTop();
 }
   
-function updateTop(){let s=status();document.getElementById("top").textContent=`Interactive LMS — Final Prototype • ${pct()}% complete • ${S.xp} XP • ${s[1]}`}
+function updateTop(){
+  const s = status();
+  const top = document.getElementById("top");
+
+  if(top){
+    top.textContent =
+      `XP: ${S.xp} | Progress: ${pct()}% | ${s}`;
+  }
+  
+}{let s=status();document.getElementById("top").textContent=`Interactive LMS — Final Prototype • ${pct()}% complete • ${S.xp} XP • ${s[1]}`}
 function buildNav(){let n=document.getElementById("nav");n.innerHTML='<button data-p="home">🏠 Dashboard</button>';
 M.forEach(m=>n.innerHTML+=`<button data-p="${m[0]}">${m[1]}</button>`);
 n.innerHTML+=`<hr><button data-p="peer">🤝 Peer Collaboration</button><button data-p="analytics">📊 Analytics</button><button data-p="badges">🏅 Achievements</button><button data-p="about">ℹ️ Design Notes</button><button id="reset">↺ Reset</button>`;
