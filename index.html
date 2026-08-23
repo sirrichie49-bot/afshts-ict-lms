@@ -47,7 +47,17 @@ img, video, iframe { max-width:100%; }
 <body>
 <header><h1>AFSHTS Practical ICT Skills Lab</h1><div id="top">Interactive LMS — Final Prototype</div></header>
 <div class="layout"><aside><nav id="nav"></nav></aside><main id="app"></main></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <script>
+const SUPABASE_URL = "https://mfuvtilepoyydbzkbrd.supabase.co";
+const SUPABASE_KEY = "sb_publishable_XEHJaJD0sXLwzWi0AWBrSA_L4ARsztu";
+
+const supabaseClient = supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY
+);
+
 const M=[
 ["M0","🎯 Orientation & Diagnostic",["Welcome","How the course works","Digital safety","Adaptive diagnostic","Self-rating","Mouse & keyboard warm-up"]],
 ["M1","🌐 Browser Foundations",["Meet the browser","Icon challenge","Address bar vs search","Guided practice","Independence check"]],
