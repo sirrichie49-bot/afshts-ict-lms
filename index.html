@@ -290,6 +290,15 @@ const SUPABASE_KEY = "sb_publishable_XEHJaJD0sXLwzWi0AWBrSA_L4ARsztu";
 let supabaseClient = null;
 
 try {
+  supabaseClient = window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+  );
+  console.log("Supabase connected successfully.");
+} catch (error) {
+  console.error("Supabase connection failed:", error);
+}
+try {
   if (window.supabase && typeof window.supabase.createClient === "function") {
     supabaseClient = window.supabase.createClient(
       SUPABASE_URL,
