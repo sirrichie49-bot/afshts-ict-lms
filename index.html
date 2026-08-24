@@ -1,286 +1,175 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>AFSHTS Practical ICT Skills Lab — Interactive LMS</title>
-<meta name="description" content="AFSHTS Interactive ICT Skills LMS">
-<meta name="theme-color" content="#17365d">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AFSHTS Practical ICT Skills Lab</title>
+<meta name="description" content="AFSHTS Interactive ICT Skills Learning Management System">
 
 <style>
 :root{
   --navy:#17365d;
-  --blue:#2f5597;
+  --navy2:#1f4775;
+  --blue:#315ea8;
   --light:#eef3f8;
-  --green:#2e7d32;
-  --amber:#a15c00;
+  --line:#d6dee8;
+  --text:#17365d;
+  --muted:#5d6675;
+  --green:#217a45;
+  --amber:#a96800;
   --red:#b42318;
-  --line:#d8dee8;
-  --bg:#f6f8fb;
   --white:#fff;
-  --text:#202938;
+  --shadow:0 2px 10px rgba(20,45,75,.08);
 }
 *{box-sizing:border-box}
-html{scroll-behavior:smooth}
-body{
-  margin:0;
-  font:15px Arial,Helvetica,sans-serif;
-  background:var(--bg);
-  color:var(--text);
-}
+html,body{margin:0;padding:0;font-family:Arial,Helvetica,sans-serif;color:#17253a;background:#f4f7fb}
+body{min-height:100vh}
+button,input,textarea,select{font:inherit}
+button{cursor:pointer}
 header{
   background:var(--navy);
   color:#fff;
-  padding:16px 20px;
+  padding:18px 22px;
   position:sticky;
   top:0;
-  z-index:10;
-  box-shadow:0 2px 8px rgba(0,0,0,.12);
+  z-index:20;
+  box-shadow:0 2px 8px rgba(0,0,0,.15);
 }
-header h1{margin:0 0 4px;font-size:22px}
-#top{font-size:14px;line-height:1.5}
-.top-row{
-  display:flex;
-  justify-content:space-between;
-  gap:16px;
-  align-items:center;
-  flex-wrap:wrap;
-}
-.top-progress{
-  min-width:260px;
-  flex:1;
-  max-width:520px;
-}
-.layout{
-  display:grid;
-  grid-template-columns:240px 1fr;
-  min-height:calc(100vh - 86px);
-}
-aside{
-  background:#fff;
-  border-right:1px solid var(--line);
-  padding:10px;
-  position:sticky;
-  top:86px;
-  height:calc(100vh - 86px);
-  overflow:auto;
-}
+.top-row{display:flex;gap:25px;align-items:center;justify-content:space-between}
+header h1{margin:0 0 3px;font-size:25px}
+#top{font-size:16px}
+#connectionStatus{font-size:12px;opacity:.9;margin-top:5px}
+.top-progress{width:260px;min-width:220px}
+.progress{height:12px;background:#e1e6ed;border-radius:999px;overflow:hidden}
+.progress-bar{height:100%;width:0;background:#315ea8;transition:width .3s ease}
+.layout{display:grid;grid-template-columns:292px 1fr;min-height:calc(100vh - 91px)}
+aside{background:#fff;border-right:1px solid var(--line);padding:10px;overflow:auto;position:sticky;top:91px;height:calc(100vh - 91px)}
 nav button{
-  width:100%;
-  padding:10px;
-  margin:2px 0;
-  text-align:left;
-  border:0;
-  background:transparent;
-  border-radius:7px;
-  cursor:pointer;
-  color:var(--text);
+  width:100%;text-align:left;border:0;background:transparent;color:var(--text);
+  padding:12px 13px;border-radius:8px;margin-bottom:3px;font-size:16px;
 }
-nav button:hover,nav button.sel{
-  background:var(--light);
-  font-weight:bold;
-  color:var(--navy);
-}
-main{
-  padding:22px;
-  max-width:1100px;
-  width:100%;
-  margin:auto;
-}
+nav button:hover,nav button.sel{background:#edf2f7}
+nav hr{border:0;border-top:1px solid #cfd6df;margin:10px 4px}
+nav .danger{color:#9b1c1c}
+main{padding:20px;max-width:1400px;width:100%;margin:0 auto}
 .card{
-  background:#fff;
-  border:1px solid var(--line);
-  border-radius:10px;
-  padding:18px;
-  margin:14px 0;
+  background:#fff;border:1px solid var(--line);border-radius:12px;
+  padding:20px;margin-bottom:18px;box-shadow:var(--shadow)
 }
-h2,h3{color:var(--navy)}
-.grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
-  gap:12px;
+.card h2,.card h3{color:var(--text);margin-top:0}
+.grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+.kpi-card{min-height:150px}
+.kpi-number{font-size:34px;font-weight:700;color:#132f55;margin:8px 0}
+.small{font-size:13px;color:var(--muted)}
+.notice{padding:13px;border-radius:8px;background:#eef3f8;margin:12px 0}
+.step{border:1px solid var(--line);padding:13px;border-radius:8px;background:#fafcff;margin:8px 0}
+.module-card{border:1px solid var(--line);border-radius:10px;padding:15px;margin:10px 0;background:#fff}
+.module-card.completed{border-left:5px solid var(--green)}
+.activity-card{border:1px solid var(--line);border-radius:10px;padding:16px;margin:12px 0;background:#fff}
+.activity-card.completed{border-left:5px solid var(--green)}
+.activity-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.primary,.secondary,.danger-btn{
+  border:0;border-radius:7px;padding:10px 16px;color:#fff;font-weight:600
 }
-.kpi{
-  background:#fbfcfe;
-  border-left:5px solid var(--blue);
-  padding:14px;
-  border-radius:6px;
-}
-.kpi-number{
-  font-size:30px;
-  font-weight:bold;
-  margin:6px 0;
-}
-.progress{
-  height:12px;
-  background:#e5e7eb;
-  border-radius:20px;
-  overflow:hidden;
-}
-.progress-bar{
-  height:100%;
-  background:var(--blue);
-  width:0%;
-  transition:width .35s ease;
-}
-.module-progress{margin:10px 0}
-button{
-  font:inherit;
-}
-button.primary{
-  background:var(--blue);
-  color:#fff;
-  border:0;
-  padding:10px 14px;
-  border-radius:7px;
-  cursor:pointer;
-}
-button.primary:hover{opacity:.9}
-button.secondary{
-  background:#fff;
-  color:var(--blue);
-  border:1px solid var(--blue);
-  padding:9px 13px;
-  border-radius:7px;
-  cursor:pointer;
-}
-button:disabled{
-  opacity:.55;
-  cursor:not-allowed;
-}
-.option{
-  border:1px solid var(--line);
-  padding:11px;
-  margin:7px 0;
-  border-radius:7px;
-  background:#fafcff;
-  cursor:pointer;
-}
-.option:hover{background:var(--light)}
-.feedback{
-  padding:11px;
-  margin-top:10px;
-  border-radius:7px;
-  background:#f1f5f9;
-}
-.ok{background:#e8f5e9}
-.warn{background:#fff3df}
-.bad{
-  background:#fde8e7;
-}
+.primary{background:#315ea8}
+.primary:hover{background:#274d8d}
+.secondary{background:#64748b}
+.danger-btn{background:#a33}
 .badge{
-  display:inline-block;
-  padding:5px 9px;
-  border-radius:14px;
-  font-size:12px;
-  font-weight:bold;
+  display:inline-block;padding:6px 10px;border-radius:999px;font-size:12px;font-weight:700
 }
 .green{background:#e8f5e9;color:var(--green)}
 .amber{background:#fff1da;color:var(--amber)}
 .red{background:#fde8e7;color:var(--red)}
-.step{
-  border:1px solid var(--line);
-  padding:12px;
-  border-radius:7px;
-  background:#fafcff;
+.option{
+  border:1px solid var(--line);padding:12px;border-radius:8px;margin:8px 0;
+  background:#fff;cursor:pointer
 }
+.option:hover{background:#f4f7fb}
+.feedback{margin-top:10px;padding:10px;border-radius:7px}
+.feedback.ok{background:#e8f5e9;color:var(--green)}
+.feedback.warn{background:#fff1da;color:var(--amber)}
+.feedback.err{background:#fde8e7;color:var(--red)}
 input,textarea,select{
-  width:100%;
-  padding:10px;
-  border:1px solid #b7c1ce;
-  border-radius:6px;
-  margin:5px 0 10px;
+  width:100%;padding:10px;border:1px solid #b7c1ce;border-radius:7px;margin:5px 0 10px
 }
 textarea{min-height:100px;resize:vertical}
-table{
-  width:100%;
-  border-collapse:collapse;
-}
-th,td{
-  border:1px solid var(--line);
-  padding:8px;
-  text-align:left;
-}
+table{width:100%;border-collapse:collapse}
+th,td{border:1px solid var(--line);padding:9px;text-align:left}
 th{background:var(--light)}
-.small{font-size:13px;color:#5d6675}
-.video{
-  background:#17253a;
-  color:#fff;
-  border-radius:9px;
-  padding:22px;
-  text-align:center;
-  margin:10px 0;
-}
+.video{background:#17253a;color:#fff;border-radius:9px;padding:20px;text-align:center;margin:10px 0}
 .play{font-size:38px}
-.module-card{
-  border:1px solid var(--line);
-  border-radius:9px;
-  padding:14px;
-  margin:10px 0;
-  background:#fff;
-}
-.completed{
-  border-left:5px solid var(--green);
-}
-.activity-actions{
-  display:flex;
-  gap:8px;
-  flex-wrap:wrap;
-  margin-top:10px;
-}
-.notice{
-  padding:12px;
-  border-radius:8px;
-  background:#eef3f8;
-  margin:10px 0;
-}
-#connectionStatus{
-  font-size:12px;
-  opacity:.9;
-}
-@media(max-width:760px){
+.login-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;background:#eef3f8}
+.login-card{width:min(460px,100%);background:#fff;border:1px solid var(--line);border-radius:14px;padding:30px;box-shadow:0 8px 30px rgba(20,45,75,.12)}
+.login-card h1{color:var(--navy);margin-top:0}
+.hidden{display:none!important}
+.loading{text-align:center;padding:60px 20px;color:var(--muted)}
+.admin-stat{border:1px solid var(--line);border-radius:10px;padding:16px;background:#fff}
+.user-row{display:flex;justify-content:space-between;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)}
+.user-row:last-child{border-bottom:0}
+@media(max-width:900px){
   .layout{grid-template-columns:1fr}
-  aside{
-    position:static;
-    height:auto;
-    border-right:0;
-    border-bottom:1px solid var(--line);
-  }
-  main{padding:14px}
-  .top-progress{min-width:100%}
+  aside{position:static;height:auto;border-right:0;border-bottom:1px solid var(--line)}
+  .grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .top-row{align-items:flex-start}
+  .top-progress{display:none}
+}
+@media(max-width:600px){
+  main{padding:12px}
+  .grid{grid-template-columns:1fr}
+  header h1{font-size:21px}
 }
 </style>
 </head>
 
 <body>
+<div id="loginScreen" class="login-wrap">
+  <div class="login-card">
+    <h1>🎓 AFSHTS Practical ICT Skills Lab</h1>
+    <p>Interactive LMS — Secure Login</p>
+
+    <div id="loginMessage"></div>
+
+    <label for="loginEmail">Email address</label>
+    <input id="loginEmail" type="email" placeholder="Enter your email" autocomplete="username">
+
+    <label for="loginPassword">Password</label>
+    <input id="loginPassword" type="password" placeholder="Enter your password" autocomplete="current-password">
+
+    <button id="loginBtn" class="primary" style="width:100%">Sign In</button>
+
+    <p class="small" style="margin-top:15px">
+      Sign in with the administrator or student account created in Supabase Authentication.
+    </p>
+  </div>
+</div>
+
+<div id="appShell" class="hidden">
 <header>
   <div class="top-row">
     <div>
       <h1>AFSHTS Practical ICT Skills Lab</h1>
       <div id="top">Interactive LMS — Final Prototype</div>
-      <div id="connectionStatus">Progress is saved locally and synced to Supabase when available.</div>
+      <div id="connectionStatus">Checking connection…</div>
     </div>
     <div class="top-progress">
-      <div class="progress">
-        <div id="globalProgressBar" class="progress-bar"></div>
-      </div>
+      <div class="progress"><div id="globalProgressBar" class="progress-bar"></div></div>
     </div>
   </div>
 </header>
 
 <div class="layout">
-  <aside>
-    <nav id="nav"></nav>
-  </aside>
+  <aside><nav id="nav"></nav></aside>
   <main id="app"></main>
+</div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <script>
 /* =========================================================
-   AFSHTS INTERACTIVE LMS
-   Clean replacement version
+   AFSHTS PRACTICAL ICT SKILLS LAB
+   Clean single-file replacement
    ========================================================= */
 
 /* ---------- SUPABASE ---------- */
@@ -288,260 +177,443 @@ const SUPABASE_URL = "https://mfuvtilepoyyddbzkbrd.supabase.co";
 const SUPABASE_KEY = "sb_publishable_XEHJaJD0sXLwzWi0AWBrSA_L4ARsztu";
 
 let supabaseClient = null;
+let currentUser = null;
+let currentProfile = null;
 
-try {
-  supabaseClient = window.supabase.createClient(
-    SUPABASE_URL,
-    SUPABASE_KEY
-  );
-  console.log("Supabase connected successfully.");
-} catch (error) {
-  console.error("Supabase connection failed:", error);
-}
-try {
-  if (window.supabase && typeof window.supabase.createClient === "function") {
-    supabaseClient = window.supabase.createClient(
-      SUPABASE_URL,
-      SUPABASE_KEY
-    );
+try{
+  if(window.supabase && typeof window.supabase.createClient === "function"){
+    supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    console.log("Supabase client created successfully.");
   }
-} catch (err) {
-  console.warn("Supabase could not be initialized:", err);
+}catch(error){
+  console.error("Supabase initialization failed:", error);
 }
 
 /* ---------- COURSE DATA ---------- */
 const M = [
   ["M0","🎯 Orientation & Diagnostic",[
-    "Welcome",
-    "How the course works",
-    "Digital safety",
-    "Adaptive diagnostic",
-    "Self-rating",
-    "Mouse & keyboard warm-up"
+    "Welcome","How the course works","Digital safety",
+    "Adaptive diagnostic","Self-rating","Mouse & keyboard warm-up"
   ]],
   ["M1","🌐 Browser Foundations",[
-    "Meet the browser",
-    "Icon challenge",
-    "Address bar vs search",
-    "Guided practice",
-    "Independence check"
+    "Meet the browser","Icon challenge","Address bar vs search",
+    "Guided practice","Independence check"
   ]],
   ["M2","🔎 URLs & Searching",[
-    "What is a URL?",
-    "URL mission",
-    "Search keyword challenge",
-    "Choose a useful result",
-    "Find → verify → retrieve"
+    "What is a URL?","URL mission","Search keyword challenge",
+    "Choose a useful result","Find → verify → retrieve"
   ]],
   ["M3","🔐 Email Login",[
-    "What is email?",
-    "Secure login",
-    "Login error clinic",
-    "Independent login"
+    "What is email?","Secure login","Login error clinic","Independent login"
   ]],
   ["M4","✉️ Composing Email",[
-    "Compose",
-    "Recipient challenge",
-    "Subject challenge",
-    "Message builder",
-    "Composition check"
+    "Compose","Recipient challenge","Subject challenge",
+    "Message builder","Composition check"
   ]],
   ["M5","📎 File Attachment",[
-    "Why attachments matter",
-    "Locate the file",
-    "Attach the file",
-    "Attachment error lab",
-    "Attachment mastery"
+    "Why attachments matter","Locate the file","Attach the file",
+    "Attachment error lab","Attachment mastery"
   ]],
   ["M6","✅ Send & Verify",[
-    "Final checks",
-    "Send",
-    "Verify in Sent",
-    "Send-and-verify challenge"
+    "Final checks","Send","Verify in Sent","Send-and-verify challenge"
   ]],
   ["M7","🛡️ Netiquette",[
-    "Email netiquette",
-    "Privacy & safe links",
-    "Responsible search"
+    "Email netiquette","Privacy & safe links","Responsible search"
   ]],
   ["M8","🏆 Integrated Challenge",[
-    "Prepare",
-    "Perform authentic task",
-    "Self-check"
+    "Prepare","Perform authentic task","Self-check"
   ]],
   ["M9","📈 Remediation & Mastery",[
-    "Mastery status",
-    "Targeted remediation",
-    "Adaptive reassessment",
-    "Troubleshoot with a peer",
-    "Completion & transfer"
+    "Mastery status","Targeted remediation","Adaptive reassessment",
+    "Troubleshoot with a peer","Completion & transfer"
   ]]
 ];
 
-const TOTAL_ACTIVITIES = M.reduce(
-  (sum, module) => sum + module[2].length,
-  0
-);
+const TOTAL_ACTIVITIES = M.reduce((n,m)=>n + m[2].length,0);
 
-/* ---------- LEARNER STATE ---------- */
+/* ---------- LOCAL LEARNER STATE ---------- */
 const DEFAULT_STATE = {
-  learnerName: "",
-  done: [],
-  xp: 0,
-  mastery: null,
-  score: null,
-  posts: [],
-  diagnosticLevel: "not assessed"
+  learnerName:"",
+  done:[],
+  xp:0,
+  mastery:null,
+  score:null,
+  posts:[],
+  diagnosticLevel:"not assessed",
+  quizCorrect:0,
+  quizTotal:0
 };
 
 function loadState(){
   try{
-    const saved = JSON.parse(
-      localStorage.getItem("afshts_lms_state") || "null"
-    );
-
+    const raw = localStorage.getItem("afshts_lms_state");
+    const saved = raw ? JSON.parse(raw) : null;
     if(saved && typeof saved === "object"){
-      return {...DEFAULT_STATE, ...saved};
+      return {...DEFAULT_STATE,...saved};
     }
-  }catch(err){
-    console.warn("Could not read saved state:",err);
+  }catch(error){
+    console.warn("Could not load local state:",error);
   }
-
   return {...DEFAULT_STATE};
 }
 
 let S = loadState();
 
-/* ---------- HELPERS ---------- */
 const app = document.getElementById("app");
 
 function save(){
-  localStorage.setItem(
-    "afshts_lms_state",
-    JSON.stringify(S)
-  );
+  localStorage.setItem("afshts_lms_state", JSON.stringify(S));
+}
+
+function esc(value){
+  return String(value ?? "")
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#039;");
 }
 
 function pct(){
-  if(!TOTAL_ACTIVITIES) return 0;
-  return Math.min(
-    100,
-    Math.round((S.done.length / TOTAL_ACTIVITIES) * 100)
-  );
+  return TOTAL_ACTIVITIES
+    ? Math.min(100,Math.round((S.done.length/TOTAL_ACTIVITIES)*100))
+    : 0;
 }
 
 function status(){
-  if(S.mastery === true){
-    return ["green","GREEN — MASTERED"];
-  }
-
-  if(S.mastery === false){
-    return ["red","RED — REMEDIATION"];
-  }
-
+  if(S.mastery === true) return ["green","GREEN — MASTERED"];
+  if(S.mastery === false) return ["red","RED — REMEDIATION"];
   return ["amber","AMBER — IN PROGRESS"];
 }
 
 function moduleProgress(moduleId){
-  const module = M.find(m => m[0] === moduleId);
-  if(!module) return {completed:0,total:0,percent:0};
-
-  const total = module[2].length;
-  const completed = S.done.filter(
-    key => key.startsWith(moduleId + "-")
-  ).length;
-
+  const m = M.find(x=>x[0]===moduleId);
+  if(!m) return {completed:0,total:0,percent:0};
+  const total = m[2].length;
+  const completed = S.done.filter(k=>k.startsWith(moduleId+"-")).length;
   return {
     completed,
     total,
-    percent: total
-      ? Math.round((completed / total) * 100)
-      : 0
+    percent: total ? Math.round(completed/total*100) : 0
   };
 }
 
 function updateTop(){
-  const s = status();
-  const percent = pct();
-
-  document.getElementById("top").textContent =
-    `XP: ${S.xp} | Progress: ${percent}% | ${s[1]}`;
-
-  document.getElementById("globalProgressBar").style.width =
-    percent + "%";
+  const el = document.getElementById("top");
+  const bar = document.getElementById("globalProgressBar");
+  if(el) el.textContent = `XP: ${S.xp} | Progress: ${pct()}% | ${status()[1]}`;
+  if(bar) bar.style.width = pct()+"%";
 }
 
-function awardXP(amount){
-  S.xp += amount;
-  save();
-  updateTop();
-}
-
-async function syncProgress(moduleId, activityId, xp){
-  if(!supabaseClient) return false;
-
-  const learnerName =
-    S.learnerName.trim() || "Demo Learner";
+/* ---------- SUPABASE PROGRESS SYNC ---------- */
+async function syncProgress(moduleId, activityId, xpAmount){
+  if(!supabaseClient || !currentUser) return false;
 
   try{
-    const {error} = await supabaseClient
-      .from("learner_progress")
-      .upsert(
-        {
-          learner_name: learnerName,
-          module_id: moduleId,
-          activity_id: activityId,
-          completed: true,
-          xp: xp
-        },
-        {
-          onConflict: "learner_name,module_id,activity_id"
-        }
-      );
+    const payload = {
+      user_id: currentUser.id,
+      learner_name: S.learnerName || currentProfile?.full_name || "Learner",
+      module_id: moduleId,
+      activity_id: activityId,
+      completed: true,
+      xp: xpAmount
+    };
 
-    if(error){
-      console.warn("Supabase sync failed:",error);
+    /* First try the authenticated-user version. */
+    let result = await supabaseClient
+      .from("learner_progress")
+      .upsert(payload);
+
+    /* If the existing table does not yet have user_id, retry
+       with the older prototype columns. */
+    if(result.error){
+      const legacyPayload = {
+        learner_name: S.learnerName || currentProfile?.full_name || "Learner",
+        module_id: moduleId,
+        activity_id: activityId,
+        completed: true,
+        xp: xpAmount
+      };
+
+      result = await supabaseClient
+        .from("learner_progress")
+        .upsert(legacyPayload);
+    }
+
+    if(result.error){
+      console.warn("Progress sync unavailable:",result.error.message);
+      setConnection("✓ LMS working locally; cloud sync unavailable.");
       return false;
     }
 
-    document.getElementById("connectionStatus").textContent =
-      "✓ Progress synced to Supabase.";
+    setConnection("✓ Progress saved locally and synced to Supabase.");
     return true;
-  }catch(err){
-    console.warn("Supabase sync error:",err);
+  }catch(error){
+    console.warn("Progress sync exception:",error);
+    setConnection("✓ LMS working locally; cloud sync unavailable.");
     return false;
   }
 }
 
-async function completeActivity(key, xpAmount=10){
+function setConnection(text){
+  const el = document.getElementById("connectionStatus");
+  if(el) el.textContent = text;
+}
+
+async function completeActivity(key,xpAmount=10){
   if(!S.done.includes(key)){
     S.done.push(key);
     S.xp += xpAmount;
     save();
 
     const parts = key.split("-");
-    const moduleId = parts[0];
-    const activityId = parts.slice(1).join("-");
+    const moduleId = parts.shift();
+    const activityId = parts.join("-");
 
-    await syncProgress(
-      moduleId,
-      activityId,
-      xpAmount
-    );
+    await syncProgress(moduleId,activityId,xpAmount);
+  }
+  updateTop();
+  buildNav(getActivePage());
+}
+
+function getActivePage(){
+  const selected = document.querySelector("nav button.sel");
+  return selected?.dataset.page || "home";
+}
+
+/* ---------- AUTHENTICATION ---------- */
+function showLoginMessage(message,type="warn"){
+  const box = document.getElementById("loginMessage");
+  box.innerHTML = `<div class="feedback ${type}">${esc(message)}</div>`;
+}
+
+async function login(){
+  if(!supabaseClient){
+    showLoginMessage("Supabase could not be initialized. Check the browser console.");
+    return;
   }
 
-  updateTop();
-  buildNav();
+  const email = document.getElementById("loginEmail").value.trim();
+  const password = document.getElementById("loginPassword").value;
+
+  if(!email || !password){
+    showLoginMessage("Enter both email address and password.");
+    return;
+  }
+
+  const btn = document.getElementById("loginBtn");
+  btn.disabled = true;
+  btn.textContent = "Signing in…";
+  showLoginMessage("Checking your account…","warn");
+
+  try{
+    const {data,error} = await supabaseClient.auth.signInWithPassword({
+      email,password
+    });
+
+    if(error) throw error;
+
+    currentUser = data.user;
+
+    const {data:profile,error:profileError} = await supabaseClient
+      .from("profiles")
+      .select("id,full_name,email,role")
+      .eq("id",currentUser.id)
+      .maybeSingle();
+
+    if(profileError) throw profileError;
+
+    if(!profile){
+      await supabaseClient.auth.signOut();
+      throw new Error("No profile was found for this account. Add the user's row to public.profiles.");
+    }
+
+    if(!["admin","student"].includes(profile.role)){
+      await supabaseClient.auth.signOut();
+      throw new Error("The profile role must be either admin or student.");
+    }
+
+    currentProfile = profile;
+
+    if(profile.full_name && !S.learnerName){
+      S.learnerName = profile.full_name;
+      save();
+    }
+
+    document.getElementById("loginScreen").classList.add("hidden");
+    document.getElementById("appShell").classList.remove("hidden");
+
+    setConnection("✓ Signed in. Supabase connected.");
+    updateTop();
+
+    if(profile.role === "admin"){
+      buildAdminNav();
+      adminHome();
+    }else{
+      buildNav("home");
+      home();
+    }
+
+  }catch(error){
+    console.error("Login error:",error);
+    showLoginMessage(error.message || "Login failed.");
+  }finally{
+    btn.disabled = false;
+    btn.textContent = "Sign In";
+  }
+}
+
+async function logout(){
+  try{
+    if(supabaseClient) await supabaseClient.auth.signOut();
+  }catch(error){
+    console.warn("Sign out warning:",error);
+  }
+
+  currentUser = null;
+  currentProfile = null;
+  document.getElementById("appShell").classList.add("hidden");
+  document.getElementById("loginScreen").classList.remove("hidden");
+  document.getElementById("loginPassword").value = "";
+  showLoginMessage("You have been signed out.","ok");
+}
+
+/* ---------- STUDENT NAVIGATION ---------- */
+function buildNav(active="home"){
+  const nav = document.getElementById("nav");
+
+  nav.innerHTML = `
+    <button data-page="home">🏠 Dashboard</button>
+    ${M.map(m=>`<button data-page="${m[0]}">${m[1]}</button>`).join("")}
+    <hr>
+    <button data-page="peer">🤝 Peer Collaboration</button>
+    <button data-page="analytics">📊 Analytics</button>
+    <button data-page="badges">🏅 Achievements</button>
+    <button data-page="about">ℹ️ Design Notes</button>
+    <hr>
+    <button id="resetBtn">↺ Reset Local Progress</button>
+    <button id="logoutBtn" class="danger">🚪 Sign Out</button>
+  `;
+
+  nav.querySelectorAll("[data-page]").forEach(button=>{
+    if(button.dataset.page===active) button.classList.add("sel");
+    button.addEventListener("click",()=>{
+      buildNav(button.dataset.page);
+      route(button.dataset.page);
+    });
+  });
+
+  document.getElementById("resetBtn").addEventListener("click",()=>{
+    if(confirm("Reset this browser's learner progress?")){
+      S = {...DEFAULT_STATE};
+      save();
+      updateTop();
+      buildNav("home");
+      home();
+    }
+  });
+
+  document.getElementById("logoutBtn").addEventListener("click",logout);
+}
+
+function route(page){
+  if(page==="home") return home();
+  if(page==="peer") return peer();
+  if(page==="analytics") return analytics();
+  if(page==="badges") return badges();
+  if(page==="about") return about();
+  modulePage(page);
+}
+
+/* ---------- STUDENT DASHBOARD ---------- */
+function home(){
+  const s = status();
+
+  app.innerHTML = `
+    <div class="card">
+      <h2>🎓 Learner Dashboard</h2>
+      <p>Welcome, <strong>${esc(S.learnerName || currentProfile?.full_name || "Learner")}</strong></p>
+
+      <div class="notice">
+        Your dashboard updates whenever an activity is completed.
+        Practical performance remains the main evidence of mastery.
+      </div>
+
+      <div class="grid">
+        <div class="card kpi-card">
+          <h3>📊 Overall Progress</h3>
+          <div class="progress"><div class="progress-bar" style="width:${pct()}%"></div></div>
+          <p class="kpi-number">${pct()}%</p>
+          <p class="small">${S.done.length} of ${TOTAL_ACTIVITIES} activities completed</p>
+        </div>
+
+        <div class="card kpi-card">
+          <h3>⭐ XP Points</h3>
+          <p class="kpi-number">${S.xp}</p>
+          <p class="small">Experience points earned</p>
+        </div>
+
+        <div class="card kpi-card">
+          <h3>✅ Completed</h3>
+          <p class="kpi-number">${S.done.length}</p>
+          <p class="small">Learning activities completed</p>
+        </div>
+
+        <div class="card kpi-card">
+          <h3>🏆 Mastery</h3>
+          <p><span class="badge ${s[0]}">${s[1]}</span></p>
+          <p class="small">Diagnostic: ${esc(S.diagnosticLevel)}</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>👤 Learner Information</h3>
+      <label for="learnerNameInput">Learner name</label>
+      <input id="learnerNameInput" value="${esc(S.learnerName)}" placeholder="Enter learner name">
+      <button class="primary" id="saveNameBtn">Save Learner Name</button>
+    </div>
+
+    <div class="card">
+      <h3>📚 Learning Modules</h3>
+      <p>Select a module below to continue.</p>
+      <div id="dashboardModules"></div>
+    </div>
+  `;
+
+  document.getElementById("saveNameBtn").addEventListener("click",setLearnerName);
+
+  const box = document.getElementById("dashboardModules");
+
+  M.forEach(m=>{
+    const p = moduleProgress(m[0]);
+    const div = document.createElement("div");
+    div.className = "module-card" + (p.percent===100 ? " completed" : "");
+
+    div.innerHTML = `
+      <h3>${m[1]}</h3>
+      <div class="progress"><div class="progress-bar" style="width:${p.percent}%"></div></div>
+      <p>${p.completed} of ${p.total} activities completed — <strong>${p.percent}%</strong></p>
+      <button class="primary">Open Module</button>
+    `;
+
+    div.querySelector("button").addEventListener("click",()=>{
+      buildNav(m[0]);
+      modulePage(m[0]);
+      window.scrollTo({top:0,behavior:"smooth"});
+    });
+
+    box.appendChild(div);
+  });
 }
 
 function setLearnerName(){
   const input = document.getElementById("learnerNameInput");
   if(!input) return;
-
   const name = input.value.trim();
 
   if(!name){
-    alert("Please enter your name.");
+    alert("Please enter the learner's name.");
     return;
   }
 
@@ -551,235 +623,27 @@ function setLearnerName(){
   home();
 }
 
-/* ---------- NAVIGATION ---------- */
-function buildNav(active="home"){
-  const nav = document.getElementById("nav");
-
-  nav.innerHTML = `
-    <button data-page="home">🏠 Dashboard</button>
-    ${M.map(m =>
-      `<button data-page="${m[0]}">${m[1]}</button>`
-    ).join("")}
-    <hr>
-    <button data-page="peer">🤝 Peer Collaboration</button>
-    <button data-page="analytics">📊 Analytics</button>
-    <button data-page="badges">🏅 Achievements</button>
-    <button data-page="about">ℹ️ Design Notes</button>
-    <button id="resetBtn">↺ Reset Local Progress</button>
-  `;
-
-  nav.querySelectorAll("[data-page]").forEach(button => {
-    button.addEventListener("click", () => {
-      buildNav(button.dataset.page);
-      route(button.dataset.page);
-    });
-  });
-
-  document.getElementById("resetBtn").addEventListener("click",()=>{
-    if(confirm(
-      "Reset this learner's local progress? This will clear the browser's saved progress."
-    )){
-      localStorage.removeItem("afshts_lms_state");
-      location.reload();
-    }
-  });
-
-  const selected = nav.querySelector(
-    `[data-page="${active}"]`
-  );
-
-  if(selected) selected.classList.add("sel");
-}
-
-function route(page){
-  if(page === "home") return home();
-  if(page === "peer") return peer();
-  if(page === "analytics") return analytics();
-  if(page === "badges") return badges();
-  if(page === "about") return about();
-
-  modulePage(page);
-}
-
-/* ---------- DASHBOARD ---------- */
-function home(){
-  const s = status();
-
-  app.innerHTML = `
-    <div class="card">
-      <h2>🎓 Learner Dashboard</h2>
-
-      <p>
-        Welcome,
-        <strong>${escapeHTML(
-          S.learnerName || "Demo Learner"
-        )}</strong>
-      </p>
-
-      <div class="notice">
-        Your dashboard updates immediately whenever an activity is completed.
-        The progress bar above also updates in real time.
-      </div>
-
-      <div class="grid">
-
-        <div class="card">
-          <h3>📊 Overall Progress</h3>
-          <div class="progress">
-            <div
-              class="progress-bar"
-              style="width:${pct()}%"
-            ></div>
-          </div>
-          <p class="kpi-number">${pct()}%</p>
-          <p class="small">
-            ${S.done.length} of ${TOTAL_ACTIVITIES}
-            activities completed
-          </p>
-        </div>
-
-        <div class="card">
-          <h3>⭐ XP Points</h3>
-          <p class="kpi-number">${S.xp}</p>
-          <p class="small">Experience points earned</p>
-        </div>
-
-        <div class="card">
-          <h3>✅ Completed</h3>
-          <p class="kpi-number">${S.done.length}</p>
-          <p class="small">Learning activities completed</p>
-        </div>
-
-        <div class="card">
-          <h3>🏆 Mastery</h3>
-          <p>
-            <span class="badge ${s[0]}">${s[1]}</span>
-          </p>
-          <p class="small">
-            Diagnostic: ${escapeHTML(S.diagnosticLevel)}
-          </p>
-        </div>
-
-      </div>
-    </div>
-
-    <div class="card">
-      <h3>👤 Learner Information</h3>
-      <label for="learnerNameInput">
-        Learner name
-      </label>
-
-      <input
-        id="learnerNameInput"
-        value="${escapeAttribute(S.learnerName)}"
-        placeholder="Enter learner name"
-      >
-
-      <button class="primary" id="saveNameBtn">
-        Save Learner Name
-      </button>
-    </div>
-
-    <div class="card">
-      <h3>📚 Learning Modules</h3>
-      <p>
-        Select a module below to continue learning.
-      </p>
-
-      <div id="dashboardModules"></div>
-    </div>
-  `;
-
-  document.getElementById("saveNameBtn")
-    .addEventListener("click",setLearnerName);
-
-  const box =
-    document.getElementById("dashboardModules");
-
-  M.forEach(m=>{
-    const p = moduleProgress(m[0]);
-
-    const div = document.createElement("div");
-    div.className =
-      "module-card" +
-      (p.percent === 100 ? " completed" : "");
-
-    div.innerHTML = `
-      <h3>${m[1]}</h3>
-
-      <div class="module-progress">
-        <div class="progress">
-          <div
-            class="progress-bar"
-            style="width:${p.percent}%"
-          ></div>
-        </div>
-      </div>
-
-      <p>
-        ${p.completed} of ${p.total}
-        activities completed
-        — <strong>${p.percent}%</strong>
-      </p>
-
-      <button class="primary">
-        Open Module
-      </button>
-    `;
-
-    div.querySelector("button")
-      .addEventListener("click",()=>{
-        buildNav(m[0]);
-        modulePage(m[0]);
-      });
-
-    box.appendChild(div);
-  });
-}
-
 /* ---------- MODULE PAGE ---------- */
 function modulePage(id){
-  const m = M.find(x=>x[0] === id);
-
-  if(!m){
-    home();
-    return;
-  }
+  const m = M.find(x=>x[0]===id);
+  if(!m){home();return}
 
   const p = moduleProgress(id);
 
   app.innerHTML = `
     <div class="card">
       <h2>${m[1]}</h2>
-      <p>
-        Complete the activities below.
-        Completed activities remain saved in this browser.
-      </p>
-
-      <div class="progress">
-        <div
-          class="progress-bar"
-          style="width:${p.percent}%"
-        ></div>
-      </div>
-
-      <p>
-        Module progress:
-        <strong>${p.percent}%</strong>
-        (${p.completed}/${p.total})
-      </p>
+      <p>Complete the activities below. Use the practical task where instructed.</p>
+      <div class="progress"><div class="progress-bar" style="width:${p.percent}%"></div></div>
+      <p>Module progress: <strong>${p.percent}%</strong> (${p.completed}/${p.total})</p>
     </div>
-
     <div id="activities"></div>
   `;
 
-  const activities =
-    document.getElementById("activities");
+  const activities = document.getElementById("activities");
 
   m[2].forEach((title,index)=>{
-    activities.appendChild(
-      createActivity(id,index,title)
-    );
+    activities.appendChild(createActivity(id,index,title));
   });
 }
 
@@ -789,681 +653,659 @@ function createActivity(moduleId,index,title){
   const completed = S.done.includes(key);
 
   const card = document.createElement("div");
-  card.className =
-    "card" + (completed ? " completed" : "");
+  card.className = "activity-card" + (completed ? " completed" : "");
 
   card.innerHTML = `
-    <h3>
-      ${index + 1}. ${title}
-      ${completed
-        ? '<span class="badge green">Completed</span>'
-        : ''
-      }
+    <h3>${index+1}. ${esc(title)}
+      ${completed ? '<span class="badge green">Completed</span>' : ''}
     </h3>
-
     <div class="activity-content"></div>
-
     <div class="activity-actions"></div>
   `;
 
-  const content =
-    card.querySelector(".activity-content");
+  const content = card.querySelector(".activity-content");
+  const actions = card.querySelector(".activity-actions");
 
-  const actions =
-    card.querySelector(".activity-actions");
-
-  renderActivityContent(
-    moduleId,
-    index,
-    title,
-    key,
-    content,
-    actions,
-    completed
-  );
-
+  renderActivityContent(moduleId,index,title,key,content,actions,completed);
   return card;
 }
 
-function renderActivityContent(
-  moduleId,
-  index,
-  title,
-  key,
-  content,
-  actions,
-  completed
-){
-  /* M0 diagnostic */
-  if(moduleId === "M0" && index === 3){
+function renderActivityContent(moduleId,index,title,key,content,actions,completed){
+
+  /* M0 adaptive diagnostic */
+  if(moduleId==="M0" && index===3){
     content.innerHTML = `
-      <p>
-        Answer the question below. This diagnostic helps
-        identify the learner's starting level.
-      </p>
-
-      <p><strong>
-        Which action is safest when receiving an unexpected email attachment?
-      </strong></p>
-
-      <div class="option" data-answer="wrong">
-        A. Open it immediately.
-      </div>
-
-      <div class="option" data-answer="correct">
-        B. Verify the sender and attachment before opening it.
-      </div>
-
-      <div class="option" data-answer="wrong">
-        C. Forward it to everyone.
-      </div>
-
-      <div class="option" data-answer="wrong">
-        D. Disable all security warnings.
-      </div>
-
-      <div id="feedback-${key}"></div>
+      <p><strong>Adaptive diagnostic:</strong> answer the questions to establish a starting point.</p>
+      <div id="diagBox-${key}"></div>
+      <div id="diagFeedback-${key}" class="feedback"></div>
     `;
 
-    content.querySelectorAll(".option")
-      .forEach(option=>{
-        option.addEventListener("click",()=>{
-          const feedback =
-            document.getElementById(
-              `feedback-${key}`
-            );
+    const questions = [
+      ["Which control is normally used to enter a website address?",["Refresh","Address bar","Back"],1],
+      ["Where can you verify a sent email?",["Inbox","Sent","Browser history"],1],
+      ["What should be confirmed before sending an email with an attachment?",["Only the browser","Recipient, message and attachment","Nothing"],1]
+    ];
 
-          if(option.dataset.answer === "correct"){
-            S.diagnosticLevel = "foundation ready";
-            feedback.className =
-              "feedback ok";
-            feedback.textContent =
-              "Correct. Good digital-safety judgement.";
+    let indexQ = 0;
+    let correct = 0;
 
-            S.mastery = S.mastery === null
-              ? null
-              : S.mastery;
+    function showQuestion(){
+      const q = questions[indexQ];
+      const box = document.getElementById(`diagBox-${key}`);
+      const feedback = document.getElementById(`diagFeedback-${key}`);
 
-            save();
-            completeActivity(key,15);
-            option.parentElement
-              .querySelectorAll(".option")
-              .forEach(x=>x.style.pointerEvents="none");
-          }else{
-            S.diagnosticLevel = "needs support";
-            feedback.className =
-              "feedback warn";
-            feedback.textContent =
-              "Not quite. Verify unexpected attachments before opening them.";
-            save();
-          }
-        });
-      });
+      box.innerHTML = `
+        <p><strong>Question ${indexQ+1} of ${questions.length}</strong></p>
+        <p>${esc(q[0])}</p>
+        ${q[1].map((opt,i)=>`
+          <label class="option">
+            <input type="radio" name="diag-${key}" value="${i}">
+            ${esc(opt)}
+          </label>
+        `).join("")}
+        <button class="primary" id="diagCheck-${key}">Check Answer</button>
+      `;
 
+      feedback.textContent = "";
+
+      document.getElementById(`diagCheck-${key}`).onclick = async()=>{
+        const selected = document.querySelector(`input[name="diag-${key}"]:checked`);
+        if(!selected){
+          feedback.className="feedback warn";
+          feedback.textContent="Choose an answer first.";
+          return;
+        }
+
+        if(Number(selected.value)===q[2]){
+          correct++;
+          feedback.className="feedback ok";
+          feedback.textContent="Correct.";
+        }else{
+          feedback.className="feedback warn";
+          feedback.textContent="Review this skill before moving on.";
+        }
+
+        indexQ++;
+
+        if(indexQ<questions.length){
+          setTimeout(showQuestion,500);
+        }else{
+          S.quizCorrect = correct;
+          S.quizTotal = questions.length;
+          S.diagnosticLevel = correct===3 ? "foundation ready" : correct>=2 ? "developing" : "needs support";
+          save();
+          await completeActivity(key,20);
+          box.innerHTML = `<div class="notice"><strong>Diagnostic complete:</strong> ${correct}/${questions.length}. Suggested starting status: ${esc(S.diagnosticLevel)}.</div>`;
+          updateTop();
+        }
+      };
+    }
+
+    showQuestion();
     return;
   }
 
-  /* M1 browser icon challenge */
-  if(moduleId === "M1" && index === 1){
-    content.innerHTML = `
-      <p>
-        Which browser feature is normally used to enter
-        a website address?
-      </p>
-
-      <div class="option" data-answer="wrong">
-        Desktop wallpaper
-      </div>
-
-      <div class="option" data-answer="correct">
-        Address bar
-      </div>
-
-      <div class="option" data-answer="wrong">
-        Recycle Bin
-      </div>
-
-      <div id="feedback-${key}"></div>
-    `;
-
-    addQuizHandlers(content,key,15);
+  /* M1 browser challenge */
+  if(moduleId==="M1" && index===1){
+    renderQuiz(
+      content,actions,key,
+      "Which browser feature is normally used to enter a website address?",
+      ["Desktop wallpaper","Address bar","Recycle Bin"],1,15
+    );
     return;
   }
 
-  /* M2 URL challenge */
-  if(moduleId === "M2" && index === 1){
-    content.innerHTML = `
-      <p>
-        Select the item that is a complete website address.
-      </p>
-
-      <div class="option" data-answer="wrong">
-        computer
-      </div>
-
-      <div class="option" data-answer="correct">
-        https://www.example.com
-      </div>
-
-      <div class="option" data-answer="wrong">
-        search words
-      </div>
-
-      <div id="feedback-${key}"></div>
-    `;
-
-    addQuizHandlers(content,key,15);
+  /* M2 search challenge */
+  if(moduleId==="M2" && index===2){
+    renderQuiz(
+      content,actions,key,
+      "Which is the strongest search query?",
+      ["email","safe email communication for senior high school students","things on the Internet"],1,15
+    );
     return;
   }
 
-  /* M7 privacy challenge */
-  if(moduleId === "M7" && index === 1){
+  /* M4 subject challenge */
+  if(moduleId==="M4" && index===2){
+    renderQuiz(
+      content,actions,key,
+      "Which is the strongest email subject?",
+      ["Hi","ICT Assignment Submission — Form 2","Important"],1,15
+    );
+    return;
+  }
+
+  /* M5 attachment error lab */
+  if(moduleId==="M5" && index===3){
+    renderQuiz(
+      content,actions,key,
+      "The attachment is not visible after selecting a file. What should you do?",
+      ["Send immediately","Wait for upload and confirm the attachment appears","Close the browser"],1,20
+    );
+    return;
+  }
+
+  /* M5 attachment mastery */
+  if(moduleId==="M5" && index===4){
     content.innerHTML = `
-      <p>
-        You receive a link asking for your password.
-        What should you do?
-      </p>
-
-      <div class="option" data-answer="wrong">
-        Enter the password immediately.
-      </div>
-
-      <div class="option" data-answer="correct">
-        Verify the source and avoid entering credentials through a suspicious link.
-      </div>
-
-      <div class="option" data-answer="wrong">
-        Share the link with classmates.
-      </div>
-
-      <div id="feedback-${key}"></div>
+      <p><strong>High-priority attachment checkpoint.</strong></p>
+      <p>Complete all four steps before submitting the checklist.</p>
+      ${["Locate the correct file","Select the correct file","Wait for the upload to finish","Confirm the attachment is visible"]
+        .map((x,i)=>`<label class="option"><input type="checkbox" data-step="${i}"> ${x}</label>`).join("")}
+      <div id="attachFeedback-${key}" class="feedback"></div>
     `;
+    const btn=document.createElement("button");
+    btn.className="primary";
+    btn.textContent=completed ? "✓ Checklist Completed" : "Submit Checklist";
+    btn.disabled=completed;
+    btn.onclick=async()=>{
+      const checked=content.querySelectorAll("input:checked").length;
+      const feedback=document.getElementById(`attachFeedback-${key}`);
+      if(checked===4){
+        await completeActivity(key,25);
+        feedback.className="feedback ok";
+        feedback.textContent="Checklist complete. Teacher should validate independent live performance.";
+        btn.disabled=true;
+        btn.textContent="✓ Checklist Completed";
+      }else{
+        feedback.className="feedback warn";
+        feedback.textContent=`${checked}/4 steps complete. Finish the sequence.`;
+      }
+    };
+    actions.appendChild(btn);
+    return;
+  }
 
-    addQuizHandlers(content,key,15);
+  /* M8 integrated challenge */
+  if(moduleId==="M8" && index===1){
+    content.innerHTML=`
+      <p><strong>Authentic practical task:</strong> complete the full browser-to-email sequence independently.</p>
+      <div class="step">
+        Browser/search → email login → compose → correct recipient → subject →
+        message → attach file → send → verify in Sent.
+      </div>
+      <div class="notice">
+        The teacher should score the live task using the 20-mark practical rubric.
+        Starting the LMS activity is not itself evidence of mastery.
+      </div>
+    `;
+    const btn=document.createElement("button");
+    btn.className="primary";
+    btn.textContent=completed ? "✓ Practical Task Recorded" : "Launch Practical Task";
+    btn.disabled=completed;
+    btn.onclick=async()=>{
+      await completeActivity(key,30);
+      btn.disabled=true;
+      btn.textContent="✓ Practical Task Recorded";
+      content.insertAdjacentHTML("beforeend",
+        `<div class="feedback ok">Task launched. Complete it independently and have the teacher record the practical score.</div>`);
+    };
+    actions.appendChild(btn);
     return;
   }
 
   /* M9 reassessment */
-  if(moduleId === "M9" && index === 2){
-    content.innerHTML = `
-      <p>
-        Mastery target: <strong>16/20</strong> or better,
-        with no critical safety failure.
-      </p>
-
-      <label for="score-${key}">
-        Enter reassessment score out of 20
+  if(moduleId==="M9" && index===2){
+    content.innerHTML=`
+      <p>Enter the teacher-awarded score for the novel equivalent practical task.</p>
+      <label>Score out of 20</label>
+      <input id="score-${key}" type="number" min="0" max="20" placeholder="e.g. 18">
+      <label class="option">
+        <input id="critical-${key}" type="checkbox">
+        No critical failure occurred
       </label>
-
-      <input
-        id="score-${key}"
-        type="number"
-        min="0"
-        max="20"
-        placeholder="e.g. 18"
-      >
-
-      <div id="feedback-${key}"></div>
+      <div id="masteryFeedback-${key}" class="feedback"></div>
     `;
 
-    const button =
-      document.createElement("button");
+    const btn=document.createElement("button");
+    btn.className="primary";
+    btn.textContent="Record Mastery Decision";
+    btn.onclick=async()=>{
+      const score=Number(document.getElementById(`score-${key}`).value);
+      const noCritical=document.getElementById(`critical-${key}`).checked;
+      const feedback=document.getElementById(`masteryFeedback-${key}`);
 
-    button.className = "primary";
-    button.textContent =
-      completed ? "Reassess Again" : "Submit Score";
-
-    button.addEventListener("click",()=>{
-      const score =
-        Number(
-          document.getElementById(
-            `score-${key}`
-          ).value
-        );
-
-      if(!Number.isFinite(score) ||
-         score < 0 ||
-         score > 20){
-        alert("Enter a score from 0 to 20.");
+      if(!Number.isFinite(score)||score<0||score>20){
+        feedback.className="feedback warn";
+        feedback.textContent="Enter a valid score from 0 to 20.";
         return;
       }
 
-      S.score = score;
-      S.mastery = score >= 16;
+      S.score=score;
+      S.mastery=(score>=16 && noCritical);
       save();
 
-      const feedback =
-        document.getElementById(
-          `feedback-${key}`
-        );
+      feedback.className=S.mastery ? "feedback ok" : "feedback warn";
+      feedback.textContent=S.mastery
+        ? "GREEN — Mastery achieved: at least 16/20 with no critical failure."
+        : "RED/AMBER — Remediation is recommended. Review the weak skill and reassess.";
 
-      feedback.className =
-        S.mastery ? "feedback ok" : "feedback warn";
-
-      feedback.textContent =
-        S.mastery
-          ? "Mastery achieved. Excellent work."
-          : "Remediation is recommended. Review the weak areas and try again.";
-
-      completeActivity(key,20);
+      await completeActivity(key,20);
       updateTop();
-    });
-
-    actions.appendChild(button);
+    };
+    actions.appendChild(btn);
     return;
   }
 
   /* Generic practical activity */
-  content.innerHTML = `
-    <p>
-      <strong>Learning task:</strong>
-      ${activityInstruction(moduleId,index,title)}
-    </p>
-
+  content.innerHTML=`
+    <p><strong>Learning task:</strong> ${esc(activityInstruction(moduleId,index,title))}</p>
+    <div class="video">
+      <div class="play">▶</div>
+      <div>Interactive demonstration: ${esc(title)}</div>
+      <small>Observe → practise → receive feedback → perform independently.</small>
+    </div>
     <div class="notice">
-      Complete the task practically, then click
-      <strong>Mark Activity Complete</strong>.
+      Perform the task practically, then mark the activity complete.
     </div>
   `;
 
-  const button =
-    document.createElement("button");
+  const btn=document.createElement("button");
+  btn.className=completed ? "secondary" : "primary";
+  btn.textContent=completed ? "✓ Activity Completed" : "Mark Activity Complete";
+  btn.disabled=completed;
 
-  button.className =
-    completed ? "secondary" : "primary";
-
-  button.textContent =
-    completed
-      ? "✓ Activity Completed"
-      : "Mark Activity Complete";
-
-  button.disabled = completed;
-
-  button.addEventListener("click",async()=>{
+  btn.onclick=async()=>{
     await completeActivity(key,10);
-
-    cardCompleteRefresh(
-      moduleId,
-      index,
-      title
-    );
-  });
-
-  actions.appendChild(button);
-}
-
-function addQuizHandlers(content,key,xpAmount){
-  content.querySelectorAll(".option")
-    .forEach(option=>{
-      option.addEventListener("click",async()=>{
-        const feedback =
-          document.getElementById(
-            `feedback-${key}`
-          );
-
-        if(option.dataset.answer === "correct"){
-          feedback.className =
-            "feedback ok";
-          feedback.textContent =
-            "Correct. Activity completed.";
-
-          content.querySelectorAll(".option")
-            .forEach(x=>{
-              x.style.pointerEvents="none";
-            });
-
-          await completeActivity(
-            key,
-            xpAmount
-          );
-
-          updateTop();
-        }else{
-          feedback.className =
-            "feedback warn";
-          feedback.textContent =
-            "Not quite. Review the options and try again.";
-        }
-      });
-    });
-}
-
-function cardCompleteRefresh(
-  moduleId,
-  index,
-  title
-){
-  modulePage(moduleId);
-  window.scrollTo({top:0,behavior:"smooth"});
-}
-
-function activityInstruction(
-  moduleId,
-  index,
-  title
-){
-  const instructions = {
-    "M0-0":
-      "Read the orientation information and identify one personal learning goal for this course.",
-    "M0-1":
-      "Review the course structure and identify how modules, activities and progress work together.",
-    "M0-2":
-      "Identify at least two safe practices for protecting accounts, devices and personal information.",
-    "M0-4":
-      "Rate your confidence with basic computer skills from 1 (beginner) to 5 (very confident).",
-    "M0-5":
-      "Practise clicking, double-clicking, selecting, dragging and using the keyboard.",
-    "M1-0":
-      "Identify the browser window, tabs, back button, refresh button, address bar and search controls.",
-    "M1-2":
-      "Explain the difference between typing a web address and typing keywords into a search engine.",
-    "M1-3":
-      "Follow a guided browser task: open a browser, enter a web address and navigate back.",
-    "M1-4":
-      "Perform the browser task independently without step-by-step assistance.",
-    "M2-0":
-      "Explain what a URL is and identify its main parts.",
-    "M2-2":
-      "Construct useful search keywords for a specific information need.",
-    "M2-3":
-      "Compare search results and choose the result most relevant to the task.",
-    "M2-4":
-      "Find information, verify the source and retrieve the required information.",
-    "M3-0":
-      "Explain what an email account is and what it is used for.",
-    "M3-1":
-      "Demonstrate safe login behaviour without sharing passwords.",
-    "M3-2":
-      "Identify likely causes of common login errors and select an appropriate response.",
-    "M3-3":
-      "Complete a simulated email login independently.",
-    "M4-0":
-      "Open the compose window and identify the main fields.",
-    "M4-1":
-      "Enter a correct recipient address.",
-    "M4-2":
-      "Write a clear and meaningful subject line.",
-    "M4-3":
-      "Compose a short professional message.",
-    "M4-4":
-      "Review the complete email before sending.",
-    "M5-0":
-      "Explain why attachments are useful when communicating digital files.",
-    "M5-1":
-      "Locate the correct file on the computer.",
-    "M5-2":
-      "Attach the selected file to an email.",
-    "M5-3":
-      "Identify and troubleshoot common attachment problems.",
-    "M5-4":
-      "Demonstrate correct attachment procedure independently.",
-    "M6-0":
-      "Perform final recipient, subject, message and attachment checks.",
-    "M6-1":
-      "Send the completed email in the practice environment.",
-    "M6-2":
-      "Open the Sent folder and verify that the message was sent.",
-    "M6-3":
-      "Complete the full send-and-verify workflow independently.",
-    "M7-0":
-      "Apply professional and respectful email communication practices.",
-    "M7-2":
-      "Use responsible search behaviour and evaluate information before using it.",
-    "M8-0":
-      "Prepare for the authentic email task by checking all required materials.",
-    "M8-1":
-      "Perform the integrated email task from start to finish.",
-    "M8-2":
-      "Use the self-check to evaluate your own performance.",
-    "M9-0":
-      "Review your current mastery status and identify the skill areas that need attention.",
-    "M9-1":
-      "Complete targeted practice in the skill area where performance is weakest.",
-    "M9-3":
-      "Work with a peer to troubleshoot a realistic ICT problem.",
-    "M9-4":
-      "Summarise what you can now do independently and how you will transfer the skill to real work."
+    btn.disabled=true;
+    btn.className="secondary";
+    btn.textContent="✓ Activity Completed";
+    cardRefreshNotice(content);
   };
 
-  return instructions[`${moduleId}-${index}`] ||
-    `Complete the practical learning activity: ${title}.`;
+  actions.appendChild(btn);
 }
 
-/* ---------- PEER COLLABORATION ---------- */
+function cardRefreshNotice(content){
+  const old=content.querySelector(".feedback");
+  if(old) old.remove();
+  content.insertAdjacentHTML("beforeend",
+    `<div class="feedback ok">Activity completed and progress updated.</div>`);
+}
+
+function renderQuiz(content,actions,key,question,options,correctIndex,xpAmount){
+  content.innerHTML=`
+    <p><strong>${esc(question)}</strong></p>
+    ${options.map((x,i)=>`
+      <div class="option" data-answer="${i}">${esc(x)}</div>
+    `).join("")}
+    <div id="feedback-${key}" class="feedback"></div>
+  `;
+
+  content.querySelectorAll(".option").forEach(option=>{
+    option.addEventListener("click",async()=>{
+      const feedback=document.getElementById(`feedback-${key}`);
+
+      if(Number(option.dataset.answer)===correctIndex){
+        feedback.className="feedback ok";
+        feedback.textContent="Correct. Activity completed.";
+        content.querySelectorAll(".option").forEach(x=>x.style.pointerEvents="none");
+        await completeActivity(key,xpAmount);
+      }else{
+        feedback.className="feedback warn";
+        feedback.textContent="Not quite. Review the options and try again.";
+      }
+    });
+  });
+}
+
+function activityInstruction(moduleId,index,title){
+  const map={
+    "M0-0":"Read the orientation information and identify one learning goal.",
+    "M0-1":"Review how the course modules, activities, progress and assessments fit together.",
+    "M0-2":"Identify at least two safe practices for protecting accounts, devices and personal information.",
+    "M0-4":"Rate your confidence with basic computer skills from 1 (beginner) to 5 (very confident).",
+    "M0-5":"Practise clicking, double-clicking, selecting, dragging and keyboard use.",
+    "M1-0":"Identify the browser window, tabs, back, refresh, address bar and search controls.",
+    "M1-2":"Explain the difference between entering a URL and entering search keywords.",
+    "M1-3":"Follow a guided browser task and navigate back to the previous page.",
+    "M1-4":"Perform the browser task independently without step-by-step assistance.",
+    "M2-0":"Explain what a URL is and identify its main parts.",
+    "M2-1":"Enter a supplied URL accurately and confirm the intended page.",
+    "M2-3":"Choose a relevant result and explain why it is useful.",
+    "M2-4":"Find information, verify the source and retrieve the required information.",
+    "M3-0":"Explain inbox, sent messages and basic email account functions.",
+    "M3-1":"Use an authorised practice account and protect the password.",
+    "M3-2":"Identify common causes of login failure and choose an appropriate recovery step.",
+    "M3-3":"Log in independently using an authorised practice account.",
+    "M4-0":"Open a new message and identify recipient, subject and message body.",
+    "M4-1":"Check the recipient carefully before sending.",
+    "M4-3":"Compose a clear message with greeting, purpose, relevant information and closing.",
+    "M4-4":"Check recipient, subject and message before attachment.",
+    "M5-0":"Explain why the correct file must be attached and verified.",
+    "M5-1":"Locate the required file using the attachment control.",
+    "M5-2":"Attach the file and wait for the upload to finish.",
+    "M6-0":"Check recipient, subject, message and attachment before sending.",
+    "M6-1":"Send the message only after completing final checks.",
+    "M6-2":"Open Sent and verify that the message and attachment are correct.",
+    "M6-3":"Complete the full send-and-verify sequence.",
+    "M7-0":"Use respectful language and meaningful subjects in email.",
+    "M7-1":"Protect passwords and personal information and treat suspicious links cautiously.",
+    "M7-2":"Use search tools responsibly and evaluate information before using it.",
+    "M8-0":"Read the practical task and locate the required file.",
+    "M8-2":"Identify one authentic future use of the skills learned.",
+    "M9-0":"Interpret Green, Amber and Red mastery status.",
+    "M9-1":"Practise the specific procedure identified as weak by evidence.",
+    "M9-3":"Explain a troubleshooting correction without taking over a peer's task.",
+    "M9-4":"Identify a real-life context in which the skills can transfer."
+  };
+  return map[`${moduleId}-${index}`] || `Complete the activity: ${title}.`;
+}
+
+/* ---------- PEER ---------- */
 function peer(){
-  app.innerHTML = `
+  app.innerHTML=`
     <div class="card">
-      <h2>🤝 Peer Collaboration</h2>
-      <p>
-        Use this space to record a short troubleshooting note.
-      </p>
-
-      <textarea
-        id="peerPost"
-        placeholder="Describe the ICT problem, what you tried and what solved it..."
-      ></textarea>
-
-      <button class="primary" id="postBtn">
-        Save Peer Note
-      </button>
-    </div>
-
-    <div class="card">
-      <h3>Saved Notes</h3>
-      <div id="posts"></div>
+      <h2>🤝 Peer Collaboration Hub</h2>
+      <p><strong>Driver:</strong> operates the computer.
+         <strong>Navigator:</strong> checks the procedure and gives prompts.
+         Swap roles during practice.</p>
+      <textarea id="peerPost" placeholder="Share a troubleshooting tip..."></textarea>
+      <button class="primary" id="postBtn">Post Tip</button>
+      <div id="peerFeed"></div>
     </div>
   `;
 
-  document.getElementById("postBtn")
-    .addEventListener("click",()=>{
-      const text =
-        document.getElementById("peerPost")
-          .value.trim();
+  renderPeerFeed();
 
-      if(!text){
-        alert("Write a note first.");
-        return;
-      }
+  document.getElementById("postBtn").onclick=()=>{
+    const value=document.getElementById("peerPost").value.trim();
+    if(!value) return;
+    S.posts.push(value);
+    S.xp+=10;
+    save();
+    document.getElementById("peerPost").value="";
+    renderPeerFeed();
+    updateTop();
+  };
+}
 
-      S.posts.push({
-        text,
-        date:new Date().toLocaleString()
-      });
+function renderPeerFeed(){
+  const feed=document.getElementById("peerFeed");
+  if(!feed) return;
 
-      save();
-      peer();
-    });
-
-  const posts =
-    document.getElementById("posts");
-
-  if(!S.posts.length){
-    posts.innerHTML =
-      "<p class='small'>No peer notes yet.</p>";
-  }else{
-    S.posts.slice().reverse().forEach(post=>{
-      const div =
-        document.createElement("div");
-
-      div.className = "step";
-      div.innerHTML = `
-        <p>${escapeHTML(post.text)}</p>
-        <p class="small">${escapeHTML(post.date)}</p>
-      `;
-
-      posts.appendChild(div);
-    });
-  }
+  feed.innerHTML=S.posts.length
+    ? S.posts.map(x=>`<div class="step">🤝 <strong>Peer tip</strong><br>${esc(x)}</div>`).join("")
+    : `<p class="small">No tips yet.</p>`;
 }
 
 /* ---------- ANALYTICS ---------- */
 function analytics(){
-  app.innerHTML = `
+  const rows=M.map(m=>{
+    const p=moduleProgress(m[0]);
+    return `<tr><td>${esc(m[1])}</td><td>${p.completed}</td><td>${p.total}</td><td>${p.percent}%</td></tr>`;
+  }).join("");
+
+  const accuracy=S.quizTotal ? Math.round(S.quizCorrect/S.quizTotal*100) : 0;
+
+  app.innerHTML=`
     <div class="card">
       <h2>📊 Learner Analytics</h2>
-      <p>
-        This page gives a simple view of progress and module completion.
-      </p>
+      <div class="grid">
+        <div class="admin-stat"><strong>Completion</strong><br><span class="kpi-number">${pct()}%</span></div>
+        <div class="admin-stat"><strong>XP</strong><br><span class="kpi-number">${S.xp}</span></div>
+        <div class="admin-stat"><strong>Quiz accuracy</strong><br><span class="kpi-number">${accuracy}%</span></div>
+        <div class="admin-stat"><strong>Mastery</strong><br><span class="badge ${status()[0]}">${status()[1]}</span></div>
+      </div>
+    </div>
 
+    <div class="card">
+      <h3>Module Progress</h3>
       <table>
-        <thead>
-          <tr>
-            <th>Module</th>
-            <th>Completed</th>
-            <th>Total</th>
-            <th>Progress</th>
-          </tr>
-        </thead>
-        <tbody id="analyticsBody"></tbody>
+        <thead><tr><th>Module</th><th>Completed</th><th>Total</th><th>Progress</th></tr></thead>
+        <tbody>${rows}</tbody>
       </table>
     </div>
+
+    <div class="card">
+      <h3>Intervention Signal</h3>
+      <p>${
+        S.mastery===false
+        ? "🔴 Targeted remediation required. Prioritise the skill identified by practical evidence."
+        : S.mastery===true
+        ? "🟢 Mastery achieved. Assign a novel transfer/troubleshooting task."
+        : "🟠 Continue formative practice and collect live practical evidence."
+      }</p>
+    </div>
   `;
-
-  const body =
-    document.getElementById("analyticsBody");
-
-  M.forEach(m=>{
-    const p = moduleProgress(m[0]);
-
-    const row =
-      document.createElement("tr");
-
-    row.innerHTML = `
-      <td>${m[1]}</td>
-      <td>${p.completed}</td>
-      <td>${p.total}</td>
-      <td>${p.percent}%</td>
-    `;
-
-    body.appendChild(row);
-  });
 }
 
 /* ---------- ACHIEVEMENTS ---------- */
 function badges(){
-  const achievements = [
-    {
-      name:"🚀 First Step",
-      rule:S.done.length >= 1
-    },
-    {
-      name:"🌱 Five Activities",
-      rule:S.done.length >= 5
-    },
-    {
-      name:"🔥 Ten Activities",
-      rule:S.done.length >= 10
-    },
-    {
-      name:"🏆 Halfway There",
-      rule:pct() >= 50
-    },
-    {
-      name:"🎓 Mastery Achieved",
-      rule:S.mastery === true
-    },
-    {
-      name:"💯 Course Complete",
-      rule:pct() === 100
-    }
+  const achievements=[
+    ["🚀 First Step",S.done.length>=1],
+    ["🌱 Five Activities",S.done.length>=5],
+    ["🔥 Ten Activities",S.done.length>=10],
+    ["🏆 Halfway There",pct()>=50],
+    ["🎓 Mastery Achieved",S.mastery===true],
+    ["💯 Course Complete",pct()===100]
   ];
 
-  app.innerHTML = `
+  app.innerHTML=`
     <div class="card">
       <h2>🏅 Achievements</h2>
+      <p>Badges reward meaningful practice; they do not replace mastery evidence.</p>
       <div class="grid" id="badgesGrid"></div>
     </div>
   `;
 
-  const grid =
-    document.getElementById("badgesGrid");
-
-  achievements.forEach(a=>{
-    const div =
-      document.createElement("div");
-
-    div.className = "step";
-
-    div.innerHTML = `
-      <h3>${a.name}</h3>
-      <p>
-        <span class="badge ${
-          a.rule ? "green" : "amber"
-        }">
-          ${a.rule ? "Unlocked" : "Locked"}
-        </span>
-      </p>
-    `;
-
-    grid.appendChild(div);
+  const grid=document.getElementById("badgesGrid");
+  achievements.forEach(([name,unlocked])=>{
+    grid.insertAdjacentHTML("beforeend",`
+      <div class="step">
+        <h3>${name}</h3>
+        <span class="badge ${unlocked?"green":"amber"}">${unlocked?"Unlocked":"Locked"}</span>
+      </div>
+    `);
   });
 }
 
 /* ---------- DESIGN NOTES ---------- */
 function about(){
-  app.innerHTML = `
+  app.innerHTML=`
     <div class="card">
       <h2>ℹ️ Design Notes</h2>
-
       <p>
-        This prototype follows an instructional-design approach
-        that combines practical ICT skills, formative assessment,
-        adaptive support, learner progress tracking and mastery.
+        This LMS is designed as a performance-support and learning decision system.
+        It combines scaffolded practice, adaptive diagnostics, peer collaboration,
+        progress tracking, mastery assessment and analytics.
       </p>
-
       <div class="grid">
-        <div class="step">
-          <strong>Learning by doing</strong><br>
-          Activities emphasise practical performance.
-        </div>
-
-        <div class="step">
-          <strong>Immediate feedback</strong><br>
-          Quiz activities provide instant responses.
-        </div>
-
-        <div class="step">
-          <strong>Progress visibility</strong><br>
-          Learners can see overall and module-level progress.
-        </div>
-
-        <div class="step">
-          <strong>Mastery learning</strong><br>
-          The reassessment uses a 16/20 mastery threshold.
-        </div>
-
-        <div class="step">
-          <strong>Data persistence</strong><br>
-          Local progress is saved in the browser.
-        </div>
-
-        <div class="step">
-          <strong>Cloud synchronisation</strong><br>
-          Completed activities can also be sent to Supabase.
-        </div>
+        <div class="step"><strong>Learning by doing</strong><br>Practical activities are central.</div>
+        <div class="step"><strong>Immediate feedback</strong><br>Interactive questions provide feedback.</div>
+        <div class="step"><strong>Mastery learning</strong><br>Mastery is 16/20 with no critical failure.</div>
+        <div class="step"><strong>Teacher centrality</strong><br>Live practical performance remains decisive.</div>
       </div>
     </div>
   `;
 }
 
-/* ---------- SECURITY / DISPLAY HELPERS ---------- */
-function escapeHTML(value){
-  return String(value ?? "")
-    .replaceAll("&","&amp;")
-    .replaceAll("<","&lt;")
-    .replaceAll(">","&gt;")
-    .replaceAll('"',"&quot;")
-    .replaceAll("'","&#039;");
+/* ---------- ADMIN NAVIGATION ---------- */
+function buildAdminNav(){
+  const nav=document.getElementById("nav");
+  nav.innerHTML=`
+    <button data-admin="home">🏠 Administrator Dashboard</button>
+    <button data-admin="users">👥 Users</button>
+    <button data-admin="about">ℹ️ System Information</button>
+    <hr>
+    <button id="adminLogout">🚪 Sign Out</button>
+  `;
+
+  nav.querySelectorAll("[data-admin]").forEach(btn=>{
+    btn.onclick=()=>{
+      nav.querySelectorAll("button").forEach(x=>x.classList.remove("sel"));
+      btn.classList.add("sel");
+      if(btn.dataset.admin==="home") adminHome();
+      if(btn.dataset.admin==="users") adminUsers();
+      if(btn.dataset.admin==="about") adminAbout();
+    };
+  });
+
+  document.getElementById("adminLogout").onclick=logout;
+  nav.querySelector('[data-admin="home"]').classList.add("sel");
 }
 
-function escapeAttribute(value){
-  return escapeHTML(value);
+/* ---------- ADMIN DASHBOARD ---------- */
+async function adminHome(){
+  app.innerHTML=`
+    <div class="loading">Loading administrator dashboard…</div>
+  `;
+
+  let profiles=[];
+  let profileError=null;
+
+  if(supabaseClient){
+    const result=await supabaseClient
+      .from("profiles")
+      .select("id,full_name,email,role,created_at")
+      .order("created_at",{ascending:true});
+    profiles=result.data || [];
+    profileError=result.error;
+  }
+
+  const students=profiles.filter(p=>p.role==="student").length;
+  const admins=profiles.filter(p=>p.role==="admin").length;
+
+  app.innerHTML=`
+    <div class="card">
+      <h2>🛡️ Administrator Dashboard</h2>
+      <p>Welcome, <strong>${esc(currentProfile?.full_name || "Administrator")}</strong>.</p>
+      <div class="notice">
+        Use this area to verify accounts and monitor the LMS structure.
+        Student progress remains protected by Supabase Row Level Security.
+      </div>
+    </div>
+
+    <div class="grid">
+      <div class="admin-stat"><strong>Total Profiles</strong><div class="kpi-number">${profiles.length}</div></div>
+      <div class="admin-stat"><strong>Students</strong><div class="kpi-number">${students}</div></div>
+      <div class="admin-stat"><strong>Administrators</strong><div class="kpi-number">${admins}</div></div>
+      <div class="admin-stat"><strong>Course Activities</strong><div class="kpi-number">${TOTAL_ACTIVITIES}</div></div>
+    </div>
+
+    <div class="card">
+      <h3>👥 Registered Profiles</h3>
+      ${profileError
+        ? `<div class="feedback warn">Could not read profiles: ${esc(profileError.message)}</div>`
+        : profiles.length
+          ? profiles.map(p=>`
+              <div class="user-row">
+                <div>
+                  <strong>${esc(p.full_name || "Unnamed User")}</strong><br>
+                  <span class="small">${esc(p.email || "")}</span>
+                </div>
+                <span class="badge ${p.role==="admin"?"red":"green"}">${esc(p.role)}</span>
+              </div>
+            `).join("")
+          : `<p class="small">No profiles found.</p>`
+      }
+    </div>
+  `;
 }
 
-/* ---------- START APPLICATION ---------- */
-buildNav("home");
-updateTop();
-home();
+async function adminUsers(){
+  app.innerHTML=`<div class="loading">Loading users…</div>`;
+
+  const {data,error}=await supabaseClient
+    .from("profiles")
+    .select("id,full_name,email,role,created_at")
+    .order("created_at",{ascending:true});
+
+  if(error){
+    app.innerHTML=`<div class="card"><h2>👥 Users</h2><div class="feedback warn">${esc(error.message)}</div></div>`;
+    return;
+  }
+
+  app.innerHTML=`
+    <div class="card">
+      <h2>👥 User Profiles</h2>
+      <p>Accounts themselves are created in Supabase Authentication → Users.</p>
+      <table>
+        <thead><tr><th>Name</th><th>Email</th><th>Role</th><th>User ID</th></tr></thead>
+        <tbody>
+          ${data.map(p=>`
+            <tr>
+              <td>${esc(p.full_name||"")}</td>
+              <td>${esc(p.email||"")}</td>
+              <td><span class="badge ${p.role==="admin"?"red":"green"}">${esc(p.role)}</span></td>
+              <td style="font-size:12px">${esc(p.id)}</td>
+            </tr>
+          `).join("")}
+        </tbody>
+      </table>
+    </div>
+  `;
+}
+
+function adminAbout(){
+  app.innerHTML=`
+    <div class="card">
+      <h2>ℹ️ System Information</h2>
+      <p><strong>Authentication:</strong> Supabase Auth</p>
+      <p><strong>Roles:</strong> admin and student</p>
+      <p><strong>Profiles:</strong> public.profiles</p>
+      <p><strong>Learning data:</strong> learner_progress and related LMS tables</p>
+      <p><strong>Security:</strong> Row Level Security should remain enabled.</p>
+      <div class="notice">
+        Never place a Supabase service-role or secret key in this HTML file.
+        The browser must use only the publishable key.
+      </div>
+    </div>
+  `;
+}
+
+/* ---------- START ---------- */
+document.getElementById("loginBtn").addEventListener("click",login);
+
+document.getElementById("loginPassword").addEventListener("keydown",e=>{
+  if(e.key==="Enter") login();
+});
+
+/* If a valid session already exists, restore it. */
+(async function restoreSession(){
+  if(!supabaseClient){
+    showLoginMessage("Supabase library could not be loaded.");
+    return;
+  }
+
+  try{
+    const {data,error}=await supabaseClient.auth.getSession();
+    if(error) throw error;
+
+    if(data.session?.user){
+      currentUser=data.session.user;
+
+      const {data:profile,error:profileError}=await supabaseClient
+        .from("profiles")
+        .select("id,full_name,email,role")
+        .eq("id",currentUser.id)
+        .maybeSingle();
+
+      if(profileError || !profile){
+        await supabaseClient.auth.signOut();
+        return;
+      }
+
+      currentProfile=profile;
+      S.learnerName=S.learnerName || profile.full_name || "";
+      save();
+
+      document.getElementById("loginScreen").classList.add("hidden");
+      document.getElementById("appShell").classList.remove("hidden");
+      setConnection("✓ Session restored.");
+
+      if(profile.role==="admin"){
+        buildAdminNav();
+        adminHome();
+      }else{
+        buildNav("home");
+        home();
+      }
+    }
+  }catch(error){
+    console.warn("Session restore failed:",error);
+  }
+})();
 </script>
 </body>
 </html>
