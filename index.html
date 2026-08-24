@@ -1120,140 +1120,885 @@ function about(){
   `;
 }
 
-/* ---------- ADMIN NAVIGATION ---------- */
+/* =========================================================
+   PHASE 6 — TEACHER CONTROL CENTRE
+   ========================================================= */
+
 function buildAdminNav(){
   const nav=document.getElementById("nav");
+
   nav.innerHTML=`
     <button data-admin="home">🏠 Administrator Dashboard</button>
+    <button data-admin="teacher">🧑‍🏫 Teacher Control Centre</button>
     <button data-admin="users">👥 Users</button>
     <button data-admin="about">ℹ️ System Information</button>
     <hr>
-    <button id="adminLogout">🚪 Sign Out</button>
+    <button id="adminLogout" class="danger">🚪 Sign Out</button>
   `;
 
   nav.querySelectorAll("[data-admin]").forEach(btn=>{
     btn.onclick=()=>{
-      nav.querySelectorAll("button").forEach(x=>x.classList.remove("sel"));
+      nav.querySelectorAll("[data-admin]").forEach(x=>{
+        x.classList.remove("sel");
+      });
+
       btn.classList.add("sel");
+
       if(btn.dataset.admin==="home") adminHome();
+      if(btn.dataset.admin==="teacher") teacherControl();
       if(btn.dataset.admin==="users") adminUsers();
       if(btn.dataset.admin==="about") adminAbout();
     };
   });
 
   document.getElementById("adminLogout").onclick=logout;
+
   nav.querySelector('[data-admin="home"]').classList.add("sel");
 }
 
-/* ---------- ADMIN DASHBOARD ---------- */
+
+/* =========================================================
+   ADMIN DASHBOARD
+   ========================================================= */
+
 async function adminHome(){
-  app.innerHTML=`
-    <div class="loading">Loading administrator dashboard…</div>
-  `;
-
-  let profiles=[];
-  let profileError=null;
-
-  if(supabaseClient){
-    const result=await supabaseClient
-      .from("profiles")
-      .select("id,full_name,email,role,created_at")
-      .order("created_at",{ascending:true});
-    profiles=result.data || [];
-    profileError=result.error;
-  }
-
-  const students=profiles.filter(p=>p.role==="student").length;
-  const admins=profiles.filter(p=>p.role==="admin").length;
 
   app.innerHTML=`
-    <div class="card">
-      <h2>🛡️ Administrator Dashboard</h2>
-      <p>Welcome, <strong>${esc(currentProfile?.full_name || "Administrator")}</strong>.</p>
-      <div class="notice">
-        Use this area to verify accounts and monitor the LMS structure.
-        Student progress remains protected by Supabase Row Level Security.
-      </div>
-    </div>
-
-    <div class="grid">
-      <div class="admin-stat"><strong>Total Profiles</strong><div class="kpi-number">${profiles.length}</div></div>
-      <div class="admin-stat"><strong>Students</strong><div class="kpi-number">${students}</div></div>
-      <div class="admin-stat"><strong>Administrators</strong><div class="kpi-number">${admins}</div></div>
-      <div class="admin-stat"><strong>Course Activities</strong><div class="kpi-number">${TOTAL_ACTIVITIES}</div></div>
-    </div>
-
-    <div class="card">
-      <h3>👥 Registered Profiles</h3>
-      ${profileError
-        ? `<div class="feedback warn">Could not read profiles: ${esc(profileError.message)}</div>`
-        : profiles.length
-          ? profiles.map(p=>`
-              <div class="user-row">
-                <div>
-                  <strong>${esc(p.full_name || "Unnamed User")}</strong><br>
-                  <span class="small">${esc(p.email || "")}</span>
-                </div>
-                <span class="badge ${p.role==="admin"?"red":"green"}">${esc(p.role)}</span>
-              </div>
-            `).join("")
-          : `<p class="small">No profiles found.</p>`
-      }
+    <div class="loading">
+      Loading administrator dashboard…
     </div>
   `;
-}
 
-async function adminUsers(){
-  app.innerHTML=`<div class="loading">Loading users…</div>`;
-
-  const {data,error}=await supabaseClient
+  const {data:profiles,error}=await supabaseClient
     .from("profiles")
     .select("id,full_name,email,role,created_at")
     .order("created_at",{ascending:true});
 
   if(error){
-    app.innerHTML=`<div class="card"><h2>👥 Users</h2><div class="feedback warn">${esc(error.message)}</div></div>`;
+    app.innerHTML=`
+      <div class="card">
+        <h2>🛡️ Administrator Dashboard</h2>
+        <div class="feedback warn">
+          ${esc(error.message)}
+        </div>
+      </div>
+    `;
+    return;
+  }
+
+  const students=profiles.filter(p=>p.role==="student");
+  const admins=profiles.filter(p=>p.role==="admin");
+
+  app.innerHTML=`
+
+    <div class="card">
+
+      <h2>🛡️ Administrator Dashboard</h2>
+
+      <p>
+        Welcome,
+        <strong>
+          ${esc(currentProfile?.full_name || "Administrator")}
+        </strong>.
+      </p>
+
+      <div class="notice">
+        Welcome to the AFSHTS Teacher Administration Area.
+        Use the Teacher Control Centre to monitor learner progress,
+        identify students who need support and inspect individual
+        learning performance.
+      </div>
+
+    </div>
+
+    <div class="grid">
+
+      <div class="admin-stat">
+        <strong>Total Profiles</strong>
+        <div class="kpi-number">
+          ${profiles.length}
+        </div>
+      </div>
+
+      <div class="admin-stat">
+        <strong>Students</strong>
+        <div class="kpi-number">
+          ${students.length}
+        </div>
+      </div>
+
+      <div class="admin-stat">
+        <strong>Administrators</strong>
+        <div class="kpi-number">
+          ${admins.length}
+        </div>
+      </div>
+
+      <div class="admin-stat">
+        <strong>Course Activities</strong>
+        <div class="kpi-number">
+          ${TOTAL_ACTIVITIES}
+        </div>
+      </div>
+
+    </div>
+
+    <div class="card">
+
+      <h3>🧑‍🏫 Teacher Control Centre</h3>
+
+      <p>
+        Monitor student participation, progress and mastery.
+      </p>
+
+      <button
+        class="primary"
+        id="openTeacherCentre"
+      >
+        Open Teacher Control Centre
+      </button>
+
+    </div>
+
+    <div class="card">
+
+      <h3>👥 Registered Profiles</h3>
+
+      ${
+        profiles.map(p=>`
+
+          <div class="user-row">
+
+            <div>
+              <strong>
+                ${esc(p.full_name || "Unnamed User")}
+              </strong>
+              <br>
+
+              <span class="small">
+                ${esc(p.email || "")}
+              </span>
+            </div>
+
+            <span class="badge ${
+              p.role==="admin" ? "red" : "green"
+            }">
+              ${esc(p.role)}
+            </span>
+
+          </div>
+
+        `).join("")
+      }
+
+    </div>
+  `;
+
+  document
+    .getElementById("openTeacherCentre")
+    .onclick=()=>{
+      buildAdminNav();
+      document
+        .querySelector('[data-admin="teacher"]')
+        .classList.add("sel");
+
+      teacherControl();
+    };
+}
+
+
+/* =========================================================
+   TEACHER CONTROL CENTRE
+   ========================================================= */
+
+async function teacherControl(){
+
+  app.innerHTML=`
+    <div class="loading">
+      Loading Teacher Control Centre…
+    </div>
+  `;
+
+  const {data:profiles,error:profileError}=await supabaseClient
+    .from("profiles")
+    .select("id,full_name,email,role")
+    .eq("role","student")
+    .order("full_name",{ascending:true});
+
+  if(profileError){
+    app.innerHTML=`
+      <div class="card">
+
+        <h2>🧑‍🏫 Teacher Control Centre</h2>
+
+        <div class="feedback warn">
+          ${esc(profileError.message)}
+        </div>
+
+      </div>
+    `;
+    return;
+  }
+
+  const {data:progress,error:progressError}=await supabaseClient
+    .from("learner_progress")
+    .select(
+      "user_id,learner_name,module_id,activity_id,completed,xp"
+    );
+
+  if(progressError){
+    app.innerHTML=`
+
+      <div class="card">
+
+        <h2>🧑‍🏫 Teacher Control Centre</h2>
+
+        <div class="feedback warn">
+
+          Student profiles loaded, but learner progress
+          could not be accessed.
+
+          <br><br>
+
+          <strong>
+            ${esc(progressError.message)}
+          </strong>
+
+          <br><br>
+
+          Check the Phase 6 learner_progress administrator
+          RLS policy in Supabase.
+
+        </div>
+
+      </div>
+
+    `;
+
+    return;
+  }
+
+  const progressRows=progress || [];
+
+  const studentData=profiles.map(student=>{
+
+    const rows=progressRows.filter(
+      r=>r.user_id===student.id
+    );
+
+    const completed=new Set(
+      rows
+        .filter(r=>r.completed)
+        .map(r=>`${r.module_id}-${r.activity_id}`)
+    ).size;
+
+    const xp=rows.reduce(
+      (sum,r)=>sum+Number(r.xp || 0),
+      0
+    );
+
+    const percent=TOTAL_ACTIVITIES
+      ? Math.round(
+          completed/TOTAL_ACTIVITIES*100
+        )
+      : 0;
+
+    let status="Needs Support";
+    let badge="red";
+
+    if(percent>=80){
+      status="On Track";
+      badge="green";
+    }else if(percent>=40){
+      status="Developing";
+      badge="amber";
+    }
+
+    return {
+      ...student,
+      completed,
+      xp,
+      percent,
+      status,
+      badge
+    };
+
+  });
+
+  const totalStudents=studentData.length;
+
+  const average=totalStudents
+    ? Math.round(
+        studentData.reduce(
+          (sum,s)=>sum+s.percent,0
+        )/totalStudents
+      )
+    : 0;
+
+  const completedStudents=studentData.filter(
+    s=>s.percent===100
+  ).length;
+
+  const needsSupport=studentData.filter(
+    s=>s.percent<40
+  ).length;
+
+  app.innerHTML=`
+
+    <div class="card">
+
+      <h2>🧑‍🏫 Teacher Control Centre</h2>
+
+      <p>
+        Monitor learner participation,
+        progress, XP and mastery.
+      </p>
+
+      <div class="notice">
+
+        <strong>Teacher decision support:</strong>
+
+        Use this dashboard to identify learners
+        who require remediation and inspect their
+        individual activity history.
+
+      </div>
+
+    </div>
+
+
+    <div class="grid">
+
+      <div class="admin-stat">
+        <strong>Total Students</strong>
+        <div class="kpi-number">
+          ${totalStudents}
+        </div>
+      </div>
+
+      <div class="admin-stat">
+        <strong>Average Progress</strong>
+        <div class="kpi-number">
+          ${average}%
+        </div>
+      </div>
+
+      <div class="admin-stat">
+        <strong>Completed</strong>
+        <div class="kpi-number">
+          ${completedStudents}
+        </div>
+      </div>
+
+      <div class="admin-stat">
+        <strong>Needs Support</strong>
+        <div class="kpi-number">
+          ${needsSupport}
+        </div>
+      </div>
+
+    </div>
+
+
+    <div class="card">
+
+      <h3>📊 Student Progress Monitor</h3>
+
+      <div style="overflow-x:auto">
+
+        <table>
+
+          <thead>
+
+            <tr>
+
+              <th>Student</th>
+              <th>Progress</th>
+              <th>Completed</th>
+              <th>XP</th>
+              <th>Status</th>
+              <th>Action</th>
+
+            </tr>
+
+          </thead>
+
+          <tbody>
+
+            ${
+              studentData.map(s=>`
+
+                <tr>
+
+                  <td>
+                    <strong>
+                      ${esc(s.full_name || "Unnamed")}
+                    </strong>
+                    <br>
+                    <span class="small">
+                      ${esc(s.email || "")}
+                    </span>
+                  </td>
+
+                  <td>
+
+                    <strong>
+                      ${s.percent}%
+                    </strong>
+
+                    <div class="progress">
+                      <div
+                        class="progress-bar"
+                        style="width:${s.percent}%"
+                      ></div>
+                    </div>
+
+                  </td>
+
+                  <td>
+                    ${s.completed}/${TOTAL_ACTIVITIES}
+                  </td>
+
+                  <td>
+                    ${s.xp}
+                  </td>
+
+                  <td>
+
+                    <span class="badge ${s.badge}">
+                      ${s.status}
+                    </span>
+
+                  </td>
+
+                  <td>
+
+                    <button
+                      class="primary view-student"
+                      data-id="${s.id}"
+                    >
+                      View
+                    </button>
+
+                  </td>
+
+                </tr>
+
+              `).join("")
+            }
+
+          </tbody>
+
+        </table>
+
+      </div>
+
+    </div>
+
+  `;
+
+
+  document
+    .querySelectorAll(".view-student")
+    .forEach(button=>{
+
+      button.onclick=()=>{
+
+        const student=studentData.find(
+          s=>s.id===button.dataset.id
+        );
+
+        if(student){
+          viewStudent(student,progressRows);
+        }
+
+      };
+
+    });
+
+}
+
+
+/* =========================================================
+   INDIVIDUAL STUDENT VIEW
+   ========================================================= */
+
+function viewStudent(student,progressRows){
+
+  const rows=progressRows.filter(
+    r=>r.user_id===student.id
+  );
+
+  app.innerHTML=`
+
+    <div class="card">
+
+      <button
+        class="secondary"
+        id="backTeacherCentre"
+      >
+        ← Back to Teacher Control Centre
+      </button>
+
+      <br><br>
+
+      <h2>👤 ${esc(student.full_name)}</h2>
+
+      <p>
+        ${esc(student.email)}
+      </p>
+
+      <div class="grid">
+
+        <div class="admin-stat">
+          <strong>Progress</strong>
+          <div class="kpi-number">
+            ${student.percent}%
+          </div>
+        </div>
+
+        <div class="admin-stat">
+          <strong>XP</strong>
+          <div class="kpi-number">
+            ${student.xp}
+          </div>
+        </div>
+
+        <div class="admin-stat">
+          <strong>Completed</strong>
+          <div class="kpi-number">
+            ${student.completed}
+          </div>
+        </div>
+
+        <div class="admin-stat">
+
+          <strong>Status</strong>
+
+          <p>
+            <span class="badge ${student.badge}">
+              ${student.status}
+            </span>
+          </p>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <div class="card">
+
+      <h3>📚 Module-by-Module Progress</h3>
+
+      ${
+        M.map(module=>{
+
+          const moduleRows=rows.filter(
+            r=>r.module_id===module[0] && r.completed
+          );
+
+          const completed=moduleRows.length;
+          const total=module[2].length;
+
+          const percent=total
+            ? Math.round(completed/total*100)
+            : 0;
+
+          return `
+
+            <div class="module-card">
+
+              <h3>
+                ${module[1]}
+              </h3>
+
+              <div class="progress">
+
+                <div
+                  class="progress-bar"
+                  style="width:${percent}%"
+                ></div>
+
+              </div>
+
+              <p>
+
+                ${completed}/${total}
+                activities completed —
+
+                <strong>
+                  ${percent}%
+                </strong>
+
+              </p>
+
+            </div>
+
+          `;
+
+        }).join("")
+      }
+
+    </div>
+
+
+    <div class="card">
+
+      <h3>📝 Activity History</h3>
+
+      ${
+        rows.length
+
+        ?
+
+        `<table>
+
+          <thead>
+
+            <tr>
+              <th>Module</th>
+              <th>Activity</th>
+              <th>XP</th>
+              <th>Status</th>
+            </tr>
+
+          </thead>
+
+          <tbody>
+
+            ${
+              rows.map(r=>`
+
+                <tr>
+
+                  <td>
+                    ${esc(r.module_id)}
+                  </td>
+
+                  <td>
+                    ${esc(r.activity_id)}
+                  </td>
+
+                  <td>
+                    ${Number(r.xp || 0)}
+                  </td>
+
+                  <td>
+
+                    <span class="badge green">
+                      Completed
+                    </span>
+
+                  </td>
+
+                </tr>
+
+              `).join("")
+            }
+
+          </tbody>
+
+        </table>`
+
+        :
+
+        `<div class="notice">
+          This learner has not completed any activities yet.
+        </div>`
+
+      }
+
+    </div>
+
+  `;
+
+
+  document
+    .getElementById("backTeacherCentre")
+    .onclick=()=>{
+
+      buildAdminNav();
+
+      document
+        .querySelector('[data-admin="teacher"]')
+        .classList.add("sel");
+
+      teacherControl();
+
+    };
+
+}
+
+
+/* =========================================================
+   USERS
+   ========================================================= */
+
+async function adminUsers(){
+
+  app.innerHTML=`
+    <div class="loading">
+      Loading users…
+    </div>
+  `;
+
+  const {data,error}=await supabaseClient
+    .from("profiles")
+    .select(
+      "id,full_name,email,role,created_at"
+    )
+    .order("created_at",{ascending:true});
+
+  if(error){
+
+    app.innerHTML=`
+
+      <div class="card">
+
+        <h2>👥 Users</h2>
+
+        <div class="feedback warn">
+          ${esc(error.message)}
+        </div>
+
+      </div>
+
+    `;
+
     return;
   }
 
   app.innerHTML=`
+
     <div class="card">
+
       <h2>👥 User Profiles</h2>
-      <p>Accounts themselves are created in Supabase Authentication → Users.</p>
+
+      <p>
+        Accounts are created through
+        Supabase Authentication.
+      </p>
+
       <table>
-        <thead><tr><th>Name</th><th>Email</th><th>Role</th><th>User ID</th></tr></thead>
+
+        <thead>
+
+          <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Role</th>
+            <th>User ID</th>
+          </tr>
+
+        </thead>
+
         <tbody>
-          ${data.map(p=>`
-            <tr>
-              <td>${esc(p.full_name||"")}</td>
-              <td>${esc(p.email||"")}</td>
-              <td><span class="badge ${p.role==="admin"?"red":"green"}">${esc(p.role)}</span></td>
-              <td style="font-size:12px">${esc(p.id)}</td>
-            </tr>
-          `).join("")}
+
+          ${
+            data.map(p=>`
+
+              <tr>
+
+                <td>
+                  ${esc(p.full_name || "")}
+                </td>
+
+                <td>
+                  ${esc(p.email || "")}
+                </td>
+
+                <td>
+
+                  <span class="badge ${
+                    p.role==="admin"
+                    ? "red"
+                    : "green"
+                  }">
+
+                    ${esc(p.role)}
+
+                  </span>
+
+                </td>
+
+                <td style="font-size:12px">
+                  ${esc(p.id)}
+                </td>
+
+              </tr>
+
+            `).join("")
+          }
+
         </tbody>
+
       </table>
+
     </div>
+
   `;
 }
+
+
+/* =========================================================
+   SYSTEM INFORMATION
+   ========================================================= */
 
 function adminAbout(){
+
   app.innerHTML=`
+
     <div class="card">
+
       <h2>ℹ️ System Information</h2>
-      <p><strong>Authentication:</strong> Supabase Auth</p>
-      <p><strong>Roles:</strong> admin and student</p>
-      <p><strong>Profiles:</strong> public.profiles</p>
-      <p><strong>Learning data:</strong> learner_progress and related LMS tables</p>
-      <p><strong>Security:</strong> Row Level Security should remain enabled.</p>
+
+      <p>
+        <strong>Authentication:</strong>
+        Supabase Auth
+      </p>
+
+      <p>
+        <strong>Roles:</strong>
+        admin and student
+      </p>
+
+      <p>
+        <strong>Profiles:</strong>
+        public.profiles
+      </p>
+
+      <p>
+        <strong>Learning data:</strong>
+        learner_progress
+      </p>
+
+      <p>
+        <strong>Teacher monitoring:</strong>
+        Teacher Control Centre
+      </p>
+
+      <p>
+        <strong>Security:</strong>
+        Supabase Row Level Security
+      </p>
+
       <div class="notice">
-        Never place a Supabase service-role or secret key in this HTML file.
-        The browser must use only the publishable key.
+
+        Never place a Supabase service-role
+        or secret key in this HTML file.
+
+        The browser must use only the
+        publishable key.
+
       </div>
+
     </div>
+
   `;
 }
-
+  
 /* ---------- START ---------- */
 document.getElementById("loginBtn").addEventListener("click",login);
 
