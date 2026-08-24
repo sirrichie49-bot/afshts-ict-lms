@@ -1,350 +1,1460 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>AFSHTS Practical ICT Skills Lab — Interactive LMS Final Prototype</title>
-<style>
-:root{--n:#17365d;--b:#2f5597;--p:#eef3f8;--g:#2e7d32;--a:#a15c00;--r:#b42318;--line:#d8dee8}
-*{box-sizing:border-box}body{margin:0;font:15px Arial;background:#f6f8fb;color:#202938}
-header{background:var(--n);color:#fff;padding:18px;position:sticky;top:0;z-index:3}header h1{margin:0;font-size:21px}
-.layout{display:grid;grid-template-columns:235px 1fr;min-height:calc(100vh - 70px)}
-aside{background:white;border-right:1px solid var(--line);padding:10px;position:sticky;top:70px;height:calc(100vh - 70px);overflow:auto}
-nav button{width:100%;padding:9px;margin:2px 0;text-align:left;border:0;background:transparent;border-radius:7px;cursor:pointer}
-nav button:hover,nav .sel{background:var(--p);font-weight:bold;color:var(--n)}
-main{padding:22px;max-width:1050px;width:100%;margin:auto}.card{background:white;border:1px solid var(--line);border-radius:10px;padding:18px;margin:14px 0}
-h2,h3{color:var(--n)}button.primary{background:var(--b);color:#fff;border:0;padding:10px 14px;border-radius:7px;cursor:pointer}
-button.secondary{background:#fff;color:var(--b);border:1px solid var(--b);padding:9px 13px;border-radius:7px;cursor:pointer}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px}.kpi{background:#fbfcfe;border-left:5px solid var(--b);padding:12px;border-radius:6px}
-.progress{height:10px;background:#e5e7eb;border-radius:10px;overflow:hidden}.progress>div{height:100%;background:var(--b)}
-.step,.option{border:1px solid var(--line);padding:10px;margin:7px 0;border-radius:7px;background:#fafcff}.option{cursor:pointer}.option:hover{background:var(--p)}
-.feedback{padding:10px;margin-top:10px;border-radius:7px;background:#f1f5f9}.ok{background:#e8f5e9}.warn{background:#fff3df}
-.badge{padding:5px 9px;border-radius:14px;font-size:12px;font-weight:bold}.green{background:#e8f5e9;color:var(--g)}.amber{background:#fff1da;color:var(--a)}.red{background:#fde8e7;color:var(--r)}
-.video{background:#17253a;color:white;border-radius:9px;padding:22px;text-align:center;margin:10px 0}.play{font-size:38px;cursor:pointer}
-textarea,input{width:100%;padding:9px;border:1px solid #b7c1ce;border-radius:6px;margin:5px 0 10px}
-table{width:100%;border-collapse:collapse}th,td{border:1px solid var(--line);padding:8px;text-align:left}th{background:var(--p)}
-@media(max-width:760px){.layout{grid-template-columns:1fr}aside{position:static;height:auto;border-right:0;border-bottom:1px solid var(--line)}}
-</style>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="AFSHTS Interactive ICT Skills LMS — Scenario C: The ICT Skills Gap">
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AFSHTS Practical ICT Skills Lab — Interactive LMS</title>
+<meta name="description" content="AFSHTS Interactive ICT Skills LMS">
 <meta name="theme-color" content="#17365d">
-<meta name="application-name" content="AFSHTS Interactive ICT Skills LMS">
 
-
-<style id="afshts-v4-responsive">
-html { scroll-behavior:smooth; }
-button, input, select, textarea { max-width:100%; }
-img, video, iframe { max-width:100%; }
-@media (max-width: 800px) {
-  body { overflow-x:hidden; }
-  table { display:block; max-width:100%; overflow-x:auto; }
-  .container, .wrap, .content, main { max-width:100% !important; }
+<style>
+:root{
+  --navy:#17365d;
+  --blue:#2f5597;
+  --light:#eef3f8;
+  --green:#2e7d32;
+  --amber:#a15c00;
+  --red:#b42318;
+  --line:#d8dee8;
+  --bg:#f6f8fb;
+  --white:#fff;
+  --text:#202938;
 }
-@media (max-width: 600px) {
-  button { min-height:44px; }
-  input, select, textarea { font-size:16px; }
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  font:15px Arial,Helvetica,sans-serif;
+  background:var(--bg);
+  color:var(--text);
+}
+header{
+  background:var(--navy);
+  color:#fff;
+  padding:16px 20px;
+  position:sticky;
+  top:0;
+  z-index:10;
+  box-shadow:0 2px 8px rgba(0,0,0,.12);
+}
+header h1{margin:0 0 4px;font-size:22px}
+#top{font-size:14px;line-height:1.5}
+.top-row{
+  display:flex;
+  justify-content:space-between;
+  gap:16px;
+  align-items:center;
+  flex-wrap:wrap;
+}
+.top-progress{
+  min-width:260px;
+  flex:1;
+  max-width:520px;
+}
+.layout{
+  display:grid;
+  grid-template-columns:240px 1fr;
+  min-height:calc(100vh - 86px);
+}
+aside{
+  background:#fff;
+  border-right:1px solid var(--line);
+  padding:10px;
+  position:sticky;
+  top:86px;
+  height:calc(100vh - 86px);
+  overflow:auto;
+}
+nav button{
+  width:100%;
+  padding:10px;
+  margin:2px 0;
+  text-align:left;
+  border:0;
+  background:transparent;
+  border-radius:7px;
+  cursor:pointer;
+  color:var(--text);
+}
+nav button:hover,nav button.sel{
+  background:var(--light);
+  font-weight:bold;
+  color:var(--navy);
+}
+main{
+  padding:22px;
+  max-width:1100px;
+  width:100%;
+  margin:auto;
+}
+.card{
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:10px;
+  padding:18px;
+  margin:14px 0;
+}
+h2,h3{color:var(--navy)}
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+  gap:12px;
+}
+.kpi{
+  background:#fbfcfe;
+  border-left:5px solid var(--blue);
+  padding:14px;
+  border-radius:6px;
+}
+.kpi-number{
+  font-size:30px;
+  font-weight:bold;
+  margin:6px 0;
+}
+.progress{
+  height:12px;
+  background:#e5e7eb;
+  border-radius:20px;
+  overflow:hidden;
+}
+.progress-bar{
+  height:100%;
+  background:var(--blue);
+  width:0%;
+  transition:width .35s ease;
+}
+.module-progress{margin:10px 0}
+button{
+  font:inherit;
+}
+button.primary{
+  background:var(--blue);
+  color:#fff;
+  border:0;
+  padding:10px 14px;
+  border-radius:7px;
+  cursor:pointer;
+}
+button.primary:hover{opacity:.9}
+button.secondary{
+  background:#fff;
+  color:var(--blue);
+  border:1px solid var(--blue);
+  padding:9px 13px;
+  border-radius:7px;
+  cursor:pointer;
+}
+button:disabled{
+  opacity:.55;
+  cursor:not-allowed;
+}
+.option{
+  border:1px solid var(--line);
+  padding:11px;
+  margin:7px 0;
+  border-radius:7px;
+  background:#fafcff;
+  cursor:pointer;
+}
+.option:hover{background:var(--light)}
+.feedback{
+  padding:11px;
+  margin-top:10px;
+  border-radius:7px;
+  background:#f1f5f9;
+}
+.ok{background:#e8f5e9}
+.warn{background:#fff3df}
+.bad{
+  background:#fde8e7;
+}
+.badge{
+  display:inline-block;
+  padding:5px 9px;
+  border-radius:14px;
+  font-size:12px;
+  font-weight:bold;
+}
+.green{background:#e8f5e9;color:var(--green)}
+.amber{background:#fff1da;color:var(--amber)}
+.red{background:#fde8e7;color:var(--red)}
+.step{
+  border:1px solid var(--line);
+  padding:12px;
+  border-radius:7px;
+  background:#fafcff;
+}
+input,textarea,select{
+  width:100%;
+  padding:10px;
+  border:1px solid #b7c1ce;
+  border-radius:6px;
+  margin:5px 0 10px;
+}
+textarea{min-height:100px;resize:vertical}
+table{
+  width:100%;
+  border-collapse:collapse;
+}
+th,td{
+  border:1px solid var(--line);
+  padding:8px;
+  text-align:left;
+}
+th{background:var(--light)}
+.small{font-size:13px;color:#5d6675}
+.video{
+  background:#17253a;
+  color:#fff;
+  border-radius:9px;
+  padding:22px;
+  text-align:center;
+  margin:10px 0;
+}
+.play{font-size:38px}
+.module-card{
+  border:1px solid var(--line);
+  border-radius:9px;
+  padding:14px;
+  margin:10px 0;
+  background:#fff;
+}
+.completed{
+  border-left:5px solid var(--green);
+}
+.activity-actions{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  margin-top:10px;
+}
+.notice{
+  padding:12px;
+  border-radius:8px;
+  background:#eef3f8;
+  margin:10px 0;
+}
+#connectionStatus{
+  font-size:12px;
+  opacity:.9;
+}
+@media(max-width:760px){
+  .layout{grid-template-columns:1fr}
+  aside{
+    position:static;
+    height:auto;
+    border-right:0;
+    border-bottom:1px solid var(--line);
+  }
+  main{padding:14px}
+  .top-progress{min-width:100%}
 }
 </style>
-
 </head>
+
 <body>
-<header><h1>AFSHTS Practical ICT Skills Lab</h1><div id="top">Interactive LMS — Final Prototype</div></header>
-<div class="layout"><aside><nav id="nav"></nav></aside><main id="app"></main></div>
+<header>
+  <div class="top-row">
+    <div>
+      <h1>AFSHTS Practical ICT Skills Lab</h1>
+      <div id="top">Interactive LMS — Final Prototype</div>
+      <div id="connectionStatus">Progress is saved locally and synced to Supabase when available.</div>
+    </div>
+    <div class="top-progress">
+      <div class="progress">
+        <div id="globalProgressBar" class="progress-bar"></div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="layout">
+  <aside>
+    <nav id="nav"></nav>
+  </aside>
+  <main id="app"></main>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <script>
-const SUPABASE_URL = "https://mfuvtilepoyyddbzkbrd.supabase.co"; 
+/* =========================================================
+   AFSHTS INTERACTIVE LMS
+   Clean replacement version
+   ========================================================= */
+
+/* ---------- SUPABASE ---------- */
+const SUPABASE_URL = "https://mfuvtilepoyyddbzkbrd.supabase.co";
 const SUPABASE_KEY = "sb_publishable_XEHJaJD0sXLwzWi0AWBrSA_L4ARsztu";
 
-const supabaseClient = supabase.createClient(
-  SUPABASE_URL,
-  SUPABASE_KEY
+let supabaseClient = null;
+
+try {
+  if (window.supabase && typeof window.supabase.createClient === "function") {
+    supabaseClient = window.supabase.createClient(
+      SUPABASE_URL,
+      SUPABASE_KEY
+    );
+  }
+} catch (err) {
+  console.warn("Supabase could not be initialized:", err);
+}
+
+/* ---------- COURSE DATA ---------- */
+const M = [
+  ["M0","🎯 Orientation & Diagnostic",[
+    "Welcome",
+    "How the course works",
+    "Digital safety",
+    "Adaptive diagnostic",
+    "Self-rating",
+    "Mouse & keyboard warm-up"
+  ]],
+  ["M1","🌐 Browser Foundations",[
+    "Meet the browser",
+    "Icon challenge",
+    "Address bar vs search",
+    "Guided practice",
+    "Independence check"
+  ]],
+  ["M2","🔎 URLs & Searching",[
+    "What is a URL?",
+    "URL mission",
+    "Search keyword challenge",
+    "Choose a useful result",
+    "Find → verify → retrieve"
+  ]],
+  ["M3","🔐 Email Login",[
+    "What is email?",
+    "Secure login",
+    "Login error clinic",
+    "Independent login"
+  ]],
+  ["M4","✉️ Composing Email",[
+    "Compose",
+    "Recipient challenge",
+    "Subject challenge",
+    "Message builder",
+    "Composition check"
+  ]],
+  ["M5","📎 File Attachment",[
+    "Why attachments matter",
+    "Locate the file",
+    "Attach the file",
+    "Attachment error lab",
+    "Attachment mastery"
+  ]],
+  ["M6","✅ Send & Verify",[
+    "Final checks",
+    "Send",
+    "Verify in Sent",
+    "Send-and-verify challenge"
+  ]],
+  ["M7","🛡️ Netiquette",[
+    "Email netiquette",
+    "Privacy & safe links",
+    "Responsible search"
+  ]],
+  ["M8","🏆 Integrated Challenge",[
+    "Prepare",
+    "Perform authentic task",
+    "Self-check"
+  ]],
+  ["M9","📈 Remediation & Mastery",[
+    "Mastery status",
+    "Targeted remediation",
+    "Adaptive reassessment",
+    "Troubleshoot with a peer",
+    "Completion & transfer"
+  ]]
+];
+
+const TOTAL_ACTIVITIES = M.reduce(
+  (sum, module) => sum + module[2].length,
+  0
 );
 
-async function saveProgress(learnerName, moduleId, activityId, xp) {
-    const { error } = await supabaseClient
-        .from("learner_progress")
-        .upsert({
-            learner_name: learnerName,
-            module_id: moduleId,
-            activity_id: activityId,
-            completed: true,
-            xp: xp
-        });
+/* ---------- LEARNER STATE ---------- */
+const DEFAULT_STATE = {
+  learnerName: "",
+  done: [],
+  xp: 0,
+  mastery: null,
+  score: null,
+  posts: [],
+  diagnosticLevel: "not assessed"
+};
 
-    if (error) {
-        console.error("Progress save error:", error);
-        return false;
-    }
-
-    console.log("Progress saved successfully!");
-    return true;
-}
-
-const M=[
-["M0","🎯 Orientation & Diagnostic",["Welcome","How the course works","Digital safety","Adaptive diagnostic","Self-rating","Mouse & keyboard warm-up"]],
-["M1","🌐 Browser Foundations",["Meet the browser","Icon challenge","Address bar vs search","Guided practice","Independence check"]],
-["M2","🔎 URLs & Searching",["What is a URL?","URL mission","Search keyword challenge","Choose a useful result","Find → verify → retrieve"]],
-["M3","🔐 Email Login",["What is email?","Secure login","Login error clinic","Independent login"]],
-["M4","✉️ Composing Email",["Compose","Recipient challenge","Subject challenge","Message builder","Composition check"]],
-["M5","📎 File Attachment",["Why attachments matter","Locate the file","Attach the file","Attachment error lab","Attachment mastery"]],
-["M6","✅ Send & Verify",["Final checks","Send","Verify in Sent","Send-and-verify challenge"]],
-["M7","🛡️ Netiquette",["Email netiquette","Privacy & safe links","Responsible search"]],
-["M8","🏆 Integrated Challenge",["Prepare","Perform authentic task","Self-check"]],
-["M9","📈 Remediation & Mastery",["Mastery status","Targeted remediation","Adaptive reassessment","Troubleshoot with a peer","Completion & transfer"]]
-];
-let S=JSON.parse(localStorage.getItem("afshts_v3")||'{"done":[],"xp":0,"mastery":null,"score":null,"posts":[]}');
-const total=M.reduce((n,m)=>n+m[2].length,0);
-const save=()=>localStorage.setItem("afshts_v3",JSON.stringify(S));
-const pct=()=>Math.round(S.done.length/total*100);
-function status(){return S.mastery===true?["green","GREEN — MASTERED"]:S.mastery===false?["red","RED — REMEDIATION"]:["amber","AMBER — IN PROGRESS"]}
-function xp(n=10){S.xp+=n;save();updateTop()}
-  
-async function done(k,n=10){
-  if(!S.done.includes(k)){
-    S.done.push(k);
-    xp(n);
-
-    const [moduleId, activityId] = k.split("-");
-    const learnerName = S.learnerName || "Demo Learner";
-
-    const saved = await saveProgress(
-      learnerName,
-      moduleId,
-      activityId,
-      n
+function loadState(){
+  try{
+    const saved = JSON.parse(
+      localStorage.getItem("afshts_lms_state") || "null"
     );
 
-    if(!saved){
-      console.error("Supabase progress was not saved.");
+    if(saved && typeof saved === "object"){
+      return {...DEFAULT_STATE, ...saved};
     }
-  }else{
-    save();
+  }catch(err){
+    console.warn("Could not read saved state:",err);
   }
-  buildNav();
+
+  return {...DEFAULT_STATE};
+}
+
+let S = loadState();
+
+/* ---------- HELPERS ---------- */
+const app = document.getElementById("app");
+
+function save(){
+  localStorage.setItem(
+    "afshts_lms_state",
+    JSON.stringify(S)
+  );
+}
+
+function pct(){
+  if(!TOTAL_ACTIVITIES) return 0;
+  return Math.min(
+    100,
+    Math.round((S.done.length / TOTAL_ACTIVITIES) * 100)
+  );
+}
+
+function status(){
+  if(S.mastery === true){
+    return ["green","GREEN — MASTERED"];
+  }
+
+  if(S.mastery === false){
+    return ["red","RED — REMEDIATION"];
+  }
+
+  return ["amber","AMBER — IN PROGRESS"];
+}
+
+function moduleProgress(moduleId){
+  const module = M.find(m => m[0] === moduleId);
+  if(!module) return {completed:0,total:0,percent:0};
+
+  const total = module[2].length;
+  const completed = S.done.filter(
+    key => key.startsWith(moduleId + "-")
+  ).length;
+
+  return {
+    completed,
+    total,
+    percent: total
+      ? Math.round((completed / total) * 100)
+      : 0
+  };
+}
+
+function updateTop(){
+  const s = status();
+  const percent = pct();
+
+  document.getElementById("top").textContent =
+    `XP: ${S.xp} | Progress: ${percent}% | ${s[1]}`;
+
+  document.getElementById("globalProgressBar").style.width =
+    percent + "%";
+}
+
+function awardXP(amount){
+  S.xp += amount;
+  save();
   updateTop();
 }
-  
-function updateTop(){
-    const s = status();
-    const top = document.getElementById("top");
 
-    if(top){
-        top.innerHTML = `
-            <div style="display:flex;align-items:center;gap:12px;">
-                <span>
-                    XP: <strong>${s.xp}</strong>
-                </span>
+async function syncProgress(moduleId, activityId, xp){
+  if(!supabaseClient) return false;
 
-                <span>
-                    Progress: <strong>${pct()}%</strong>
-                </span>
+  const learnerName =
+    S.learnerName.trim() || "Demo Learner";
 
-                <span>
-                    ${s[1]}
-                </span>
-            </div>
+  try{
+    const {error} = await supabaseClient
+      .from("learner_progress")
+      .upsert(
+        {
+          learner_name: learnerName,
+          module_id: moduleId,
+          activity_id: activityId,
+          completed: true,
+          xp: xp
+        },
+        {
+          onConflict: "learner_name,module_id,activity_id"
+        }
+      );
 
-            <div class="progress" style="margin-top:8px;">
-                <div class="progress-bar"
-                     style="width:${pct()}%">
-                </div>
-            </div>
-        `;
+    if(error){
+      console.warn("Supabase sync failed:",error);
+      return false;
     }
 
-    // Refresh dashboard numbers if the learner is currently on Home
-    const dashboard = document.getElementById("dashboardModules");
-
-    if(dashboard){
-        home();
-    }
-}
-  {
-  const s = status();
-  const top = document.getElementById("top");
-
-  if(top){
-    top.textContent =
-      `XP: ${S.xp} | Progress: ${pct()}% | ${s}`;
+    document.getElementById("connectionStatus").textContent =
+      "✓ Progress synced to Supabase.";
+    return true;
+  }catch(err){
+    console.warn("Supabase sync error:",err);
+    return false;
   }
-  
-}{let s=status();document.getElementById("top").textContent=`Interactive LMS — Final Prototype • ${pct()}% complete • ${S.xp} XP • ${s[1]}`}
-function buildNav(){let n=document.getElementById("nav");n.innerHTML='<button data-p="home">🏠 Dashboard</button>';
-M.forEach(m=>n.innerHTML+=`<button data-p="${m[0]}">${m[1]}</button>`);
-n.innerHTML+=`<hr><button data-p="peer">🤝 Peer Collaboration</button><button data-p="analytics">📊 Analytics</button><button data-p="badges">🏅 Achievements</button><button data-p="about">ℹ️ Design Notes</button><button id="reset">↺ Reset</button>`;
-n.querySelectorAll("[data-p]").forEach(b=>b.onclick=()=>{n.querySelectorAll("button").forEach(x=>x.classList.remove("sel"));b.classList.add("sel");route(b.dataset.p)});
-document.getElementById("reset").onclick=()=>{if(confirm("Reset local learner data?")){localStorage.removeItem("afshts_v3");location.reload()}}}
-function route(p){p==="home"?home():p==="peer"?peer():p==="analytics"?analytics():p==="badges"?badges():p==="about"?about():module(p)}
+}
+
+async function completeActivity(key, xpAmount=10){
+  if(!S.done.includes(key)){
+    S.done.push(key);
+    S.xp += xpAmount;
+    save();
+
+    const parts = key.split("-");
+    const moduleId = parts[0];
+    const activityId = parts.slice(1).join("-");
+
+    await syncProgress(
+      moduleId,
+      activityId,
+      xpAmount
+    );
+  }
+
+  updateTop();
+  buildNav();
+}
+
+function setLearnerName(){
+  const input = document.getElementById("learnerNameInput");
+  if(!input) return;
+
+  const name = input.value.trim();
+
+  if(!name){
+    alert("Please enter your name.");
+    return;
+  }
+
+  S.learnerName = name;
+  save();
+  updateTop();
+  home();
+}
+
+/* ---------- NAVIGATION ---------- */
+function buildNav(active="home"){
+  const nav = document.getElementById("nav");
+
+  nav.innerHTML = `
+    <button data-page="home">🏠 Dashboard</button>
+    ${M.map(m =>
+      `<button data-page="${m[0]}">${m[1]}</button>`
+    ).join("")}
+    <hr>
+    <button data-page="peer">🤝 Peer Collaboration</button>
+    <button data-page="analytics">📊 Analytics</button>
+    <button data-page="badges">🏅 Achievements</button>
+    <button data-page="about">ℹ️ Design Notes</button>
+    <button id="resetBtn">↺ Reset Local Progress</button>
+  `;
+
+  nav.querySelectorAll("[data-page]").forEach(button => {
+    button.addEventListener("click", () => {
+      buildNav(button.dataset.page);
+      route(button.dataset.page);
+    });
+  });
+
+  document.getElementById("resetBtn").addEventListener("click",()=>{
+    if(confirm(
+      "Reset this learner's local progress? This will clear the browser's saved progress."
+    )){
+      localStorage.removeItem("afshts_lms_state");
+      location.reload();
+    }
+  });
+
+  const selected = nav.querySelector(
+    `[data-page="${active}"]`
+  );
+
+  if(selected) selected.classList.add("sel");
+}
+
+function route(page){
+  if(page === "home") return home();
+  if(page === "peer") return peer();
+  if(page === "analytics") return analytics();
+  if(page === "badges") return badges();
+  if(page === "about") return about();
+
+  modulePage(page);
+}
+
+/* ---------- DASHBOARD ---------- */
 function home(){
-    app.innerHTML = `
+  const s = status();
+
+  app.innerHTML = `
+    <div class="card">
+      <h2>🎓 Learner Dashboard</h2>
+
+      <p>
+        Welcome,
+        <strong>${escapeHTML(
+          S.learnerName || "Demo Learner"
+        )}</strong>
+      </p>
+
+      <div class="notice">
+        Your dashboard updates immediately whenever an activity is completed.
+        The progress bar above also updates in real time.
+      </div>
+
+      <div class="grid">
+
         <div class="card">
-            <h2>🎓 Learner Dashboard</h2>
-            <p>Welcome, <strong>${S.learnerName || "Demo Learner"}</strong></p>
-
-            <div class="grid">
-
-                <div class="card">
-                    <h3>📊 Overall Progress</h3>
-
-                    <div class="progress">
-                        <div class="progress-bar"
-                             style="width:${pct()}%">
-                        </div>
-                    </div>
-
-                    <p><strong>${pct()}%</strong> completed</p>
-                </div>
-
-                <div class="card">
-                    <h3>⭐ XP Points</h3>
-                    <p style="font-size:32px;font-weight:bold;">
-                        ${S.xp}
-                    </p>
-                </div>
-
-                <div class="card">
-                    <h3>✅ Activities Completed</h3>
-                    <p style="font-size:32px;font-weight:bold;">
-                        ${S.done.length}
-                    </p>
-                </div>
-
-                <div class="card">
-                    <h3>🏆 Mastery Status</h3>
-                    <p>${status()}</p>
-                </div>
-
-            </div>
-
-            <div class="card">
-                <h3>📚 Learning Modules</h3>
-                <p>Select a module below to continue learning.</p>
-                <div id="dashboardModules"></div>
-            </div>
+          <h3>📊 Overall Progress</h3>
+          <div class="progress">
+            <div
+              class="progress-bar"
+              style="width:${pct()}%"
+            ></div>
+          </div>
+          <p class="kpi-number">${pct()}%</p>
+          <p class="small">
+            ${S.done.length} of ${TOTAL_ACTIVITIES}
+            activities completed
+          </p>
         </div>
+
+        <div class="card">
+          <h3>⭐ XP Points</h3>
+          <p class="kpi-number">${S.xp}</p>
+          <p class="small">Experience points earned</p>
+        </div>
+
+        <div class="card">
+          <h3>✅ Completed</h3>
+          <p class="kpi-number">${S.done.length}</p>
+          <p class="small">Learning activities completed</p>
+        </div>
+
+        <div class="card">
+          <h3>🏆 Mastery</h3>
+          <p>
+            <span class="badge ${s[0]}">${s[1]}</span>
+          </p>
+          <p class="small">
+            Diagnostic: ${escapeHTML(S.diagnosticLevel)}
+          </p>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>👤 Learner Information</h3>
+      <label for="learnerNameInput">
+        Learner name
+      </label>
+
+      <input
+        id="learnerNameInput"
+        value="${escapeAttribute(S.learnerName)}"
+        placeholder="Enter learner name"
+      >
+
+      <button class="primary" id="saveNameBtn">
+        Save Learner Name
+      </button>
+    </div>
+
+    <div class="card">
+      <h3>📚 Learning Modules</h3>
+      <p>
+        Select a module below to continue learning.
+      </p>
+
+      <div id="dashboardModules"></div>
+    </div>
+  `;
+
+  document.getElementById("saveNameBtn")
+    .addEventListener("click",setLearnerName);
+
+  const box =
+    document.getElementById("dashboardModules");
+
+  M.forEach(m=>{
+    const p = moduleProgress(m[0]);
+
+    const div = document.createElement("div");
+    div.className =
+      "module-card" +
+      (p.percent === 100 ? " completed" : "");
+
+    div.innerHTML = `
+      <h3>${m[1]}</h3>
+
+      <div class="module-progress">
+        <div class="progress">
+          <div
+            class="progress-bar"
+            style="width:${p.percent}%"
+          ></div>
+        </div>
+      </div>
+
+      <p>
+        ${p.completed} of ${p.total}
+        activities completed
+        — <strong>${p.percent}%</strong>
+      </p>
+
+      <button class="primary">
+        Open Module
+      </button>
     `;
 
-    const moduleBox = document.getElementById("dashboardModules");
+    div.querySelector("button")
+      .addEventListener("click",()=>{
+        buildNav(m[0]);
+        modulePage(m[0]);
+      });
 
-    M.forEach(m => {
-        const completed = S.done.filter(
-            k => k.startsWith(m[0] + "-")
-        ).length;
-
-        const total = m[2].length;
-
-        const progress = total
-            ? Math.round((completed / total) * 100)
-            : 0;
-
-        moduleBox.innerHTML += `
-            <div class="card">
-                <h3>${m[1]}</h3>
-
-                <div class="progress">
-                    <div class="progress-bar"
-                         style="width:${progress}%">
-                    </div>
-                </div>
-
-                <p>
-                    ${completed} of ${total} activities completed
-                </p>
-
-                <button class="primary"
-                        onclick="module('${m[0]}')">
-                    Open Module
-                </button>
-            </div>
-        `;
-    });
-}
-    const moduleBox = document.getElementById("dashboardModules");
-
-    M.forEach(m => {
-        const completed = s.done.filter(k => k.startsWith(m[0] + "-")).length;
-        const total = m[2].length;
-        const progress = total
-            ? Math.round((completed / total) * 100)
-            : 0;
-
-        moduleBox.innerHTML += `
-            <div class="card">
-                <h3>${m[1]}</h3>
-
-                <div class="progress">
-                    <div class="progress-bar"
-                         style="width:${progress}%"></div>
-                </div>
-
-                <p>${completed} of ${total} activities completed</p>
-
-                <button class="primary"
-                        onclick="module('${m[0]}')">
-                    Open Module
-                </button>
-            </div>
-        `;
-    });
-}
-">${s[1]}</span><p>${pct()}% complete • ${S.xp} XP</p><div class="progress"><div style="width:${pct()}%"></div></div></div>
-<div class="grid"><div class="kpi"><b>Primary task</b><br>Compose, attach, send and verify an email.</div><div class="kpi"><b>High-priority skill</b><br>File attachment.</div><div class="kpi"><b>Mastery</b><br>16/20 + no critical failure.</div><div class="kpi"><b>Adaptive assessment</b><br>Difficulty changes with performance.</div></div>
-<div class="card"><h3>Gamified learning loop</h3><div class="grid"><div class="step">🎮 XP + levels</div><div class="step">🏅 Achievement badges</div><div class="step">🤝 Peer troubleshooting</div><div class="step">🧠 Adaptive quizzes</div><div class="step">🎬 Interactive media</div><div class="step">📊 Analytics</div></div></div>
-<div class="card"><h3>Start</h3><button class="primary" onclick="module('M0')">Open diagnostic</button></div>`}
-function module(id){let m=M.find(x=>x[0]===id);app.innerHTML=`<div class="card"><h2>${m[1]}</h2><p>Complete the activities. Practical evidence has priority over completion alone.</p></div><div id="acts"></div>`;
-m[2].forEach((a,i)=>activity(id,i,a))}
-function activity(mid,i,a){let k=mid+"-"+i,el=document.createElement("div");el.className="card";el.innerHTML=`<h3>${i+1}. ${a}</h3><div id="c${k}"></div><div id="a${k}"></div>`;acts.appendChild(el);let c=el.querySelector("#c"+k),q=el.querySelector("#a"+k);
-if(mid==="M0"&&i===3)return diagnostic(c,q,k);
-if(mid==="M1"&&i===1)return quiz(c,q,k,"Which control enters a website address?",["Refresh","Address bar","Back"],1);
-if(mid==="M2"&&i===2)return quiz(c,q,k,"Which is the strongest search query?",["email","safe email communication for students","things on the Internet"],1);
-if(mid==="M4"&&i===2)return quiz(c,q,k,"Which is the strongest subject?",["Hi","ICT Assignment Submission — Form 2","Important"],1);
-if(mid==="M5"&&i===3)return quiz(c,q,k,"The attachment is not visible. What should you do?",["Send immediately","Wait for upload and confirm the attachment appears","Close the browser"],1,20);
-if(mid==="M5"&&i===4)return attachment(c,q,k);
-if(mid==="M8"&&i===1)return integrated(c,q,k);
-if(mid==="M9"&&i===2)return reassess(c,q,k);
-c.innerHTML=`<p>${text(a)}</p><div class="video"><div><div class="play">▶</div><div>Interactive demonstration: ${a}</div><small>Click ▶ to reveal the next procedural step.</small></div></div><div class="step"><b>Practice:</b> Perform the action yourself. In pairs, rotate Driver/Navigator roles.</div>`;
-q.innerHTML=`<button class="primary">${S.done.includes(k)?"Completed ✓":"Complete activity"}</button>`;q.firstChild.onclick=()=>{done(k);q.firstChild.textContent="Completed ✓"}}
-function text(a){let x={"Meet the browser":"Identify address bar, Back, Forward, Refresh and New Tab.","Address bar vs search":"Use the address bar for URLs and a search engine for information.","What is a URL?":"A URL is a web address used to reach a web location.","URL mission":"Enter the supplied URL accurately and confirm the intended page.","What is email?":"Inbox contains received messages; Sent contains messages you have sent.","Secure login":"Use an authorised practice account and protect the password.","Compose":"Open a new message and identify recipient, subject and message.","Recipient challenge":"Check the assigned recipient carefully.","Message builder":"Use a greeting, purpose, relevant information and closing.","Composition check":"Check recipient, subject and message before attachment.","Why attachments matter":"An attachment sends a file with an email; confirm the correct file before sending.","Locate the file":"Use the attachment control to find the required file.","Attach the file":"Wait for loading and confirm the attachment is visible.","Final checks":"Check recipient, subject, message and attachment before Send.","Send":"Send only after final checks.","Verify in Sent":"Confirm the message appears in Sent and is correct.","Email netiquette":"Use respectful language and meaningful subjects.","Privacy & safe links":"Protect passwords/private information and treat suspicious links cautiously.","Responsible search":"Use search tools responsibly.","Prepare":"Read the task and locate the required file.","Self-check":"Identify the step that needs more practice.","Mastery status":"Green = independent; Amber = with support; Red = not yet independently demonstrated.","Targeted remediation":"Practise only the procedure shown by evidence to be weak.","Troubleshoot with a peer":"Explain a correction without taking over the peer's task.","Completion & transfer":"Identify one authentic use of email."};return x[a]||"Observe, practise, receive feedback and repeat until you can perform independently."}
-function quiz(c,q,k,p,opts,ans,points=15){c.innerHTML=`<p>${p}</p>${opts.map((x,i)=>`<label class="option"><input type="radio" name="${k}" value="${i}"> ${x}</label>`).join("")}<div id="f${k}" class="feedback"></div>`;q.innerHTML=`<button class="primary">Check answer</button>`;q.firstChild.onclick=()=>{let r=document.querySelector('input[name="'+k+'"]:checked'),f=document.getElementById("f"+k);if(!r){f.textContent="Choose an answer.";return}if(+r.value===ans){f.className="feedback ok";f.textContent="Correct. XP awarded.";done(k,points)}else{f.className="feedback warn";f.textContent="Not yet. Review the explanation and try again.";S.xp=Math.max(0,S.xp-2);save();updateTop()}}}
-function diagnostic(c,q,k){let qs=[["Which control enters a URL?",["Refresh","Address bar","Back"],1],["Where can you verify a sent email?",["Inbox","Sent","Browser history"],1],["What must be confirmed before sending an attachment?",["Only the browser","Recipient, message and attachment","Nothing"],1]],i=0,cor=0;c.innerHTML=`<p>Adaptive diagnostic: difficulty responds to your answers.</p><div id="dq"></div><div id="df" class="feedback"></div>`;function show(){let z=qs[i];document.getElementById("dq").innerHTML=`<b>Question ${i+1}/3</b>${z[1].map((o,j)=>`<label class="option"><input type="radio" name="ad" value="${j}"> ${o}</label>`).join("")}`;q.innerHTML=`<button class="primary">Check</button>`;q.firstChild.onclick=()=>{let r=document.querySelector('input[name="ad"]:checked'),f=document.getElementById("df");if(!r){f.textContent="Choose an answer.";return}if(+r.value===z[2]){cor++;f.className="feedback ok";f.textContent="Correct — difficulty increases."}else{f.className="feedback warn";f.textContent="Review the skill — next item remains foundational."}i++;if(i<3)setTimeout(show,400);else{S.quizCorrect=cor;S.quizTotal=3;save();done(k,20);f.textContent=`Diagnostic complete: ${cor}/3. Use teacher evidence to place yourself on Red/Amber/Green pathway.`}}}show()}
-function attachment(c,q,k){c.innerHTML=`<p>High-priority attachment checkpoint.</p>${["Locate correct file","Select correct file","Wait for upload","Confirm attachment is visible"].map(x=>`<label class="option"><input type="checkbox"> ${x}</label>`).join("")}`;q.innerHTML=`<button class="primary">Submit checklist</button>`;q.firstChild.onclick=()=>{let n=c.querySelectorAll("input:checked").length;if(n===4){done(k,25);q.innerHTML="<div class='feedback ok'>Checklist complete. Teacher must validate independent live performance.</div>"}else q.innerHTML=`<div class='feedback warn'>${n}/4 complete. Finish the attachment sequence.</div>`}}
-function integrated(c,q,k){c.innerHTML=`<p><b>Authentic task:</b> Complete browser/search → login → compose → recipient → subject → message → attach → send → verify.</p><div class="step">Teacher scores the live task using the 20-mark rubric.</div>`;q.innerHTML=`<button class="primary">Launch practical</button>`;q.firstChild.onclick=()=>{done(k,30);q.innerHTML="<div class='feedback ok'>Practical task launched. Complete it independently and ask the teacher to record the rubric.</div>"}}
-function reassess(c,q,k){c.innerHTML=`<p>Enter the teacher-awarded score for a novel equivalent practical task.</p><input id="score" type="number" min="0" max="20"><label class="option"><input id="crit" type="checkbox"> No critical failure occurred.</label><div id="rf" class="feedback"></div>`;q.innerHTML=`<button class="primary">Record mastery</button>`;q.firstChild.onclick=()=>{let sc=+document.getElementById("score").value,cr=document.getElementById("crit").checked;if(sc<0||sc>20||Number.isNaN(sc))return;S.score=sc;S.critical=cr;S.mastery=sc>=16&&cr;save();done(k,25);document.getElementById("rf").className="feedback "+(S.mastery?"ok":"warn");document.getElementById("rf").innerHTML=`<b>${status()[1]}</b><br>${sc}/20. ${S.mastery?"Mastery achieved.":"Remediation required."}`}}
-function peer(){app.innerHTML=`<div class="card"><h2>🤝 Peer Collaboration Hub</h2><p><b>Driver:</b> operates the computer. <b>Navigator:</b> checks the procedure and gives prompts. Swap roles.</p><textarea id="post" rows="3" placeholder="Share a troubleshooting tip..."></textarea><button class="primary" id="postbtn">Post tip</button><div id="feed"></div></div>`;feed();postbtn.onclick=()=>{let v=post.value.trim();if(v){S.posts.push(v);save();xp(10);post.value="";feed()}}}
-function feed(){document.getElementById("feed").innerHTML=S.posts.length?S.posts.map(x=>`<div class="step">🤝 <b>Peer tip</b><br>${x}</div>`).join(""):"<p class='small'>No tips yet.</p>"}
-function analytics(){let rows=M.map(m=>{let d=m[2].filter((_,i)=>S.done.includes(m[0]+"-"+i)).length;return `<tr><td>${m[0]} — ${m[1]}</td><td>${Math.round(d/m[2].length*100)}%</td></tr>`}).join("");app.innerHTML=`<div class="card"><h2>📊 Learner Analytics Dashboard</h2><div class="grid"><div class="kpi"><b>Completion</b><br>${pct()}%</div><div class="kpi"><b>XP</b><br>${S.xp}</div><div class="kpi"><b>Quiz accuracy</b><br>${S.quizTotal?Math.round(S.quizCorrect/S.quizTotal*100):0}%</div><div class="kpi"><b>Mastery</b><br>${status()[1]}</div></div></div><div class="card"><h3>Module progress</h3><table><tr><th>Module</th><th>Progress</th></tr>${rows}</table></div><div class="card"><h3>Intervention signal</h3><p>${S.mastery===false?"🔴 Targeted remediation required. Prioritise the skill identified by practical evidence.":S.mastery===true?"🟢 Mastery achieved. Assign transfer/troubleshooting.":"🟠 Continue formative practice and collect live practical evidence."}</p></div><div class="card"><h3>Production analytics</h3><p>Capture diagnostic performance, attempts, time on task, attachment errors, login errors, mastery, intervention referrals and pre/post reassessment results.</p></div>`}
-function badges(){let b=[];if(S.xp>=50)b.push("🌱 Practice Starter");if(S.xp>=100)b.push("⭐ 100 XP");if(S.done.includes("M5-4"))b.push("📎 Attachment Specialist");if(S.mastery===true)b.push("🏆 Independent Performer");if(S.posts.length)b.push("🤝 Peer Helper");app.innerHTML=`<div class="card"><h2>🏅 Achievements</h2><p>Badges reward meaningful practice; they do not replace mastery assessment.</p><div class="grid">${b.map(x=>`<div class="step">${x}</div>`).join("")||"<div class='step'>Complete activities to unlock badges.</div>"}</div></div>`}
-function about(){app.innerHTML=`<div class="card"><h2>ℹ️ Design Notes</h2><p>This redesign preserves the approved AFSHTS instructional sequence and strengthens interaction through gamification, structured peer collaboration, adaptive diagnostics, interactive multimedia, analytics and mastery-based assessment.</p><h3>Teacher remains central</h3><p>The LMS supports diagnosis, feedback, intervention and analytics. It cannot replace observation of live browser/email performance.</p><h3>Security</h3><p>Use only test/practice accounts and dummy files. Never enter learner passwords.</p></div>`}
-buildNav();updateTop();home();
-</script>
-<script>
-(function () {
-  const qs = new URLSearchParams(location.search);
-  if (!qs.has("debug")) return;
-
-  window.addEventListener("DOMContentLoaded", function () {
-    const panel = document.createElement("aside");
-    panel.id = "deploymentDebugPanel";
-    panel.setAttribute("role", "status");
-    panel.innerHTML = `
-      <div style="font-weight:700;margin-bottom:6px">AFSHTS LMS Deployment Check</div>
-      <div>URL: ${location.origin === "null" ? "Local file" : location.origin}</div>
-      <div>Online: ${navigator.onLine ? "Yes" : "No"}</div>
-      <div>Local storage: ${(() => { try {
-        const k="__afshts_test__"; localStorage.setItem(k,"1");
-        const ok=localStorage.getItem(k)==="1"; localStorage.removeItem(k); return ok?"Available":"Unavailable";
-      } catch(e){ return "Unavailable"; }})()}</div>
-      <div>Viewport: ${window.innerWidth} × ${window.innerHeight}</div>
-      <div style="margin-top:6px;font-size:12px">
-        Note: this prototype stores learner state locally in the current browser.
-      </div>`;
-    Object.assign(panel.style,{
-      position:"fixed",right:"12px",bottom:"12px",zIndex:"99999",
-      maxWidth:"360px",padding:"12px 14px",background:"#fff",
-      color:"#17365d",border:"2px solid #17365d",borderRadius:"10px",
-      boxShadow:"0 8px 24px rgba(0,0,0,.2)",font:"13px/1.45 Arial,sans-serif"
-    });
-    document.body.appendChild(panel);
+    box.appendChild(div);
   });
-})();
-</script>
+}
 
-</body></html>
+/* ---------- MODULE PAGE ---------- */
+function modulePage(id){
+  const m = M.find(x=>x[0] === id);
+
+  if(!m){
+    home();
+    return;
+  }
+
+  const p = moduleProgress(id);
+
+  app.innerHTML = `
+    <div class="card">
+      <h2>${m[1]}</h2>
+      <p>
+        Complete the activities below.
+        Completed activities remain saved in this browser.
+      </p>
+
+      <div class="progress">
+        <div
+          class="progress-bar"
+          style="width:${p.percent}%"
+        ></div>
+      </div>
+
+      <p>
+        Module progress:
+        <strong>${p.percent}%</strong>
+        (${p.completed}/${p.total})
+      </p>
+    </div>
+
+    <div id="activities"></div>
+  `;
+
+  const activities =
+    document.getElementById("activities");
+
+  m[2].forEach((title,index)=>{
+    activities.appendChild(
+      createActivity(id,index,title)
+    );
+  });
+}
+
+/* ---------- ACTIVITY ENGINE ---------- */
+function createActivity(moduleId,index,title){
+  const key = `${moduleId}-${index}`;
+  const completed = S.done.includes(key);
+
+  const card = document.createElement("div");
+  card.className =
+    "card" + (completed ? " completed" : "");
+
+  card.innerHTML = `
+    <h3>
+      ${index + 1}. ${title}
+      ${completed
+        ? '<span class="badge green">Completed</span>'
+        : ''
+      }
+    </h3>
+
+    <div class="activity-content"></div>
+
+    <div class="activity-actions"></div>
+  `;
+
+  const content =
+    card.querySelector(".activity-content");
+
+  const actions =
+    card.querySelector(".activity-actions");
+
+  renderActivityContent(
+    moduleId,
+    index,
+    title,
+    key,
+    content,
+    actions,
+    completed
+  );
+
+  return card;
+}
+
+function renderActivityContent(
+  moduleId,
+  index,
+  title,
+  key,
+  content,
+  actions,
+  completed
+){
+  /* M0 diagnostic */
+  if(moduleId === "M0" && index === 3){
+    content.innerHTML = `
+      <p>
+        Answer the question below. This diagnostic helps
+        identify the learner's starting level.
+      </p>
+
+      <p><strong>
+        Which action is safest when receiving an unexpected email attachment?
+      </strong></p>
+
+      <div class="option" data-answer="wrong">
+        A. Open it immediately.
+      </div>
+
+      <div class="option" data-answer="correct">
+        B. Verify the sender and attachment before opening it.
+      </div>
+
+      <div class="option" data-answer="wrong">
+        C. Forward it to everyone.
+      </div>
+
+      <div class="option" data-answer="wrong">
+        D. Disable all security warnings.
+      </div>
+
+      <div id="feedback-${key}"></div>
+    `;
+
+    content.querySelectorAll(".option")
+      .forEach(option=>{
+        option.addEventListener("click",()=>{
+          const feedback =
+            document.getElementById(
+              `feedback-${key}`
+            );
+
+          if(option.dataset.answer === "correct"){
+            S.diagnosticLevel = "foundation ready";
+            feedback.className =
+              "feedback ok";
+            feedback.textContent =
+              "Correct. Good digital-safety judgement.";
+
+            S.mastery = S.mastery === null
+              ? null
+              : S.mastery;
+
+            save();
+            completeActivity(key,15);
+            option.parentElement
+              .querySelectorAll(".option")
+              .forEach(x=>x.style.pointerEvents="none");
+          }else{
+            S.diagnosticLevel = "needs support";
+            feedback.className =
+              "feedback warn";
+            feedback.textContent =
+              "Not quite. Verify unexpected attachments before opening them.";
+            save();
+          }
+        });
+      });
+
+    return;
+  }
+
+  /* M1 browser icon challenge */
+  if(moduleId === "M1" && index === 1){
+    content.innerHTML = `
+      <p>
+        Which browser feature is normally used to enter
+        a website address?
+      </p>
+
+      <div class="option" data-answer="wrong">
+        Desktop wallpaper
+      </div>
+
+      <div class="option" data-answer="correct">
+        Address bar
+      </div>
+
+      <div class="option" data-answer="wrong">
+        Recycle Bin
+      </div>
+
+      <div id="feedback-${key}"></div>
+    `;
+
+    addQuizHandlers(content,key,15);
+    return;
+  }
+
+  /* M2 URL challenge */
+  if(moduleId === "M2" && index === 1){
+    content.innerHTML = `
+      <p>
+        Select the item that is a complete website address.
+      </p>
+
+      <div class="option" data-answer="wrong">
+        computer
+      </div>
+
+      <div class="option" data-answer="correct">
+        https://www.example.com
+      </div>
+
+      <div class="option" data-answer="wrong">
+        search words
+      </div>
+
+      <div id="feedback-${key}"></div>
+    `;
+
+    addQuizHandlers(content,key,15);
+    return;
+  }
+
+  /* M7 privacy challenge */
+  if(moduleId === "M7" && index === 1){
+    content.innerHTML = `
+      <p>
+        You receive a link asking for your password.
+        What should you do?
+      </p>
+
+      <div class="option" data-answer="wrong">
+        Enter the password immediately.
+      </div>
+
+      <div class="option" data-answer="correct">
+        Verify the source and avoid entering credentials through a suspicious link.
+      </div>
+
+      <div class="option" data-answer="wrong">
+        Share the link with classmates.
+      </div>
+
+      <div id="feedback-${key}"></div>
+    `;
+
+    addQuizHandlers(content,key,15);
+    return;
+  }
+
+  /* M9 reassessment */
+  if(moduleId === "M9" && index === 2){
+    content.innerHTML = `
+      <p>
+        Mastery target: <strong>16/20</strong> or better,
+        with no critical safety failure.
+      </p>
+
+      <label for="score-${key}">
+        Enter reassessment score out of 20
+      </label>
+
+      <input
+        id="score-${key}"
+        type="number"
+        min="0"
+        max="20"
+        placeholder="e.g. 18"
+      >
+
+      <div id="feedback-${key}"></div>
+    `;
+
+    const button =
+      document.createElement("button");
+
+    button.className = "primary";
+    button.textContent =
+      completed ? "Reassess Again" : "Submit Score";
+
+    button.addEventListener("click",()=>{
+      const score =
+        Number(
+          document.getElementById(
+            `score-${key}`
+          ).value
+        );
+
+      if(!Number.isFinite(score) ||
+         score < 0 ||
+         score > 20){
+        alert("Enter a score from 0 to 20.");
+        return;
+      }
+
+      S.score = score;
+      S.mastery = score >= 16;
+      save();
+
+      const feedback =
+        document.getElementById(
+          `feedback-${key}`
+        );
+
+      feedback.className =
+        S.mastery ? "feedback ok" : "feedback warn";
+
+      feedback.textContent =
+        S.mastery
+          ? "Mastery achieved. Excellent work."
+          : "Remediation is recommended. Review the weak areas and try again.";
+
+      completeActivity(key,20);
+      updateTop();
+    });
+
+    actions.appendChild(button);
+    return;
+  }
+
+  /* Generic practical activity */
+  content.innerHTML = `
+    <p>
+      <strong>Learning task:</strong>
+      ${activityInstruction(moduleId,index,title)}
+    </p>
+
+    <div class="notice">
+      Complete the task practically, then click
+      <strong>Mark Activity Complete</strong>.
+    </div>
+  `;
+
+  const button =
+    document.createElement("button");
+
+  button.className =
+    completed ? "secondary" : "primary";
+
+  button.textContent =
+    completed
+      ? "✓ Activity Completed"
+      : "Mark Activity Complete";
+
+  button.disabled = completed;
+
+  button.addEventListener("click",async()=>{
+    await completeActivity(key,10);
+
+    cardCompleteRefresh(
+      moduleId,
+      index,
+      title
+    );
+  });
+
+  actions.appendChild(button);
+}
+
+function addQuizHandlers(content,key,xpAmount){
+  content.querySelectorAll(".option")
+    .forEach(option=>{
+      option.addEventListener("click",async()=>{
+        const feedback =
+          document.getElementById(
+            `feedback-${key}`
+          );
+
+        if(option.dataset.answer === "correct"){
+          feedback.className =
+            "feedback ok";
+          feedback.textContent =
+            "Correct. Activity completed.";
+
+          content.querySelectorAll(".option")
+            .forEach(x=>{
+              x.style.pointerEvents="none";
+            });
+
+          await completeActivity(
+            key,
+            xpAmount
+          );
+
+          updateTop();
+        }else{
+          feedback.className =
+            "feedback warn";
+          feedback.textContent =
+            "Not quite. Review the options and try again.";
+        }
+      });
+    });
+}
+
+function cardCompleteRefresh(
+  moduleId,
+  index,
+  title
+){
+  modulePage(moduleId);
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+
+function activityInstruction(
+  moduleId,
+  index,
+  title
+){
+  const instructions = {
+    "M0-0":
+      "Read the orientation information and identify one personal learning goal for this course.",
+    "M0-1":
+      "Review the course structure and identify how modules, activities and progress work together.",
+    "M0-2":
+      "Identify at least two safe practices for protecting accounts, devices and personal information.",
+    "M0-4":
+      "Rate your confidence with basic computer skills from 1 (beginner) to 5 (very confident).",
+    "M0-5":
+      "Practise clicking, double-clicking, selecting, dragging and using the keyboard.",
+    "M1-0":
+      "Identify the browser window, tabs, back button, refresh button, address bar and search controls.",
+    "M1-2":
+      "Explain the difference between typing a web address and typing keywords into a search engine.",
+    "M1-3":
+      "Follow a guided browser task: open a browser, enter a web address and navigate back.",
+    "M1-4":
+      "Perform the browser task independently without step-by-step assistance.",
+    "M2-0":
+      "Explain what a URL is and identify its main parts.",
+    "M2-2":
+      "Construct useful search keywords for a specific information need.",
+    "M2-3":
+      "Compare search results and choose the result most relevant to the task.",
+    "M2-4":
+      "Find information, verify the source and retrieve the required information.",
+    "M3-0":
+      "Explain what an email account is and what it is used for.",
+    "M3-1":
+      "Demonstrate safe login behaviour without sharing passwords.",
+    "M3-2":
+      "Identify likely causes of common login errors and select an appropriate response.",
+    "M3-3":
+      "Complete a simulated email login independently.",
+    "M4-0":
+      "Open the compose window and identify the main fields.",
+    "M4-1":
+      "Enter a correct recipient address.",
+    "M4-2":
+      "Write a clear and meaningful subject line.",
+    "M4-3":
+      "Compose a short professional message.",
+    "M4-4":
+      "Review the complete email before sending.",
+    "M5-0":
+      "Explain why attachments are useful when communicating digital files.",
+    "M5-1":
+      "Locate the correct file on the computer.",
+    "M5-2":
+      "Attach the selected file to an email.",
+    "M5-3":
+      "Identify and troubleshoot common attachment problems.",
+    "M5-4":
+      "Demonstrate correct attachment procedure independently.",
+    "M6-0":
+      "Perform final recipient, subject, message and attachment checks.",
+    "M6-1":
+      "Send the completed email in the practice environment.",
+    "M6-2":
+      "Open the Sent folder and verify that the message was sent.",
+    "M6-3":
+      "Complete the full send-and-verify workflow independently.",
+    "M7-0":
+      "Apply professional and respectful email communication practices.",
+    "M7-2":
+      "Use responsible search behaviour and evaluate information before using it.",
+    "M8-0":
+      "Prepare for the authentic email task by checking all required materials.",
+    "M8-1":
+      "Perform the integrated email task from start to finish.",
+    "M8-2":
+      "Use the self-check to evaluate your own performance.",
+    "M9-0":
+      "Review your current mastery status and identify the skill areas that need attention.",
+    "M9-1":
+      "Complete targeted practice in the skill area where performance is weakest.",
+    "M9-3":
+      "Work with a peer to troubleshoot a realistic ICT problem.",
+    "M9-4":
+      "Summarise what you can now do independently and how you will transfer the skill to real work."
+  };
+
+  return instructions[`${moduleId}-${index}`] ||
+    `Complete the practical learning activity: ${title}.`;
+}
+
+/* ---------- PEER COLLABORATION ---------- */
+function peer(){
+  app.innerHTML = `
+    <div class="card">
+      <h2>🤝 Peer Collaboration</h2>
+      <p>
+        Use this space to record a short troubleshooting note.
+      </p>
+
+      <textarea
+        id="peerPost"
+        placeholder="Describe the ICT problem, what you tried and what solved it..."
+      ></textarea>
+
+      <button class="primary" id="postBtn">
+        Save Peer Note
+      </button>
+    </div>
+
+    <div class="card">
+      <h3>Saved Notes</h3>
+      <div id="posts"></div>
+    </div>
+  `;
+
+  document.getElementById("postBtn")
+    .addEventListener("click",()=>{
+      const text =
+        document.getElementById("peerPost")
+          .value.trim();
+
+      if(!text){
+        alert("Write a note first.");
+        return;
+      }
+
+      S.posts.push({
+        text,
+        date:new Date().toLocaleString()
+      });
+
+      save();
+      peer();
+    });
+
+  const posts =
+    document.getElementById("posts");
+
+  if(!S.posts.length){
+    posts.innerHTML =
+      "<p class='small'>No peer notes yet.</p>";
+  }else{
+    S.posts.slice().reverse().forEach(post=>{
+      const div =
+        document.createElement("div");
+
+      div.className = "step";
+      div.innerHTML = `
+        <p>${escapeHTML(post.text)}</p>
+        <p class="small">${escapeHTML(post.date)}</p>
+      `;
+
+      posts.appendChild(div);
+    });
+  }
+}
+
+/* ---------- ANALYTICS ---------- */
+function analytics(){
+  app.innerHTML = `
+    <div class="card">
+      <h2>📊 Learner Analytics</h2>
+      <p>
+        This page gives a simple view of progress and module completion.
+      </p>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Module</th>
+            <th>Completed</th>
+            <th>Total</th>
+            <th>Progress</th>
+          </tr>
+        </thead>
+        <tbody id="analyticsBody"></tbody>
+      </table>
+    </div>
+  `;
+
+  const body =
+    document.getElementById("analyticsBody");
+
+  M.forEach(m=>{
+    const p = moduleProgress(m[0]);
+
+    const row =
+      document.createElement("tr");
+
+    row.innerHTML = `
+      <td>${m[1]}</td>
+      <td>${p.completed}</td>
+      <td>${p.total}</td>
+      <td>${p.percent}%</td>
+    `;
+
+    body.appendChild(row);
+  });
+}
+
+/* ---------- ACHIEVEMENTS ---------- */
+function badges(){
+  const achievements = [
+    {
+      name:"🚀 First Step",
+      rule:S.done.length >= 1
+    },
+    {
+      name:"🌱 Five Activities",
+      rule:S.done.length >= 5
+    },
+    {
+      name:"🔥 Ten Activities",
+      rule:S.done.length >= 10
+    },
+    {
+      name:"🏆 Halfway There",
+      rule:pct() >= 50
+    },
+    {
+      name:"🎓 Mastery Achieved",
+      rule:S.mastery === true
+    },
+    {
+      name:"💯 Course Complete",
+      rule:pct() === 100
+    }
+  ];
+
+  app.innerHTML = `
+    <div class="card">
+      <h2>🏅 Achievements</h2>
+      <div class="grid" id="badgesGrid"></div>
+    </div>
+  `;
+
+  const grid =
+    document.getElementById("badgesGrid");
+
+  achievements.forEach(a=>{
+    const div =
+      document.createElement("div");
+
+    div.className = "step";
+
+    div.innerHTML = `
+      <h3>${a.name}</h3>
+      <p>
+        <span class="badge ${
+          a.rule ? "green" : "amber"
+        }">
+          ${a.rule ? "Unlocked" : "Locked"}
+        </span>
+      </p>
+    `;
+
+    grid.appendChild(div);
+  });
+}
+
+/* ---------- DESIGN NOTES ---------- */
+function about(){
+  app.innerHTML = `
+    <div class="card">
+      <h2>ℹ️ Design Notes</h2>
+
+      <p>
+        This prototype follows an instructional-design approach
+        that combines practical ICT skills, formative assessment,
+        adaptive support, learner progress tracking and mastery.
+      </p>
+
+      <div class="grid">
+        <div class="step">
+          <strong>Learning by doing</strong><br>
+          Activities emphasise practical performance.
+        </div>
+
+        <div class="step">
+          <strong>Immediate feedback</strong><br>
+          Quiz activities provide instant responses.
+        </div>
+
+        <div class="step">
+          <strong>Progress visibility</strong><br>
+          Learners can see overall and module-level progress.
+        </div>
+
+        <div class="step">
+          <strong>Mastery learning</strong><br>
+          The reassessment uses a 16/20 mastery threshold.
+        </div>
+
+        <div class="step">
+          <strong>Data persistence</strong><br>
+          Local progress is saved in the browser.
+        </div>
+
+        <div class="step">
+          <strong>Cloud synchronisation</strong><br>
+          Completed activities can also be sent to Supabase.
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+/* ---------- SECURITY / DISPLAY HELPERS ---------- */
+function escapeHTML(value){
+  return String(value ?? "")
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#039;");
+}
+
+function escapeAttribute(value){
+  return escapeHTML(value);
+}
+
+/* ---------- START APPLICATION ---------- */
+buildNav("home");
+updateTop();
+home();
+</script>
+</body>
+</html>
