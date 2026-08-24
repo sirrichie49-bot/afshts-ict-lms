@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AFSHTS Student Registration</title>
+<meta name="description" content="AFSHTS Practical ICT Skills Lab student self-registration">
+<style>
+:root{--navy:#17365d;--blue:#315ea8;--light:#eef3f8;--line:#d6dee8;--text:#17253a;--muted:#5d6675;--green:#217a45;--amber:#a96800;--red:#b42318}
+*{box-sizing:border-box}body{margin:0;min-height:100vh;font-family:Arial,Helvetica,sans-serif;background:var(--light);color:var(--text);display:flex;align-items:center;justify-content:center;padding:20px}
+.card{width:min(500px,100%);background:#fff;border:1px solid var(--line);border-radius:14px;padding:30px;box-shadow:0 8px 30px rgba(20,45,75,.12)}
+h1{color:var(--navy);margin:0 0 8px;font-size:28px}.subtitle{margin:0 0 22px;color:var(--muted)}
+label{display:block;font-weight:600;margin-top:12px}input{width:100%;padding:12px;border:1px solid #b7c1ce;border-radius:7px;margin:6px 0 4px;font:inherit}
+button{width:100%;border:0;border-radius:7px;padding:12px 16px;margin-top:16px;background:var(--blue);color:#fff;font:inherit;font-weight:700;cursor:pointer}button:disabled{opacity:.65;cursor:not-allowed}
+.message{padding:12px;border-radius:8px;margin:12px 0;display:none}.message.show{display:block}.success{background:#e8f5e9;color:var(--green)}.warn{background:#fff1da;color:var(--amber)}.error{background:#fde8e7;color:var(--red)}
+.note{background:var(--light);padding:12px;border-radius:8px;margin-top:16px;font-size:13px;color:var(--muted);line-height:1.5}.links{text-align:center;margin-top:18px}.links a{color:var(--blue);text-decoration:none;font-weight:600}
+.password-help{font-size:12px;color:var(--muted);margin-top:2px}.brand{font-size:15px;color:var(--navy);font-weight:700;margin-bottom:18px}
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="brand">🎓 AFSHTS Practical ICT Skills Lab</div>
+  <h1>Student Registration</h1>
+  <p class="subtitle">Create your student account to access the LMS.</p>
+  <div id="message" class="message"></div>
+
+  <form id="registerForm">
+    <label for="fullName">Full name</label>
+    <input id="fullName" type="text" placeholder="e.g. Nana Mensah" autocomplete="name" required>
+
+    <label for="email">Email address</label>
+    <input id="email" type="email" placeholder="student@example.com" autocomplete="email" required>
+
+    <label for="password">Password</label>
+    <input id="password" type="password" placeholder="At least 6 characters" autocomplete="new-password" minlength="6" required>
+    <div class="password-help">Use a password you can remember. Do not share it with classmates.</div>
+
+    <label for="confirmPassword">Confirm password</label>
+    <input id="confirmPassword" type="password" placeholder="Re-enter your password" autocomplete="new-password" minlength="6" required>
+
+    <button id="registerBtn" type="submit">Create Student Account</button>
+  </form>
+
+  <div class="note">
+    <strong>What happens next?</strong><br>
+    Your account is created as a <strong>student</strong>. Your profile is created automatically in the LMS. If email confirmation is enabled in Supabase, check your email first; otherwise you can sign in immediately.
+  </div>
+
+  <div class="links">Already registered? <a href="./">Return to Sign In</a></div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const SUPABASE_URL="https://mfuvtilepoyyddbzkbrd.supabase.co";
+const SUPABASE_KEY="sb_publishable_XEHJaJD0sXLwzWi0AWBrSA_L4ARsztu";
+const supabaseClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+
+const form=document.getElementById("registerForm");
+const btn=document.getElementById("registerBtn");
+const message=document.getElementById("message");
+
+function showMessage(text,type){
+  message.textContent=text;
+  message.className="message show "+type;
+}
+
+form.addEventListener("submit",async(e)=>{
+  e.preventDefault();
+
+  const fullName=document.getElementById("fullName").value.trim();
+  const email=document.getElementById("email").value.trim().toLowerCase();
+  const password=document.getElementById("password").value;
+  const confirmPassword=document.getElementById("confirmPassword").value;
+
+  if(!fullName)return showMessage("Please enter your full name.","error");
+  if(password.length<6)return showMessage("Password must be at least 6 characters.","error");
+  if(password!==confirmPassword)return showMessage("The two passwords do not match.","error");
+
+  btn.disabled=true;
+  btn.textContent="Creating account…";
+  showMessage("Please wait while your student account is created.","warn");
+
+  try{
+    const {data,error}=await supabaseClient.auth.signUp({
+      email,
+      password,
+      options:{
+        data:{full_name:fullName,role:"student"},
+        emailRedirectTo:window.location.origin+window.location.pathname.replace(/register\.html$/i,"")
+      }
+    });
+
+    if(error)throw error;
+
+    if(data.session){
+      showMessage("Account created successfully. Opening the LMS…","success");
+      setTimeout(()=>{window.location.href="./";},1000);
+      return;
+    }
+
+    showMessage("Registration successful. Check your email for the confirmation link, then return to the LMS and sign in.","success");
+    form.reset();
+  }catch(error){
+    console.error("Registration error:",error);
+    showMessage(error.message||"Registration failed. Please try again.","error");
+  }finally{
+    btn.disabled=false;
+    btn.textContent="Create Student Account";
+  }
+});
+</script>
+</body>
+</html>
