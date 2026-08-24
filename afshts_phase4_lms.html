@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AFSHTS Practical ICT Skills Lab — Phase 4</title>
+<style>
+:root{--n:#17365d;--b:#315ea8;--l:#eef3f8;--line:#d6dee8;--t:#17253a;--m:#64748b;--g:#217a45;--a:#a96800;--r:#b42318}
+*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:#f4f7fb;color:var(--t)}
+button,input,textarea,select{font:inherit}button{cursor:pointer}
+header{background:var(--n);color:white;padding:16px 22px;position:sticky;top:0;z-index:10}.top{display:flex;justify-content:space-between;gap:20px;align-items:center}h1{margin:0;font-size:25px}.connection{font-size:12px;margin-top:5px}.topbar{width:280px}.progress{height:12px;background:#e1e6ed;border-radius:99px;overflow:hidden}.bar{height:100%;background:var(--b);width:0;transition:.3s}
+.layout{display:grid;grid-template-columns:285px 1fr;min-height:calc(100vh - 86px)}aside{background:#fff;border-right:1px solid var(--line);padding:10px;position:sticky;top:86px;height:calc(100vh - 86px);overflow:auto}nav button{width:100%;border:0;background:transparent;text-align:left;color:var(--n);padding:11px 12px;border-radius:8px;margin-bottom:3px}nav button:hover,nav button.sel{background:#edf2f7}nav hr{border:0;border-top:1px solid var(--line);margin:10px 4px}
+main{padding:20px;max-width:1450px;width:100%;margin:auto}.card,.activity{background:#fff;border:1px solid var(--line);border-radius:13px;padding:20px;margin-bottom:16px;box-shadow:0 3px 14px #142d4b17}.grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}.kpi{min-height:135px}.num{font-size:34px;font-weight:700;color:#132f55;margin:7px 0}.small{font-size:13px;color:var(--m)}.notice{padding:13px;border-radius:9px;background:var(--l);margin:12px 0}.badge{display:inline-block;padding:6px 10px;border-radius:99px;font-size:12px;font-weight:700}.green{background:#e8f5e9;color:var(--g)}.amber{background:#fff1da;color:var(--a)}.red{background:#fde8e7;color:var(--r)}
+.primary,.secondary{border:0;border-radius:8px;padding:10px 16px;color:#fff;font-weight:700}.primary{background:var(--b)}.secondary{background:#64748b}.option{border:1px solid var(--line);padding:12px;border-radius:8px;margin:8px 0;background:white;cursor:pointer}.option:hover{background:#f5f8fb}.feedback{padding:11px;border-radius:8px;margin-top:10px}.ok{background:#e8f5e9;color:var(--g)}.warn{background:#fff1da;color:var(--a)}.err{background:#fde8e7;color:var(--r)}
+input,textarea,select{width:100%;padding:10px;border:1px solid #b7c1ce;border-radius:8px;margin:5px 0 10px}textarea{min-height:110px}.activity.done{border-left:5px solid var(--g)}.activity-head{display:flex;justify-content:space-between;gap:12px}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.sim{border:1px solid #cbd5e1;border-radius:10px;padding:16px;background:#fafcff}.simhead{background:#edf2f7;padding:10px;border-radius:7px;font-weight:700}.simrow{display:grid;grid-template-columns:100px 1fr;gap:8px;align-items:center;margin:8px 0}.sequence{display:flex;flex-wrap:wrap;gap:8px}.seq{padding:9px 12px;border:1px solid var(--line);border-radius:8px;background:white;cursor:pointer}.seq.sel{background:#eef4ff;border-color:var(--b)}.login{min-height:100vh;display:flex;align-items:center;justify-content:center;background:#eef3f8;padding:20px}.login-card{width:min(460px,100%);background:white;padding:30px;border:1px solid var(--line);border-radius:15px;box-shadow:0 8px 30px #142d4b1f}.login-card h1{color:var(--n)}.hidden{display:none!important}
+@media(max-width:900px){.layout{grid-template-columns:1fr}aside{position:static;height:auto;border-right:0;border-bottom:1px solid var(--line)}.grid{grid-template-columns:repeat(2,1fr)}.topbar{display:none}}@media(max-width:600px){main{padding:12px}.grid{grid-template-columns:1fr}.simrow{grid-template-columns:1fr}h1{font-size:21px}}
+
+.phase4-step{padding:16px;border:1px solid #d7e0ec;border-radius:12px;background:#fff}
+.phase4-step.locked{opacity:.55}
+.phase4-step.complete{border-color:#86c59b}
+.phase4-step.current{border-color:#3567b0;box-shadow:0 0 0 2px rgba(53,103,176,.08)}
+.phase4-step h4{margin:0 0 8px}
+.phase4-state{font-weight:700;font-size:12px;letter-spacing:.2px}
+.phase4-master{height:12px;background:#e2e8f0;border-radius:99px;overflow:hidden}
+.phase4-master>div{height:100%;width:0;background:#3567b0;transition:width .25s}
+.phase4-question{margin-top:14px;padding:16px;border-radius:12px;background:#f8fafc;border:1px solid #e2e8f0}
+.phase4-option{display:block;width:100%;text-align:left;margin:8px 0;padding:12px;border:1px solid #cbd5e1;background:#fff;border-radius:9px;cursor:pointer}
+.phase4-option:hover{border-color:#3567b0}
+.phase4-feedback{margin-top:12px;padding:12px;border-radius:9px}
+.phase4-good{background:#eaf7ee;color:#176534}
+.phase4-bad{background:#fff1f2;color:#9f1239}
+.phase4-certificate{padding:24px;text-align:center;border:2px solid #3567b0;border-radius:14px;background:#f8fbff}
+
+</style>
+</head>
+<body>
+<div id="login" class="login"><div class="login-card">
+<h1>🎓 AFSHTS Practical ICT Skills Lab</h1><p>Interactive LMS — Secure Login</p><div id="loginMsg"></div>
+<label>Email address</label><input id="email" type="email" placeholder="Enter your email">
+<label>Password</label><input id="password" type="password" placeholder="Enter your password">
+<button id="loginBtn" class="primary" style="width:100%">Sign In</button>
+<button id="registerBtn" class="secondary" style="width:100%;margin-top:8px">Student Registration</button>
+<p class="small">Phase 2 adds interactive practice, feedback, retries, simulations and mastery evidence.</p>
+</div></div>
+
+<div id="shell" class="hidden"><header><div class="top"><div>
+<h1>AFSHTS Practical ICT Skills Lab</h1><div id="top"></div><div id="connection" class="connection">Checking connection…</div>
+</div><div class="topbar"><div class="progress"><div id="topBar" class="bar"></div></div></div></div></header>
+<div class="layout"><aside><nav id="nav"></nav></aside><main id="app"></main></div></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const SUPABASE_URL="https://mfuvtilepoyyddbzkbrd.supabase.co";
+const SUPABASE_KEY="sb_publishable_XEHJaJD0sXLwzWi0AWBrSA_L4ARsztu";
+const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+let user=null,profile=null;
+const M=[
+["M0","🎯 Orientation & Diagnostic",["Welcome","How the course works","Digital safety","Adaptive diagnostic","Self-rating","Mouse & keyboard warm-up"]],
+["M1","🌐 Browser Foundations",["Meet the browser","Icon challenge","Address bar vs search","Guided practice","Independence check"]],
+["M2","🔎 URLs & Searching",["What is a URL?","URL mission","Search keyword challenge","Choose a useful result","Find → verify → retrieve"]],
+["M3","🔐 Email Login",["What is email?","Secure login","Login error clinic","Independent login"]],
+["M4","✉️ Composing Email",["Compose","Recipient challenge","Subject challenge","Message builder","Composition check"]],
+["M5","📎 File Attachment",["Why attachments matter","Locate the file","Attach the file","Attachment error lab","Attachment mastery"]],
+["M6","✅ Send & Verify",["Final checks","Send","Verify in Sent","Send-and-verify challenge"]],
+["M7","🛡️ Netiquette",["Email netiquette","Privacy & safe links","Responsible search"]],
+["M8","🏆 Integrated Challenge",["Prepare","Perform authentic task","Self-check"]],
+["M9","📈 Remediation & Mastery",["Mastery status","Targeted remediation","Adaptive reassessment","Troubleshoot with a peer","Completion & transfer"]]
+];
+const TOTAL=M.reduce((n,m)=>n+m[2].length,0);
+const BASE={learnerName:"",done:[],xp:0,mastery:null,score:null,diag:"not assessed",correct:0,total:0,posts:[]};
+let S=load();
+function load(){try{return {...BASE,...JSON.parse(localStorage.getItem("afshts_lms_state")||"null")}}catch{return {...BASE}}}
+function save(){localStorage.setItem("afshts_lms_state",JSON.stringify(S))}
+function esc(x){return String(x??"").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#039;")}
+function pct(){return Math.round(S.done.length/TOTAL*100)}
+function status(){return S.mastery===true?["green","GREEN — MASTERED"]:S.mastery===false?["red","RED — REMEDIATION"]:["amber","AMBER — IN PROGRESS"]}
+function mp(id){let m=M.find(x=>x[0]===id),d=S.done.filter(k=>k.startsWith(id+"-")).length;return{d,t:m[2].length,p:Math.round(d/m[2].length*100)}}
+function top(){document.getElementById("top").textContent=`XP: ${S.xp} | Progress: ${pct()}% | ${status()[1]}`;document.getElementById("topBar").style.width=pct()+"%"}
+function conn(x){document.getElementById("connection").textContent=x}
+async function sync(id,i,xp){if(!user)return;try{let r=await db.from("learner_progress").upsert({user_id:user.id,learner_name:S.learnerName||profile?.full_name||"Learner",module_id:id,activity_id:String(i),completed:true,xp});conn(r.error?"✓ Activity saved locally.":"✓ Activity completed and synced to Supabase.")}catch{conn("✓ Activity completed locally.")}}
+
+async function loadCloudProgress(){
+  if(!user) return;
+  try{
+    const r = await db.from("learner_progress")
+      .select("module_id,activity_id,completed,xp")
+      .eq("user_id", user.id);
+
+    if(r.error) throw r.error;
+
+    const rows = r.data || [];
+    const cloudDone = rows
+      .filter(x => x.completed)
+      .map(x => `${x.module_id}-${x.activity_id}`);
+
+    S.done = [...new Set(cloudDone)];
+    S.xp = rows.reduce((sum,x)=>sum + (Number(x.xp)||0), 0);
+    save();
+    conn("✓ Signed in. Cloud progress restored.");
+  }catch(e){
+    console.warn("Cloud progress could not be loaded:", e);
+    conn("✓ Signed in. Local progress is active.");
+  }
+}
+
+
+const PHASE4_STAGES = [
+  {id:"diagnostic", title:"Diagnostic Check", desc:"Establish what the learner already knows.", xp:10},
+  {id:"foundation", title:"Foundation Skills", desc:"Build the essential practical ICT skills.", xp:15},
+  {id:"guided", title:"Guided Practice", desc:"Practise with immediate feedback and retries.", xp:20},
+  {id:"mastery", title:"Mastery Check", desc:"Demonstrate independent performance.", xp:25},
+  {id:"challenge", title:"Integrated Challenge", desc:"Apply several skills in one practical task.", xp:35},
+  {id:"achievement", title:"Achievement Record", desc:"Review performance and confirm completion.", xp:0}
+];
+
+function phase4DoneCount(){
+  return Array.isArray(S.done) ? S.done.length : 0;
+}
+
+function phase4MasteryPercent(){
+  return Math.min(100, Math.round((phase4DoneCount()/TOTAL)*100));
+}
+
+function phase4StageIndex(){
+  const p=phase4MasteryPercent();
+  if(p>=100) return 5;
+  if(p>=80) return 4;
+  if(p>=55) return 3;
+  if(p>=30) return 2;
+  if(p>=10) return 1;
+  return 0;
+}
+
+function renderPhase4Pathway(){
+  const summary=document.getElementById("pathwaySummary");
+  const steps=document.getElementById("pathwaySteps");
+  if(!summary||!steps) return;
+
+  const idx=phase4StageIndex();
+  const pct=phase4MasteryPercent();
+
+  summary.innerHTML = `
+    <strong>Mastery progress: ${pct}%</strong>
+    <div class="phase4-master" style="margin-top:10px"><div style="width:${pct}%"></div></div>
+    <p style="margin:8px 0 0">${phase4DoneCount()} of ${TOTAL} activities completed.
+    ${pct>=100 ? "🎉 All learning stages completed." : "Complete activities in sequence to unlock deeper practice."}</p>
+  `;
+
+  steps.innerHTML=PHASE4_STAGES.map((s,i)=>{
+    const state=i<idx?"COMPLETED":i===idx?"CURRENT":"LOCKED";
+    const cls=i<idx?"complete":i===idx?"current":"locked";
+    return `<div class="phase4-step ${cls}">
+      <div class="phase4-state">${state}</div>
+      <h4>${i+1}. ${esc(s.title)}</h4>
+      <p>${esc(s.desc)}</p>
+      <small>${s.xp?`Up to ${s.xp} XP`:"Final record"}</small>
+    </div>`;
+  }).join("");
+}
+
+function phase4ShowDiagnostic(){
+  const app=document.getElementById("app");
+  if(!app) return;
+
+  const questions=[
+    {q:"Which action is safest before opening an unexpected email attachment?",
+     a:["Open it immediately","Verify the sender and attachment first","Forward it to everyone","Disable antivirus"],c:1},
+    {q:"What is the main purpose of a strong password?",
+     a:["To make typing harder","To protect an account from unauthorized access","To increase internet speed","To format a computer"],c:1},
+    {q:"Which practice best protects a student's personal information?",
+     a:["Share passwords with friends","Use the same password everywhere","Use privacy controls and protect login details","Post credentials publicly"],c:2}
+  ];
+
+  let score=0, current=0;
+  function draw(){
+    const item=questions[current];
+    app.innerHTML=`<div class="card">
+      <h2>🧠 Phase 4 Diagnostic Check</h2>
+      <p>Question ${current+1} of ${questions.length}</p>
+      <div class="phase4-question">
+        <strong>${esc(item.q)}</strong>
+        ${item.a.map((x,i)=>`<button class="phase4-option" data-i="${i}">${esc(x)}</button>`).join("")}
+        <div id="diagFeedback"></div>
+      </div>
+    </div>`;
+    app.querySelectorAll(".phase4-option").forEach(btn=>{
+      btn.onclick=()=>{
+        const chosen=Number(btn.dataset.i);
+        const fb=document.getElementById("diagFeedback");
+        app.querySelectorAll(".phase4-option").forEach(b=>b.disabled=true);
+        if(chosen===item.c){
+          score++;
+          fb.className="phase4-feedback phase4-good";
+          fb.textContent="✓ Correct. Good practical judgement.";
+        }else{
+          fb.className="phase4-feedback phase4-bad";
+          fb.textContent=`✗ Not quite. Review the principle and try again in the practice activity.`;
+        }
+        setTimeout(()=>{
+          current++;
+          if(current<questions.length) draw();
+          else {
+            const key="phase4-diagnostic";
+            complete(key,10);
+            app.innerHTML=`<div class="card">
+              <h2>Diagnostic Complete</h2>
+              <p>You scored <strong>${score}/${questions.length}</strong>.</p>
+              <div class="notice">Your result is used as a starting point. You can still practise every skill and improve your mastery.</div>
+              <button onclick="render()">Continue to Learning Activities</button>
+            </div>`;
+          }
+        },650);
+      };
+    });
+  }
+  draw();
+}
+
+function phase4Certificate(){
+  const app=document.getElementById("app");
+  if(!app) return;
+  const pct=phase4MasteryPercent();
+  const name=S.learnerName||profile?.full_name||"Learner";
+  app.innerHTML=`<div class="card phase4-certificate">
+    <div style="font-size:46px">🏆</div>
+    <h2>AFSHTS Practical ICT Skills Lab</h2>
+    <h3>Phase 4 Learning Achievement Record</h3>
+    <p>This record recognises</p>
+    <h2>${esc(name)}</h2>
+    <p>for reaching <strong>${pct}%</strong> activity completion with <strong>${Number(S.xp)||0} XP</strong>.</p>
+    <p><strong>${phase4DoneCount()} of ${TOTAL}</strong> practical learning activities completed.</p>
+    ${pct>=100 ? '<div class="notice">🎉 Mastery pathway completed.</div>' : '<div class="notice">Continue the remaining activities to reach full mastery.</div>'}
+    <button onclick="render()">Return to Dashboard</button>
+  </div>`;
+}
+
+function phase4Launch(){
+  const p=phase4MasteryPercent();
+  if(p===0) phase4ShowDiagnostic();
+  else if(p>=100) phase4Certificate();
+  else render();
+}
+
+
+async function complete(key,xp=10){if(!S.done.includes(key)){S.done.push(key);S.xp+=xp;save();let [id,i]=key.split("-");await sync(id,i,xp)}top();let p=document.querySelector("nav button.sel")?.dataset.p||"home";render(p)}
+function loginMsg(t,c="warn"){document.getElementById("loginMsg").innerHTML=`<div class="feedback ${c}">${esc(t)}</div>`}
+async function login(){
+ let email=document.getElementById("email").value.trim(),password=document.getElementById("password").value;
+ if(!email||!password)return loginMsg("Enter both email and password.");
+ let b=document.getElementById("loginBtn");b.disabled=true;b.textContent="Signing in…";
+ try{let r=await db.auth.signInWithPassword({email,password});if(r.error)throw r.error;user=r.data.user;
+ let p=await db.from("profiles").select("id,full_name,email,role").eq("id",user.id).maybeSingle();if(p.error||!p.data)throw new Error("Your account has no matching profile.");
+ profile=p.data;S.learnerName=S.learnerName||profile.full_name||"";save();
+ await loadCloudProgress();
+ document.getElementById("login").classList.add("hidden");document.getElementById("shell").classList.remove("hidden");conn("✓ Signed in. Supabase connected.");top();
+ if(profile.role==="admin")adminStart();else{buildNav("home");home()}
+ }catch(e){loginMsg(e.message||"Invalid login credentials.")}finally{b.disabled=false;b.textContent="Sign In"}
+}
+async function logout(){await db.auth.signOut();user=null;profile=null;document.getElementById("shell").classList.add("hidden");document.getElementById("login").classList.remove("hidden");document.getElementById("password").value=""}
+function buildNav(active="home"){let n=document.getElementById("nav");n.innerHTML=`<button data-p="home">🏠 Dashboard</button>${M.map(m=>`<button data-p="${m[0]}">${m[1]}</button>`).join("")}<hr><button data-p="peer">🤝 Peer Collaboration</button><button data-p="analytics">📊 Analytics</button><button data-p="badges">🏅 Achievements</button><hr><button id="reset">↺ Reset Local Progress</button><button id="out" style="color:#b42318">🚪 Sign Out</button>`;
+n.querySelectorAll("[data-p]").forEach(x=>{if(x.dataset.p===active)x.classList.add("sel");x.onclick=()=>{buildNav(x.dataset.p);render(x.dataset.p)}});document.getElementById("reset").onclick=()=>{if(confirm("Reset this browser's learner progress?")){S={...BASE};save();top();buildNav("home");home()}};document.getElementById("out").onclick=logout}
+function render(p="home"){if(p==="home")return home();if(p==="peer")return peer();if(p==="analytics")return analytics();if(p==="badges")return badges();modulePage(p)}
+function home(){let s=status();document.getElementById("app").innerHTML=`<div class="card"><h2>🎓 Learner Dashboard</h2><p>Welcome, <strong>${esc(S.learnerName||profile?.full_name||"Learner")}</strong></p><div class="notice"><strong>Phase 2 is active.</strong> Activities now use interactive questions, simulations, feedback, retry and practical evidence.</div><div class="grid"><div class="card kpi"><h3>📊 Progress</h3><div class="progress"><div class="bar" style="width:${pct()}%"></div></div><div class="num">${pct()}%</div><span class="small">${S.done.length} of ${TOTAL} activities</span></div><div class="card kpi"><h3>⭐ XP</h3><div class="num">${S.xp}</div></div><div class="card kpi"><h3>✅ Completed</h3><div class="num">${S.done.length}</div></div><div class="card kpi"><h3>🏆 Mastery</h3><span class="badge ${s[0]}">${s[1]}</span><p class="small">Diagnostic: ${esc(S.diag)}</p></div></div></div><div class="card"><h3>👤 Learner Information</h3><input id="lname" value="${esc(S.learnerName)}" placeholder="Learner name"><button class="primary" id="saveName">Save Learner Name</button></div><div class="card"><h3>📚 Course Modules</h3><div id="mods"></div></div>`;
+document.getElementById("saveName").onclick=()=>{let v=document.getElementById("lname").value.trim();if(v){S.learnerName=v;save();top();home()}};let box=document.getElementById("mods");M.forEach(m=>{let p=mp(m[0]);box.insertAdjacentHTML("beforeend",`<div class="card"><h3>${m[1]}</h3><div class="progress"><div class="bar" style="width:${p.p}%"></div></div><p>${p.d}/${p.t} completed — ${p.p}%</p><button class="primary" onclick="buildNav('${m[0]}');modulePage('${m[0]}')">Open Module</button></div>`)})}
+function modulePage(id){let m=M.find(x=>x[0]===id);if(!m)return home();let p=mp(id);document.getElementById("app").innerHTML=`<div class="card"><h2>${m[1]}</h2><p>Complete each activity. Wrong answers can be retried until the learner understands the skill.</p><div class="progress"><div class="bar" style="width:${p.p}%"></div></div><p><strong>${p.p}%</strong> complete (${p.d}/${p.t})</p></div><div id="acts"></div>`;m[2].forEach((t,i)=>document.getElementById("acts").appendChild(activity(id,i,t)))}
+function activity(id,i,title){let key=id+"-"+i,done=S.done.includes(key),a=document.createElement("section");a.className="activity"+(done?" done":"");a.innerHTML=`<div class="activity-head"><h3>${i+1}. ${esc(title)}</h3>${done?'<span class="badge green">Completed</span>':""}</div><div class="body"></div><div class="actions"></div>`;draw(id,i,title,key,a.querySelector(".body"),a.querySelector(".actions"),done);return a}
+const Q={
+"M0-0":["Why is a practical ICT lab useful?",["To memorise definitions","To practise usable digital skills","To avoid computers"],1],
+"M0-1":["Which stage provides evidence of independent performance?",["Perform","Read","Login"],0],
+"M0-2":["Which is safest?",["Share your password","Keep a unique password private","Post it publicly"],1],
+"M0-4":["Which confidence rating means very confident?",["1","3","5"],2],
+"M1-0":["Which control takes you to the previous page?",["Back","Refresh","Address bar"],0],
+"M1-2":["Which is a URL?",["school ICT skills","https://example.com","computer lesson"],1],
+"M1-3":["Where do you enter a known web address?",["Address bar","Recycle Bin","Clock"],0],
+"M2-0":["Which is normally part of a URL?",["Domain name","Keyboard battery","Printer tray"],0],
+"M2-1":["Which is the best URL habit?",["Guess it","Check spelling before opening","Forward it"],1],
+"M2-3":["Which search result is most useful?",["One matching the exact topic","Random advertisement","Unrelated post"],0],
+"M3-0":["Where do you verify messages you have sent?",["Sent","Inbox","Wallpaper"],0],
+"M3-1":["What should you do with your password?",["Keep it private","Post it","Tell everyone"],0],
+"M3-2":["What should you check first after a login failure?",["Email spelling and password","Delete account","Share password"],0],
+"M4-0":["Which field identifies the recipient?",["To","Subject","Body"],0],
+"M4-1":["Why verify the recipient?",["Avoid wrong recipient","Speed up internet","Change keyboard"],0],
+"M4-3":["Which opening is professional?",["Hey!!!","Dear Sir/Madam,","Send me now"],1],
+"M4-4":["What should happen before Send?",["Final review","Close browser","Delete subject"],0],
+"M5-0":["What is a key attachment risk?",["Wrong/incomplete file","Large keyboard","Screen brightness"],0],
+"M5-1":["What comes first?",["Choose correct file","Send first","Close email"],0],
+"M5-2":["What confirms attachment success?",["Attachment visible and ready","Screen freezes","Message disappears"],0],
+"M6-0":["Which is NOT part of a final check?",["Recipient","Attachment","Desktop wallpaper"],2],
+"M6-1":["When should you click Send?",["After checking","Before writing","Immediately"],0],
+"M6-2":["What does Sent help verify?",["Message was sent","Wi-Fi password","Computer model"],0],
+"M7-0":["Which subject is professional?",["Hi","ICT Assignment Submission — Form 2","Important!!!"],1],
+"M7-1":["What should you do with a suspicious link?",["Verify before opening","Open immediately","Forward it"],0],
+"M7-2":["What is a good verification habit?",["Check source and relevance","Believe first result","Copy without checking"],0],
+"M8-0":["What should be prepared before composing?",["Correct recipient and file","Random attachment","Unverified link"],0],
+"M8-2":["Which is a realistic transfer task?",["Submitting an assignment by email","Changing wallpaper","Turning monitor off"],0],
+"M9-0":["What does Green mean?",["Mastery achieved","No work started","Account deleted"],0],
+"M9-1":["What is remediation?",["Targeted practice on a weak skill","Skipping practice","Deleting results"],0],
+"M9-3":["What should a peer do?",["Give a prompt and let learner perform","Take over","Share password"],0],
+"M9-4":["Why is transfer important?",["Skill works beyond the lesson","No practice needed","Changes password"],0]
+};
+function quiz(body,actions,key,q,opts,ans,xp=10){body.innerHTML=`<p><strong>${esc(q)}</strong></p>${opts.map((o,i)=>`<div class="option" data-i="${i}">${esc(o)}</div>`).join("")}<div id="f${key}" class="feedback"></div>`;body.querySelectorAll(".option").forEach(o=>o.onclick=async()=>{let f=document.getElementById("f"+key);if(+o.dataset.i===ans){f.className="feedback ok";f.textContent="Correct. Good reasoning — activity completed.";body.querySelectorAll(".option").forEach(x=>x.style.pointerEvents="none");S.correct++;S.total++;save();await complete(key,xp)}else{f.className="feedback warn";f.textContent="Not quite. Review the question and try again."}})}
+function checklist(body,actions,key,items,xp=15){body.innerHTML="<p><strong>Complete every step.</strong></p>"+items.map(x=>`<label class="option"><input type="checkbox"> ${esc(x)}</label>`).join("")+'<div id="f'+key+'" class="feedback"></div>';let b=document.createElement("button");b.className="primary";b.textContent="Check my work";actions.appendChild(b);b.onclick=async()=>{let n=body.querySelectorAll("input:checked").length,f=document.getElementById("f"+key);if(n===items.length){f.className="feedback ok";f.textContent="Excellent. All steps are complete.";b.disabled=true;await complete(key,xp)}else{f.className="feedback warn";f.textContent=`${n}/${items.length} complete. Finish every step.`}}}
+function textTask(body,actions,key,prompt,xp=10){body.innerHTML=`<p><strong>${esc(prompt)}</strong></p><textarea id="tx${key}" placeholder="Type your answer..."></textarea><div id="f${key}" class="feedback"></div>`;let b=document.createElement("button");b.className="primary";b.textContent="Check response";actions.appendChild(b);b.onclick=async()=>{let v=document.getElementById("tx"+key).value.trim(),f=document.getElementById("f"+key);if(v.length<25){f.className="feedback warn";f.textContent="Write at least 25 characters so your answer demonstrates understanding.";return}f.className="feedback ok";f.textContent="Response recorded. Compare it with teacher feedback.";await complete(key,xp)}}
+function diagnostic(body,actions,key){let qs=[["Which control enters a known address?",["Address bar","Recycle Bin","Volume"],0],["Where do you verify sent email?",["Sent","Inbox","Wallpaper"],0],["Before sending an attachment?",["Check recipient, message and attachment","Check wallpaper","Nothing"],0]],n=0,c=0;body.innerHTML='<div id="dq"></div>';function show(){let q=qs[n];document.getElementById("dq").innerHTML=`<p><strong>Question ${n+1} of 3</strong></p><p>${q[0]}</p>${q[1].map((x,j)=>`<div class="option" data-j="${j}">${x}</div>`).join("")}`;document.querySelectorAll("#dq .option").forEach(o=>o.onclick=async()=>{if(+o.dataset.j===q[2])c++;n++;if(n<3)show();else{S.correct=c;S.total=3;S.diag=c===3?"foundation ready":c===2?"developing":"needs support";save();document.getElementById("dq").innerHTML=`<div class="notice"><strong>Diagnostic complete:</strong> ${c}/3 — ${S.diag}.</div>`;await complete(key,20)}})}show()}
+function emailComposer(body,actions,key){body.innerHTML=`<div class="sim"><div class="simhead">✉️ Practice Email Composer</div><div class="simrow"><label>To</label><input id="to${key}" placeholder="teacher@school.edu"></div><div class="simrow"><label>Subject</label><input id="su${key}" placeholder="ICT Assignment Submission"></div><label>Message</label><textarea id="me${key}" placeholder="Write a professional message..."></textarea><div id="f${key}" class="feedback"></div></div>`;let b=document.createElement("button");b.className="primary";b.textContent="Check Composition";actions.appendChild(b);b.onclick=async()=>{let to=document.getElementById("to"+key).value.trim(),su=document.getElementById("su"+key).value.trim(),me=document.getElementById("me"+key).value.trim(),f=document.getElementById("f"+key);if(!to.includes("@")||!su||me.length<20){f.className="feedback warn";f.textContent="Complete To, Subject and a meaningful message of at least 20 characters.";return}f.className="feedback ok";f.textContent="Good composition. Verify the recipient before sending.";await complete(key,20)}}
+function attachment(body,actions,key){body.innerHTML=`<div class="sim"><div class="simhead">📎 Practice Attachment</div><select id="fl${key}"><option value="">Select a file</option><option>ICT_Assignment.pdf</option><option>Holiday_Photos.zip</option><option>Music.mp3</option></select><div id="up${key}" class="notice">No file selected.</div><div id="f${key}" class="feedback"></div></div>`;let b=document.createElement("button");b.className="primary";b.textContent="Attach File";actions.appendChild(b);b.onclick=async()=>{let v=document.getElementById("fl"+key).value,u=document.getElementById("up"+key),f=document.getElementById("f"+key);if(!v){f.className="feedback warn";f.textContent="Select a file first.";return}u.textContent="Uploading…";setTimeout(async()=>{u.textContent="✓ "+v+" attached.";f.className="feedback ok";f.textContent="Attachment verified.";await complete(key,20)},600)}}
+function sendPractice(body,actions,key){body.innerHTML=`<div class="sim"><div class="simhead">✅ Final Send Check</div>${["Recipient verified","Subject verified","Message verified","Attachment verified"].map((x,i)=>`<label class="option"><input id="c${i}${key}" type="checkbox"> ${x}</label>`).join("")}<div id="f${key}" class="feedback"></div></div>`;let b=document.createElement("button");b.className="primary";b.textContent="Send Practice Message";actions.appendChild(b);b.onclick=async()=>{let ok=[0,1,2,3].every(i=>document.getElementById("c"+i+key).checked),f=document.getElementById("f"+key);if(!ok){f.className="feedback warn";f.textContent="Complete every final check before sending.";return}f.className="feedback ok";f.textContent="Sent. Now verify it in Sent.";await complete(key,20)}}
+function searchPractice(body,actions,key){body.innerHTML=`<div class="sim"><div class="simhead">🔎 Practice Search</div><input id="sq${key}" placeholder="safe email communication for students"><div id="res${key}"></div><div id="f${key}" class="feedback"></div></div>`;let b=document.createElement("button");b.className="primary";b.textContent="Run Search";actions.appendChild(b);b.onclick=async()=>{let q=document.getElementById("sq"+key).value.trim(),r=document.getElementById("res"+key),f=document.getElementById("f"+key);if(q.split(" ").length<3){f.className="feedback warn";f.textContent="Use several meaningful keywords.";return}r.innerHTML='<div class="option" id="best">Result A — Safe email communication guide</div><div class="option">Result B — Random entertainment</div><div class="option">Result C — Unrelated advertisement</div>';document.getElementById("best").onclick=async()=>{f.className="feedback ok";f.textContent="Correct result selected. You matched the search intent.";await complete(key,20)}}}
+function sequence(body,actions,key){let steps=["Open email","Compose","Check recipient","Check subject","Attach file","Send","Verify in Sent"],order=[];body.innerHTML=`<p>Click the steps in the correct order.</p><div class="sequence">${steps.map((x,i)=>`<div class="seq" data-i="${i}">${x}</div>`).join("")}</div><div id="f${key}" class="feedback"></div>`;body.querySelectorAll(".seq").forEach(o=>o.onclick=async()=>{if(o.classList.contains("sel"))return;o.classList.add("sel");order.push(+o.dataset.i);if(order.length===steps.length){let f=document.getElementById("f"+key);if(order.join(",")==="0,1,2,3,4,5,6"){f.className="feedback ok";f.textContent="Perfect sequence.";await complete(key,25)}else{f.className="feedback warn";f.textContent="Wrong order. Try again.";body.querySelectorAll(".seq").forEach(x=>x.classList.remove("sel"));order=[]}}})}
+function mastery(body,actions,key){body.innerHTML=`<p>Enter the teacher-awarded practical score.</p><label>Score out of 20</label><input id="sc${key}" type="number" min="0" max="20" placeholder="e.g. 18"><label class="option"><input id="nc${key}" type="checkbox"> No critical failure</label><div id="f${key}" class="feedback"></div>`;let b=document.createElement("button");b.className="primary";b.textContent="Record Mastery";actions.appendChild(b);b.onclick=async()=>{let sc=+document.getElementById("sc"+key).value,nc=document.getElementById("nc"+key).checked,f=document.getElementById("f"+key);if(sc<0||sc>20||!Number.isFinite(sc)){f.className="feedback warn";f.textContent="Enter a valid score from 0 to 20.";return}S.score=sc;S.mastery=sc>=16&&nc;save();f.className="feedback "+(S.mastery?"ok":"warn");f.textContent=S.mastery?"GREEN — Mastery achieved.":"AMBER/RED — Remediation recommended.";await complete(key,20);top()}}
+function draw(id,i,title,key,body,actions,done){
+ if(id==="M0"&&i===3)return diagnostic(body,actions,key);
+ if(id==="M0"&&i===5)return checklist(body,actions,key,["Click once","Double-click","Select an item","Drag an item","Use keyboard"],15);
+ if(id==="M1"&&i===1)return quiz(body,actions,key,"Which browser control enters a website address?",["Search results","Address bar","Recycle Bin"],1,15);
+ if(id==="M2"&&i===2)return quiz(body,actions,key,"Which search query is strongest?",["email","safe email communication for senior high school students","things online"],1,15);
+ if(id==="M2"&&i===4)return searchPractice(body,actions,key);
+ if(id==="M3"&&i===3)return loginPractice(body,actions,key);
+ if(id==="M4"&&i===2)return quiz(body,actions,key,"Which subject line is strongest?",["Hi","ICT Assignment Submission — Form 2","Important"],1,15);
+ if(id==="M4"&&i===3)return emailComposer(body,actions,key);
+ if(id==="M5"&&i===2)return attachment(body,actions,key);
+ if(id==="M5"&&i===3)return quiz(body,actions,key,"Attachment not visible yet. What should you do?",["Send immediately","Wait for upload and confirm it appears","Close browser"],1,20);
+ if(id==="M5"&&i===4)return checklist(body,actions,key,["Locate correct file","Select correct file","Wait for upload","Confirm attachment is visible"],25);
+ if(id==="M6"&&i===1)return sendPractice(body,actions,key);
+ if(id==="M6"&&i===3)return sequence(body,actions,key);
+ if(id==="M8"&&i===1){body.innerHTML='<p><strong>Authentic integrated challenge:</strong></p><div class="notice"><ol><li>Open browser and find the LMS.</li><li>Log in.</li><li>Compose a professional email.</li><li>Attach the correct file.</li><li>Send and verify in Sent.</li></ol></div><p class="small">Teacher observes the live performance; the LMS records the learning activity.</p>';let b=document.createElement("button");b.className="primary";b.textContent="Launch Integrated Challenge";actions.appendChild(b);b.onclick=()=>complete(key,30);return}
+ if(id==="M9"&&i===2)return mastery(body,actions,key);
+ if(Q[key]){let q=Q[key];return quiz(body,actions,key,q[0],q[1],q[2],10)}
+ body.innerHTML=`<p><strong>Practical task:</strong> Complete “${esc(title)}” using the procedure demonstrated by the teacher.</p><div class="video" style="background:#17253a;color:#fff;padding:20px;border-radius:9px;text-align:center">▶<br><strong>Observe → Practise → Feedback → Perform</strong></div>`;let b=document.createElement("button");b.className="primary";b.textContent="✓ I completed the practical task";actions.appendChild(b);b.onclick=()=>complete(key,10)
+}
+function loginPractice(body,actions,key){body.innerHTML=`<div class="sim"><div class="simhead">🔐 Practice Login</div><label>Email</label><input id="le${key}" placeholder="student@example.com"><label>Password</label><input id="lp${key}" type="password"><div id="f${key}" class="feedback"></div></div>`;let b=document.createElement("button");b.className="primary";b.textContent="Check Login";actions.appendChild(b);b.onclick=async()=>{let e=document.getElementById("le"+key).value.trim(),p=document.getElementById("lp"+key).value,f=document.getElementById("f"+key);if(!e.includes("@")||p.length<6){f.className="feedback warn";f.textContent="Check email format and use at least 6 password characters.";return}f.className="feedback ok";f.textContent="Practice login accepted. Never reveal your real password.";await complete(key,15)}}
+function peer(){document.getElementById("app").innerHTML=`<div class="card"><h2>🤝 Peer Collaboration</h2><p>Driver operates the computer. Navigator checks the procedure. Swap roles.</p><textarea id="post" placeholder="Share a troubleshooting tip..."></textarea><button class="primary" id="pb">Post Tip</button><div>${S.posts.map(x=>`<div class="notice">🤝 ${esc(x)}</div>`).join("")}</div></div>`;document.getElementById("pb").onclick=()=>{let v=document.getElementById("post").value.trim();if(v){S.posts.push(v);S.xp+=5;save();peer();top()}}}
+function analytics(){let rows=M.map(m=>{let p=mp(m[0]);return`<tr><td>${m[1]}</td><td>${p.d}</td><td>${p.t}</td><td>${p.p}%</td></tr>`}).join("");let acc=S.total?Math.round(S.correct/S.total*100):0;document.getElementById("app").innerHTML=`<div class="card"><h2>📊 Learner Analytics</h2><div class="grid"><div class="card kpi"><h3>Completion</h3><div class="num">${pct()}%</div></div><div class="card kpi"><h3>XP</h3><div class="num">${S.xp}</div></div><div class="card kpi"><h3>Quiz Accuracy</h3><div class="num">${acc}%</div></div><div class="card kpi"><h3>Mastery</h3><span class="badge ${status()[0]}">${status()[1]}</span></div></div></div><div class="card"><h3>Module Progress</h3><table><tr><th>Module</th><th>Done</th><th>Total</th><th>Progress</th></tr>${rows}</table></div>`}
+function badges(){let a=[["🚀 First Step",S.done.length>=1],["🌱 Five Activities",S.done.length>=5],["🔥 Ten Activities",S.done.length>=10],["🏆 Halfway",pct()>=50],["🎓 Mastery",S.mastery===true],["💯 Complete",pct()===100]];document.getElementById("app").innerHTML=`<div class="card"><h2>🏅 Achievements</h2><div class="grid">${a.map(x=>`<div class="card"><h3>${x[0]}</h3><span class="badge ${x[1]?"green":"amber"}">${x[1]?"Unlocked":"Locked"}</span></div>`).join("")}</div></div>`}
+async function adminHome(){
+  const r = await db.from("profiles")
+    .select("id,full_name,email,role,created_at")
+    .order("created_at",{ascending:true});
+  const p = r.data || [];
+
+  let progressRows = [];
+  try{
+    const pr = await db.from("learner_progress")
+      .select("user_id,module_id,activity_id,completed,xp");
+    if(!pr.error) progressRows = pr.data || [];
+  }catch(e){ console.warn(e); }
+
+  const students = p.filter(x=>x.role==="student");
+  const progressByUser = {};
+  progressRows.forEach(x=>{
+    if(!progressByUser[x.user_id]) progressByUser[x.user_id]={done:new Set(),xp:0};
+    if(x.completed) progressByUser[x.user_id].done.add(`${x.module_id}-${x.activity_id}`);
+    progressByUser[x.user_id].xp += Number(x.xp)||0;
+  });
+
+  const rows = students.map(x=>{
+    const q = progressByUser[x.id] || {done:new Set(),xp:0};
+    const pct = Math.min(100, Math.round((q.done.size / TOTAL) * 100));
+    return `<tr>
+      <td><strong>${esc(x.full_name||"Unnamed")}</strong><br><small>${esc(x.email||"")}</small></td>
+      <td>${q.done.size} / ${TOTAL}</td>
+      <td><div class="progress"><div class="bar" style="width:${pct}%"></div></div><small>${pct}%</small></td>
+      <td>${q.xp} XP</td>
+    </tr>`;
+  }).join("");
+
+  document.getElementById("app").innerHTML=`
+    <div class="card">
+      <h2>🛡️ Administrator Dashboard — Phase 4</h2>
+      <p>Welcome, <strong>${esc(profile?.full_name||"Administrator")}</strong>.</p>
+      <div class="notice">Learner activity is now designed to persist in Supabase so progress can follow the student across devices.</div>
+    </div>
+
+    <div class="grid">
+      <div class="card kpi"><h3>Total Profiles</h3><div class="num">${p.length}</div></div>
+      <div class="card kpi"><h3>Students</h3><div class="num">${students.length}</div></div>
+      <div class="card kpi"><h3>Administrators</h3><div class="num">${p.filter(x=>x.role==="admin").length}</div></div>
+      <div class="card kpi"><h3>Course Activities</h3><div class="num">${TOTAL}</div></div>
+    </div>
+
+    <div class="card">
+      <h3>📊 Student Progress</h3>
+      ${rows ? `<div style="overflow:auto"><table>
+        <tr><th>Learner</th><th>Completed</th><th>Progress</th><th>XP</th></tr>
+        ${rows}
+      </table></div>` : "<p>No student progress recorded yet.</p>"}
+    </div>
+
+    <div class="card">
+      <h3>👥 Registered Profiles</h3>
+      ${p.map(x=>`<div class="notice"><strong>${esc(x.full_name||"Unnamed")}</strong><br>${esc(x.email||"")} <span class="badge ${x.role==="admin"?"red":"green"}">${esc(x.role)}</span></div>`).join("")}
+    </div>`;
+}
+function adminStart(){document.getElementById("nav").innerHTML='<button class="sel">🏠 Administrator Dashboard</button><button id="users">👥 Users</button><hr><button id="logout" style="color:#b42318">🚪 Sign Out</button>';document.getElementById("logout").onclick=logout;document.getElementById("users").onclick=async()=>{let r=await db.from("profiles").select("full_name,email,role,id").order("created_at",{ascending:true});document.getElementById("app").innerHTML=`<div class="card"><h2>👥 Users</h2><table><tr><th>Name</th><th>Email</th><th>Role</th></tr>${(r.data||[]).map(x=>`<tr><td>${esc(x.full_name)}</td><td>${esc(x.email)}</td><td>${esc(x.role)}</td></tr>`).join("")}</table></div>`};adminHome()}
+document.getElementById("loginBtn").onclick=login;
+document.getElementById("registerBtn").onclick=()=>location.href="register.html";
+document.getElementById("password").onkeydown=e=>{if(e.key==="Enter")login()};
+(async()=>{try{let r=await db.auth.getSession();if(r.data.session?.user){user=r.data.session.user;let p=await db.from("profiles").select("id,full_name,email,role").eq("id",user.id).maybeSingle();if(p.data){profile=p.data;S.learnerName=S.learnerName||profile.full_name||"";save();await loadCloudProgress();document.getElementById("login").classList.add("hidden");document.getElementById("shell").classList.remove("hidden");conn("✓ Session restored.");top();profile.role==="admin"?adminStart():(buildNav("home"),home())}}}catch(e){console.warn(e)}})();
+</script>
+<div style="text-align:center;padding:20px;color:#64748b;font-size:12px">AFSHTS Practical ICT Skills Lab • Phase 4 • Learning pathway and mastery enabled</div>
+</body>
+</html>
