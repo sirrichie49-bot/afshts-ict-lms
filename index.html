@@ -446,42 +446,6 @@ async function syncProgress(moduleId, activityId, xpAmount){
   }
 }
 
-    /* First try the authenticated-user version. */
-    let result = await supabaseClient
-      .from("learner_progress")
-      .upsert(payload);
-
-    /* If the existing table does not yet have user_id, retry
-       with the older prototype columns. */
-    if(result.error){
-      const legacyPayload = {
-        learner_name: S.learnerName || currentProfile?.full_name || "Learner",
-        module_id: moduleId,
-        activity_id: activityId,
-        completed: true,
-        xp: xpAmount
-      };
-
-      result = await supabaseClient
-        .from("learner_progress")
-        .upsert(legacyPayload);
-    }
-
-    if(result.error){
-      console.warn("Progress sync unavailable:",result.error.message);
-      setConnection("✓ LMS working locally; cloud sync unavailable.");
-      return false;
-    }
-
-    setConnection("✓ Progress saved locally and synced to Supabase.");
-    return true;
-  }catch(error){
-    console.warn("Progress sync exception:",error);
-    setConnection("✓ LMS working locally; cloud sync unavailable.");
-    return false;
-  }
-}
-
 function setConnection(text){
   const el = document.getElementById("connectionStatus");
   if(el) el.textContent = text;
