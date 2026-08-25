@@ -125,43 +125,127 @@ th{background:var(--light)}
 <body>
 <div id="loginScreen" class="login-wrap">
   <div class="login-card">
-    <h1>🎓 AFSHTS Practical ICT Skills Lab</h1>
-    <p>Interactive LMS — Secure Login</p>
 
-    <div id="loginMessage"></div>
+    <!-- ================= LOGIN ================= -->
+    <div id="loginView">
 
-    <label for="loginEmail">Email address</label>
-    <input id="loginEmail" type="email" placeholder="Enter your email" autocomplete="username">
+      <h1>🎓 AFSHTS Practical ICT Skills Lab</h1>
+      <p>Interactive LMS — Secure Login</p>
 
-    <label for="loginPassword">Password</label>
-    <input id="loginPassword" type="password" placeholder="Enter your password" autocomplete="current-password">
+      <div id="loginMessage"></div>
 
-    <button id="loginBtn" class="primary" style="width:100%">Sign In</button>
+      <label for="loginEmail">Email address</label>
+      <input
+        id="loginEmail"
+        type="email"
+        placeholder="Enter your email"
+        autocomplete="username"
+      >
 
-    <p class="small" style="margin-top:15px">
-      Sign in with the administrator or student account created in Supabase Authentication.
-    </p>
-  </div>
-</div>
+      <label for="loginPassword">Password</label>
+      <input
+        id="loginPassword"
+        type="password"
+        placeholder="Enter your password"
+        autocomplete="current-password"
+      >
 
-<div id="appShell" class="hidden">
-<header>
-  <div class="top-row">
-    <div>
-      <h1>AFSHTS Practical ICT Skills Lab</h1>
-      <div id="top">Interactive LMS — Final Prototype</div>
-      <div id="connectionStatus">Checking connection…</div>
+      <button
+        id="loginBtn"
+        class="primary"
+        style="width:100%"
+        type="button"
+      >
+        Sign In
+      </button>
+
+      <button
+        id="showRegisterBtn"
+        class="secondary"
+        style="width:100%;margin-top:10px"
+        type="button"
+      >
+        Create Student Account
+      </button>
+
+      <p class="small" style="margin-top:15px">
+        Sign in with your administrator or student account.
+      </p>
+
     </div>
-    <div class="top-progress">
-      <div class="progress"><div id="globalProgressBar" class="progress-bar"></div></div>
-    </div>
-  </div>
-</header>
 
-<div class="layout">
-  <aside><nav id="nav"></nav></aside>
-  <main id="app"></main>
-</div>
+
+    <!-- ================= STUDENT REGISTRATION ================= -->
+    <div id="registerView" class="hidden">
+
+      <h1>🎓 Create Student Account</h1>
+
+      <p>
+        Register to access the AFSHTS Practical ICT Skills Lab.
+      </p>
+
+      <div id="registerMessage"></div>
+
+      <label for="registerFullName">Full name</label>
+      <input
+        id="registerFullName"
+        type="text"
+        placeholder="Enter your full name"
+        autocomplete="name"
+      >
+
+      <label for="registerEmail">Email address</label>
+      <input
+        id="registerEmail"
+        type="email"
+        placeholder="Enter your email"
+        autocomplete="email"
+      >
+
+      <label for="registerPassword">Password</label>
+      <input
+        id="registerPassword"
+        type="password"
+        placeholder="At least 6 characters"
+        autocomplete="new-password"
+        minlength="6"
+      >
+
+      <label for="registerConfirmPassword">Confirm password</label>
+      <input
+        id="registerConfirmPassword"
+        type="password"
+        placeholder="Re-enter your password"
+        autocomplete="new-password"
+        minlength="6"
+      >
+
+      <button
+        id="registerBtn"
+        class="primary"
+        style="width:100%"
+        type="button"
+      >
+        Create Student Account
+      </button>
+
+      <button
+        id="backToLoginBtn"
+        class="secondary"
+        style="width:100%;margin-top:10px"
+        type="button"
+      >
+        ← Back to Sign In
+      </button>
+
+      <p class="small" style="margin-top:15px">
+        New accounts created here are automatically registered as
+        <strong>student</strong> accounts.
+      </p>
+
+    </div>
+
+  </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -424,101 +508,642 @@ function getActivePage(){
   return selected?.dataset.page || "home";
 }
 
-/* ---------- AUTHENTICATION ---------- */
+/* =========================================================
+   AUTHENTICATION
+   LOGIN + STUDENT REGISTRATION
+   ========================================================= */
+
 function showLoginMessage(message,type="warn"){
   const box = document.getElementById("loginMessage");
-  box.innerHTML = `<div class="feedback ${type}">${esc(message)}</div>`;
+
+  if(!box) return;
+
+  box.innerHTML =
+    `<div class="feedback ${type}">${esc(message)}</div>`;
 }
 
+
+function showRegisterMessage(message,type="warn"){
+  const box = document.getElementById("registerMessage");
+
+  if(!box) return;
+
+  box.innerHTML =
+    `<div class="feedback ${type}">${esc(message)}</div>`;
+}
+
+
+/* ---------- SHOW LOGIN FORM ---------- */
+
+function showLoginView(){
+
+  document.getElementById("loginView")
+    .classList.remove("hidden");
+
+  document.getElementById("registerView")
+    .classList.add("hidden");
+
+  const msg = document.getElementById("registerMessage");
+
+  if(msg) msg.innerHTML = "";
+
+}
+
+
+/* ---------- SHOW REGISTRATION FORM ---------- */
+
+function showRegisterView(){
+
+  document.getElementById("loginView")
+    .classList.add("hidden");
+
+  document.getElementById("registerView")
+    .classList.remove("hidden");
+
+  const msg = document.getElementById("loginMessage");
+
+  if(msg) msg.innerHTML = "";
+
+}
+
+
+/* =========================================================
+   LOGIN
+   ========================================================= */
+
 async function login(){
+
   if(!supabaseClient){
-    showLoginMessage("Supabase could not be initialized. Check the browser console.");
+
+    showLoginMessage(
+      "Supabase could not be initialized. Check the browser console."
+    );
+
     return;
   }
 
-  const email = document.getElementById("loginEmail").value.trim();
-  const password = document.getElementById("loginPassword").value;
+
+  const email =
+    document.getElementById("loginEmail")
+      .value
+      .trim()
+      .toLowerCase();
+
+  const password =
+    document.getElementById("loginPassword")
+      .value;
+
 
   if(!email || !password){
-    showLoginMessage("Enter both email address and password.");
+
+    showLoginMessage(
+      "Enter both email address and password."
+    );
+
     return;
   }
 
-  const btn = document.getElementById("loginBtn");
+
+  const btn =
+    document.getElementById("loginBtn");
+
+
   btn.disabled = true;
   btn.textContent = "Signing in…";
-  showLoginMessage("Checking your account…","warn");
+
+
+  showLoginMessage(
+    "Checking your account…",
+    "warn"
+  );
+
 
   try{
-    const {data,error} = await supabaseClient.auth.signInWithPassword({
-      email,password
-    });
+
+    const {data,error} =
+      await supabaseClient.auth.signInWithPassword({
+        email,
+        password
+      });
+
 
     if(error) throw error;
 
+
     currentUser = data.user;
 
-    const {data:profile,error:profileError} = await supabaseClient
-      .from("profiles")
-      .select("id,full_name,email,role")
-      .eq("id",currentUser.id)
-      .maybeSingle();
 
-    if(profileError) throw profileError;
+    /*
+      Get the user's LMS profile.
+    */
+
+    let {
+      data:profile,
+      error:profileError
+    } =
+      await supabaseClient
+        .from("profiles")
+        .select("id,full_name,email,role")
+        .eq("id",currentUser.id)
+        .maybeSingle();
+
+
+    if(profileError)
+      throw profileError;
+
+
+    /*
+      If the student was created through
+      the registration form but the profile
+      does not yet exist, create it now.
+
+      The role is ALWAYS student here.
+    */
 
     if(!profile){
-      await supabaseClient.auth.signOut();
-      throw new Error("No profile was found for this account. Add the user's row to public.profiles.");
+
+      const fullName =
+        currentUser.user_metadata?.full_name ||
+        currentUser.email?.split("@")[0] ||
+        "Student";
+
+
+      const {
+        data:newProfile,
+        error:createProfileError
+      } =
+        await supabaseClient
+          .from("profiles")
+          .insert({
+            id: currentUser.id,
+            full_name: fullName,
+            email: currentUser.email,
+            role: "student"
+          })
+          .select("id,full_name,email,role")
+          .single();
+
+
+      if(createProfileError){
+
+        await supabaseClient.auth.signOut();
+
+        throw new Error(
+          "Your account was created, but your student profile could not be created. " +
+          createProfileError.message
+        );
+      }
+
+
+      profile = newProfile;
     }
 
+
+    /*
+      Only admin and student are allowed.
+    */
+
     if(!["admin","student"].includes(profile.role)){
+
       await supabaseClient.auth.signOut();
-      throw new Error("The profile role must be either admin or student.");
+
+      throw new Error(
+        "The profile role must be either admin or student."
+      );
     }
+
 
     currentProfile = profile;
 
+
+    /*
+      Use the student's real name.
+    */
+
     if(profile.full_name && !S.learnerName){
+
       S.learnerName = profile.full_name;
+
       save();
     }
 
-    document.getElementById("loginScreen").classList.add("hidden");
-    document.getElementById("appShell").classList.remove("hidden");
 
-    setConnection("✓ Signed in. Supabase connected.");
+    /*
+      Hide login screen.
+    */
+
+    document
+      .getElementById("loginScreen")
+      .classList.add("hidden");
+
+
+    document
+      .getElementById("appShell")
+      .classList.remove("hidden");
+
+
+    setConnection(
+      "✓ Signed in. Supabase connected."
+    );
+
+
     updateTop();
 
+
+    /*
+      Role-based routing.
+    */
+
     if(profile.role === "admin"){
+
       buildAdminNav();
+
       adminHome();
+
     }else{
+
       buildNav("home");
+
       home();
+
     }
 
+
   }catch(error){
-    console.error("Login error:",error);
-    showLoginMessage(error.message || "Login failed.");
+
+    console.error(
+      "Login error:",
+      error
+    );
+
+
+    showLoginMessage(
+      error.message || "Login failed.",
+      "err"
+    );
+
+
   }finally{
+
     btn.disabled = false;
+
     btn.textContent = "Sign In";
   }
 }
 
-async function logout(){
-  try{
-    if(supabaseClient) await supabaseClient.auth.signOut();
-  }catch(error){
-    console.warn("Sign out warning:",error);
+
+/* =========================================================
+   STUDENT REGISTRATION
+   ========================================================= */
+
+async function registerStudent(){
+
+  if(!supabaseClient){
+
+    showRegisterMessage(
+      "Supabase could not be initialized. Please refresh the page.",
+      "err"
+    );
+
+    return;
   }
 
+
+  const fullName =
+    document
+      .getElementById("registerFullName")
+      .value
+      .trim();
+
+
+  const email =
+    document
+      .getElementById("registerEmail")
+      .value
+      .trim()
+      .toLowerCase();
+
+
+  const password =
+    document
+      .getElementById("registerPassword")
+      .value;
+
+
+  const confirmPassword =
+    document
+      .getElementById("registerConfirmPassword")
+      .value;
+
+
+  /* ---------- VALIDATION ---------- */
+
+  if(!fullName){
+
+    showRegisterMessage(
+      "Please enter your full name.",
+      "warn"
+    );
+
+    return;
+  }
+
+
+  if(!email){
+
+    showRegisterMessage(
+      "Please enter your email address.",
+      "warn"
+    );
+
+    return;
+  }
+
+
+  if(password.length < 6){
+
+    showRegisterMessage(
+      "Password must be at least 6 characters.",
+      "warn"
+    );
+
+    return;
+  }
+
+
+  if(password !== confirmPassword){
+
+    showRegisterMessage(
+      "The two passwords do not match.",
+      "warn"
+    );
+
+    return;
+  }
+
+
+  const btn =
+    document.getElementById("registerBtn");
+
+
+  btn.disabled = true;
+
+  btn.textContent =
+    "Creating account…";
+
+
+  showRegisterMessage(
+    "Please wait while your student account is created…",
+    "warn"
+  );
+
+
+  try{
+
+    /*
+      IMPORTANT:
+      The role is deliberately fixed to "student".
+      A visitor cannot create an admin account.
+    */
+
+    const {
+      data,
+      error
+    } =
+      await supabaseClient.auth.signUp({
+
+        email: email,
+
+        password: password,
+
+        options:{
+
+          data:{
+            full_name: fullName,
+            role: "student"
+          }
+
+        }
+
+      });
+
+
+    if(error) throw error;
+
+
+    /*
+      Supabase may return an active session
+      immediately, or may require email confirmation.
+    */
+
+    if(data?.user){
+
+      /*
+        If a session exists, create the
+        student profile immediately.
+      */
+
+      if(data.session){
+
+        const {
+          data:profile,
+          error:profileError
+        } =
+          await supabaseClient
+            .from("profiles")
+            .insert({
+
+              id: data.user.id,
+
+              full_name: fullName,
+
+              email: email,
+
+              role: "student"
+
+            })
+            .select("id,full_name,email,role")
+            .single();
+
+
+        /*
+          If the profile already exists because
+          Supabase has a database trigger, do not
+          treat that as a fatal problem.
+        */
+
+        if(profileError){
+
+          const existing =
+            await supabaseClient
+              .from("profiles")
+              .select("id,full_name,email,role")
+              .eq("id",data.user.id)
+              .maybeSingle();
+
+
+          if(existing.error || !existing.data){
+
+            throw new Error(
+              "Account was created, but the student profile could not be created. " +
+              profileError.message
+            );
+          }
+        }
+
+
+        /*
+          Go directly into the LMS.
+        */
+
+        currentUser = data.user;
+
+
+        const profileResult =
+          await supabaseClient
+            .from("profiles")
+            .select("id,full_name,email,role")
+            .eq("id",data.user.id)
+            .maybeSingle();
+
+
+        if(profileResult.data){
+
+          currentProfile =
+            profileResult.data;
+
+          S.learnerName =
+            currentProfile.full_name || fullName;
+
+          save();
+
+          document
+            .getElementById("loginScreen")
+            .classList.add("hidden");
+
+          document
+            .getElementById("appShell")
+            .classList.remove("hidden");
+
+          setConnection(
+            "✓ Student account created successfully."
+          );
+
+          updateTop();
+
+          buildNav("home");
+
+          home();
+
+          return;
+        }
+      }
+
+
+      /*
+        Email confirmation is enabled.
+      */
+
+      showRegisterMessage(
+        "Your student account has been created successfully. " +
+        "Please check your email and confirm your account. " +
+        "After confirmation, return here and sign in.",
+        "ok"
+      );
+
+
+      /*
+        Clear password fields.
+      */
+
+      document
+        .getElementById("registerPassword")
+        .value = "";
+
+      document
+        .getElementById("registerConfirmPassword")
+        .value = "";
+
+    }
+
+
+  }catch(error){
+
+    console.error(
+      "Student registration error:",
+      error
+    );
+
+
+    showRegisterMessage(
+      error.message ||
+      "Student registration failed. Please try again.",
+      "err"
+    );
+
+
+  }finally{
+
+    btn.disabled = false;
+
+    btn.textContent =
+      "Create Student Account";
+  }
+}
+
+
+/* =========================================================
+   LOGOUT
+   ========================================================= */
+
+async function logout(){
+
+  try{
+
+    if(supabaseClient){
+
+      await supabaseClient
+        .auth
+        .signOut();
+    }
+
+  }catch(error){
+
+    console.warn(
+      "Sign out warning:",
+      error
+    );
+
+  }
+
+
   currentUser = null;
+
   currentProfile = null;
-  document.getElementById("appShell").classList.add("hidden");
-  document.getElementById("loginScreen").classList.remove("hidden");
-  document.getElementById("loginPassword").value = "";
-  showLoginMessage("You have been signed out.","ok");
+
+
+  document
+    .getElementById("appShell")
+    .classList.add("hidden");
+
+
+  document
+    .getElementById("loginScreen")
+    .classList.remove("hidden");
+
+
+  document
+    .getElementById("loginPassword")
+    .value = "";
+
+
+  showLoginView();
+
+
+  showLoginMessage(
+    "You have been signed out.",
+    "ok"
+  );
 }
 
 /* ---------- STUDENT NAVIGATION ---------- */
@@ -2043,11 +2668,35 @@ function adminAbout(){
 }
   
 /* ---------- START ---------- */
-document.getElementById("loginBtn").addEventListener("click",login);
+/* ---------- AUTHENTICATION CONTROLS ---------- */
 
-document.getElementById("loginPassword").addEventListener("keydown",e=>{
-  if(e.key==="Enter") login();
-});
+document
+  .getElementById("loginBtn")
+  .addEventListener("click",login);
+
+
+document
+  .getElementById("loginPassword")
+  .addEventListener("keydown",e=>{
+    if(e.key === "Enter"){
+      login();
+    }
+  });
+
+
+document
+  .getElementById("showRegisterBtn")
+  .addEventListener("click",showRegisterView);
+
+
+document
+  .getElementById("backToLoginBtn")
+  .addEventListener("click",showLoginView);
+
+
+document
+  .getElementById("registerBtn")
+  .addEventListener("click",registerStudent);
 
 /* If a valid session already exists, restore it. */
 (async function restoreSession(){
