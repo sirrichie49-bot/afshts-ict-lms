@@ -310,14 +310,57 @@ async function syncProgress(moduleId, activityId, xpAmount){
   if(!supabaseClient || !currentUser) return false;
 
   try{
-    const payload = {
-      user_id: currentUser.id,
-      learner_name: S.learnerName || currentProfile?.full_name || "Learner",
-      module_id: moduleId,
-      activity_id: activityId,
-      completed: true,
-      xp: xpAmount
-    };
+    const userId = currentUser.id;
+    const learnerName =
+      S.learnerName ||
+      currentProfile?.full_name ||
+      currentUser.email ||
+      "Learner";
+
+    // Check whether this activity has already been saved
+    const { data: existing, error: checkError } = await supabaseClient
+      .from("learner_progress")
+      .select("id")
+      .eq("user_id", userId)
+      .eq("module_id", moduleId)
+      .eq("activity_id", activityId)
+      .maybeSingle();
+
+    if(checkError){
+      console.error("Progress check failed:", checkError);
+      setConnection("✓ LMS working locally; cloud sync unavailable.");
+      return false;
+    }
+
+    // Insert only when this activity is not already recorded
+    if(!existing){
+      const { error: insertError } = await supabaseClient
+        .from("learner_progress")
+        .insert({
+          user_id: userId,
+          learner_name: learnerName,
+          module_id: moduleId,
+          activity_id: activityId,
+          completed: true,
+          xp: xpAmount
+        });
+
+      if(insertError){
+        console.error("Progress insert failed:", insertError);
+        setConnection("✓ LMS working locally; cloud sync unavailable.");
+        return false;
+      }
+    }
+
+    setConnection("✓ Progress saved locally and synced to Supabase.");
+    return true;
+
+  }catch(error){
+    console.error("Progress sync exception:", error);
+    setConnection("✓ LMS working locally; cloud sync unavailable.");
+    return false;
+  }
+}
 
     /* First try the authenticated-user version. */
     let result = await supabaseClient
