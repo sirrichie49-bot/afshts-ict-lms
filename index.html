@@ -165,6 +165,20 @@ th{background:var(--light)}
 .admin-stat{border:1px solid var(--line);border-radius:10px;padding:16px;background:#fff}
 .user-row{display:flex;justify-content:space-between;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)}
 .user-row:last-child{border-bottom:0}
+
+.m0-stepper{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:16px 0 20px}
+.m0-step{display:flex;align-items:center;gap:10px;text-align:left;background:#fff;border:1px solid var(--line);border-radius:10px;padding:12px;cursor:pointer;min-height:58px;color:var(--navy);font-weight:600}
+.m0-step:hover{border-color:#315ea8;box-shadow:0 3px 10px rgba(20,45,75,.08)}
+.m0-step.active{border:2px solid #315ea8;background:#eef5ff}
+.m0-step.done{border-left:5px solid var(--green)}
+.m0-step-num{width:30px;height:30px;min-width:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:#e8eef7;color:var(--navy);font-weight:700}
+.m0-step.active .m0-step-num{background:#315ea8;color:#fff}
+.m0-step.done .m0-step-num{background:#e8f5e9;color:var(--green)}
+.m0-step-title{line-height:1.35}
+@media(max-width:600px){
+  .m0-stepper{grid-template-columns:1fr;gap:8px}
+  .m0-step{min-height:52px;padding:11px 12px}
+}
 @media(max-width:900px){
   .layout{grid-template-columns:1fr}
   aside{position:static;height:auto;border-right:0;border-bottom:1px solid var(--line)}
@@ -1348,6 +1362,47 @@ function modulePage(id){
 
   const p = moduleProgress(id);
 
+  /* M0 uses a guided activity navigator so learners can clearly see all six
+     activities without needing to search through a long page. Other modules
+     retain the original multi-card layout. */
+  if(id === "M0"){
+    app.innerHTML = `
+      <div class="card">
+        <h2>${m[1]}</h2>
+        <p>Work through the six activities in order. Each activity gives you an opportunity to learn, practise, receive feedback and try again.</p>
+        <div class="progress"><div class="progress-bar" style="width:${p.percent}%"></div></div>
+        <p>Module progress: <strong>${p.percent}%</strong> (${p.completed}/${p.total})</p>
+      </div>
+      <div class="m0-stepper" aria-label="M0 activity navigation">
+        ${m[2].map((title,index)=>{
+          const done=S.done.includes(`M0-${index}`);
+          return `<button type="button" class="m0-step ${done?'done':''}" data-m0-index="${index}" aria-label="Open activity ${index+1}: ${esc(title)}">
+            <span class="m0-step-num">${done?'✓':index+1}</span>
+            <span class="m0-step-title">${esc(title)}</span>
+          </button>`;
+        }).join("")}
+      </div>
+      <div id="m0ActivityHost"></div>
+    `;
+
+    const host=document.getElementById("m0ActivityHost");
+    const buttons=[...document.querySelectorAll("[data-m0-index]")];
+    const openActivity=(index)=>{
+      buttons.forEach((b,i)=>b.classList.toggle("active",i===index));
+      host.innerHTML="";
+      try{
+        host.appendChild(createActivity("M0",index,m[2][index]));
+        window.scrollTo({top:0,behavior:"smooth"});
+      }catch(error){
+        console.error("M0 activity render error:",error);
+        host.innerHTML=`<div class="activity-card"><h3>${index+1}. ${esc(m[2][index])}</h3><div class="feedback err"><strong>This activity could not be displayed.</strong><br>Please refresh the page and try again.</div></div>`;
+      }
+    };
+    buttons.forEach((b,i)=>b.addEventListener("click",()=>openActivity(i)));
+    openActivity(0);
+    return;
+  }
+
   app.innerHTML = `
     <div class="card">
       <h2>${m[1]}</h2>
@@ -1361,7 +1416,12 @@ function modulePage(id){
   const activities = document.getElementById("activities");
 
   m[2].forEach((title,index)=>{
-    activities.appendChild(createActivity(id,index,title));
+    try{
+      activities.appendChild(createActivity(id,index,title));
+    }catch(error){
+      console.error(`Activity render error: ${id}-${index}`,error);
+      activities.insertAdjacentHTML("beforeend",`<div class="activity-card"><h3>${index+1}. ${esc(title)}</h3><div class="feedback err">This activity could not be displayed. Please refresh and try again.</div></div>`);
+    }
   });
 }
 
