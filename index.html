@@ -165,20 +165,6 @@ th{background:var(--light)}
 .admin-stat{border:1px solid var(--line);border-radius:10px;padding:16px;background:#fff}
 .user-row{display:flex;justify-content:space-between;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)}
 .user-row:last-child{border-bottom:0}
-
-.m0-stepper{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:16px 0 20px}
-.m0-step{display:flex;align-items:center;gap:10px;text-align:left;background:#fff;border:1px solid var(--line);border-radius:10px;padding:12px;cursor:pointer;min-height:58px;color:var(--navy);font-weight:600}
-.m0-step:hover{border-color:#315ea8;box-shadow:0 3px 10px rgba(20,45,75,.08)}
-.m0-step.active{border:2px solid #315ea8;background:#eef5ff}
-.m0-step.done{border-left:5px solid var(--green)}
-.m0-step-num{width:30px;height:30px;min-width:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:#e8eef7;color:var(--navy);font-weight:700}
-.m0-step.active .m0-step-num{background:#315ea8;color:#fff}
-.m0-step.done .m0-step-num{background:#e8f5e9;color:var(--green)}
-.m0-step-title{line-height:1.35}
-@media(max-width:600px){
-  .m0-stepper{grid-template-columns:1fr;gap:8px}
-  .m0-step{min-height:52px;padding:11px 12px}
-}
 @media(max-width:900px){
   .layout{grid-template-columns:1fr}
   aside{position:static;height:auto;border-right:0;border-bottom:1px solid var(--line)}
@@ -424,6 +410,7 @@ const DEFAULT_STATE = {
   posts:[],
   diagnosticLevel:"not assessed",
   diagnosticDetails:null,
+  ratings:null,
   quizCorrect:0,
   quizTotal:0
 };
@@ -1362,47 +1349,6 @@ function modulePage(id){
 
   const p = moduleProgress(id);
 
-  /* M0 uses a guided activity navigator so learners can clearly see all six
-     activities without needing to search through a long page. Other modules
-     retain the original multi-card layout. */
-  if(id === "M0"){
-    app.innerHTML = `
-      <div class="card">
-        <h2>${m[1]}</h2>
-        <p>Work through the six activities in order. Each activity gives you an opportunity to learn, practise, receive feedback and try again.</p>
-        <div class="progress"><div class="progress-bar" style="width:${p.percent}%"></div></div>
-        <p>Module progress: <strong>${p.percent}%</strong> (${p.completed}/${p.total})</p>
-      </div>
-      <div class="m0-stepper" aria-label="M0 activity navigation">
-        ${m[2].map((title,index)=>{
-          const done=S.done.includes(`M0-${index}`);
-          return `<button type="button" class="m0-step ${done?'done':''}" data-m0-index="${index}" aria-label="Open activity ${index+1}: ${esc(title)}">
-            <span class="m0-step-num">${done?'✓':index+1}</span>
-            <span class="m0-step-title">${esc(title)}</span>
-          </button>`;
-        }).join("")}
-      </div>
-      <div id="m0ActivityHost"></div>
-    `;
-
-    const host=document.getElementById("m0ActivityHost");
-    const buttons=[...document.querySelectorAll("[data-m0-index]")];
-    const openActivity=(index)=>{
-      buttons.forEach((b,i)=>b.classList.toggle("active",i===index));
-      host.innerHTML="";
-      try{
-        host.appendChild(createActivity("M0",index,m[2][index]));
-        window.scrollTo({top:0,behavior:"smooth"});
-      }catch(error){
-        console.error("M0 activity render error:",error);
-        host.innerHTML=`<div class="activity-card"><h3>${index+1}. ${esc(m[2][index])}</h3><div class="feedback err"><strong>This activity could not be displayed.</strong><br>Please refresh the page and try again.</div></div>`;
-      }
-    };
-    buttons.forEach((b,i)=>b.addEventListener("click",()=>openActivity(i)));
-    openActivity(0);
-    return;
-  }
-
   app.innerHTML = `
     <div class="card">
       <h2>${m[1]}</h2>
@@ -1416,12 +1362,7 @@ function modulePage(id){
   const activities = document.getElementById("activities");
 
   m[2].forEach((title,index)=>{
-    try{
-      activities.appendChild(createActivity(id,index,title));
-    }catch(error){
-      console.error(`Activity render error: ${id}-${index}`,error);
-      activities.insertAdjacentHTML("beforeend",`<div class="activity-card"><h3>${index+1}. ${esc(title)}</h3><div class="feedback err">This activity could not be displayed. Please refresh and try again.</div></div>`);
-    }
+    activities.appendChild(createActivity(id,index,title));
   });
 }
 
@@ -1520,7 +1461,7 @@ function renderActivityContent(moduleId,index,title,key,content,actions,complete
     `;
     content.querySelectorAll(`[data-path]`).forEach(btn=>btn.addEventListener("click",()=>{
       const i=Number(btn.dataset.path);
-      content.querySelector(`#pathwayDetail-${key}`).innerHTML=`<strong>${esc(steps[i][0])}</strong><p>${esc(steps[i][1])}</p>`;
+      document.getElementById(`pathwayDetail-${key}`).innerHTML=`<strong>${esc(steps[i][0])}</strong><p>${esc(steps[i][1])}</p>`;
     }));
     const qs=[
       ["What is the main purpose of the diagnostic?",["To find what I can already do and what I need to improve","To replace all practical work","To give me internet access"],0],
@@ -1530,14 +1471,14 @@ function renderActivityContent(moduleId,index,title,key,content,actions,complete
     let qIndex=0, correct=0;
     const renderCheck=()=>{
       const q=qs[qIndex];
-      content.querySelector(`#courseCheck-${key}`).innerHTML=`
+      document.getElementById(`courseCheck-${key}`).innerHTML=`
         <p><strong>Question ${qIndex+1} of ${qs.length}</strong></p>
         <p>${esc(q[0])}</p>
         ${q[1].map((opt,i)=>`<label class="option"><input type="radio" name="course-${key}" value="${i}"> ${esc(opt)}</label>`).join("")}
         <button type="button" class="primary" id="courseCheckBtn-${key}">Check Answer</button>`;
-      content.querySelector(`#courseCheckBtn-${key}`).onclick=async()=>{
+      document.getElementById(`courseCheckBtn-${key}`).onclick=async()=>{
         const selected=content.querySelector(`input[name="course-${key}"]:checked`);
-        const fb=content.querySelector(`#courseFeedback-${key}`);
+        const fb=document.getElementById(`courseFeedback-${key}`);
         if(!selected){fb.className="feedback warn";fb.textContent="Choose an answer first.";return;}
         if(Number(selected.value)===q[2]){
           correct++;
@@ -1551,13 +1492,13 @@ function renderActivityContent(moduleId,index,title,key,content,actions,complete
         qIndex++;
         if(qIndex<qs.length){setTimeout(renderCheck,450);}
         else{
-          content.querySelector(`#courseCheck-${key}`).innerHTML=`<div class="notice"><strong>Course pathway understood.</strong> You are ready for the diagnostic and practical learning activities.</div>`;
+          document.getElementById(`courseCheck-${key}`).innerHTML=`<div class="notice"><strong>Course pathway understood.</strong> You are ready for the diagnostic and practical learning activities.</div>`;
           await completeActivity(key,10);
         }
       };
     };
     if(completed){
-      content.querySelector(`#courseCheck-${key}`).innerHTML=`<div class="notice"><strong>Completed.</strong> You have already demonstrated understanding of the course pathway.</div>`;
+      document.getElementById(`courseCheck-${key}`).innerHTML=`<div class="notice"><strong>Completed.</strong> You have already demonstrated understanding of the course pathway.</div>`;
     }else renderCheck();
     return;
   }
@@ -1609,9 +1550,9 @@ function renderActivityContent(moduleId,index,title,key,content,actions,complete
     `;
 
     let qIndex=0, correct=0;
-    const box=content.querySelector(`#safetyBox-${key}`);
-    const feedback=content.querySelector(`#safetyFeedback-${key}`);
-    const progress=content.querySelector(`#safetyProgress-${key}`);
+    const box=document.getElementById(`safetyBox-${key}`);
+    const feedback=document.getElementById(`safetyFeedback-${key}`);
+    const progress=document.getElementById(`safetyProgress-${key}`);
 
     const renderSafety=()=>{
       const q=scenarios[qIndex];
@@ -1622,7 +1563,7 @@ function renderActivityContent(moduleId,index,title,key,content,actions,complete
         <button type="button" class="primary" id="safetyBtn-${key}">Check Decision</button>
       `;
       feedback.textContent="";
-      content.querySelector(`#safetyBtn-${key}`).onclick=async()=>{
+      document.getElementById(`safetyBtn-${key}`).onclick=async()=>{
         const selected=content.querySelector(`input[name="safety-${key}"]:checked`);
         if(!selected){feedback.className="feedback warn";feedback.textContent="Choose the safest action first.";return;}
         if(Number(selected.value)!==q.a){
@@ -1674,9 +1615,9 @@ function renderActivityContent(moduleId,index,title,key,content,actions,complete
 
     let difficulty=1, asked=0, correct=0, maxDifficulty=1, minDifficulty=3;
     const askedIds=[];
-    const box=content.querySelector(`#adaptiveBox-${key}`);
-    const feedback=content.querySelector(`#adaptiveFeedback-${key}`);
-    const progress=content.querySelector(`#adaptiveProgress-${key}`);
+    const box=document.getElementById(`adaptiveBox-${key}`);
+    const feedback=document.getElementById(`adaptiveFeedback-${key}`);
+    const progress=document.getElementById(`adaptiveProgress-${key}`);
 
     const pickQuestion=()=>{
       let pool=questions.filter(q=>q.d===difficulty && !askedIds.includes(q));
@@ -1722,7 +1663,7 @@ function renderActivityContent(moduleId,index,title,key,content,actions,complete
         ${q.o.map((o,i)=>`<label class="option"><input type="radio" name="adaptive-${key}" value="${i}"> ${esc(o)}</label>`).join("")}
         <button type="button" class="primary" id="adaptiveBtn-${key}">Check Answer</button>
       `;
-      content.querySelector(`#adaptiveBtn-${key}`).onclick=()=>{
+      document.getElementById(`adaptiveBtn-${key}`).onclick=()=>{
         const selected=content.querySelector(`input[name="adaptive-${key}"]:checked`);
         if(!selected){feedback.className="feedback warn";feedback.textContent="Choose an answer first.";return;}
         if(Number(selected.value)===q.a){
@@ -1744,6 +1685,203 @@ function renderActivityContent(moduleId,index,title,key,content,actions,complete
       box.innerHTML=`<div class="notice"><strong>Completed.</strong> Previous diagnostic level: <strong>${esc(level)}</strong>. You can review the later remediation activities if needed.</div>`;
       progress.textContent="Completed";
     }else renderQuestion();
+    return;
+  }
+
+  /* M0 Activity 5 — Self-rating: demonstration + guided practice + feedback */
+  if(moduleId==="M0" && index===4){
+    const skills=[
+      ["Using a web browser","Open a browser, use the address bar and move between pages."],
+      ["Searching the web","Use specific keywords to find useful information."],
+      ["Understanding URLs","Recognise a web address and distinguish it from a search query."],
+      ["Logging into email","Enter your email credentials safely and recognise a secure login routine."],
+      ["Composing email","Choose a recipient, write a useful subject and clear message."],
+      ["Attaching a file","Locate the correct file, attach it and check that it is present."],
+      ["Digital safety","Protect passwords, personal information and account sessions."]
+    ];
+
+    content.innerHTML=`
+      <div class="notice">
+        <strong>Purpose:</strong> This activity helps you compare how confident you feel across the practical skills in this course. Your rating is about <em>confidence</em>, not a mark for ability.
+      </div>
+
+      <div class="step" id="ratingDemo-${key}">
+        <h4 style="margin-top:0">🎬 Interactive demonstration: How to rate yourself</h4>
+        <p><strong>Step 1:</strong> Read the skill.</p>
+        <p><strong>Step 2:</strong> Think about whether you could perform it without help.</p>
+        <p><strong>Step 3:</strong> Choose 1–5 honestly.</p>
+        <p><strong>Step 4:</strong> Submit all ratings and review the feedback.</p>
+        <button type="button" class="secondary" id="showRatingExample-${key}">Show an example</button>
+        <div id="ratingExample-${key}" class="notice hidden" aria-live="polite"></div>
+      </div>
+
+      <div class="notice">
+        <strong>Rating scale:</strong>
+        <span style="display:inline-block;margin-left:8px">1 = Need a lot of help</span> ·
+        <span>2 = Need some help</span> ·
+        <span>3 = Can do with some confidence</span> ·
+        <span>4 = Confident</span> ·
+        <span>5 = Very confident</span>
+      </div>
+
+      <div id="ratingForm-${key}"></div>
+      <div id="ratingFeedback-${key}" class="feedback" aria-live="polite"></div>
+    `;
+
+    document.getElementById(`showRatingExample-${key}`).onclick=()=>{
+      const ex=document.getElementById(`ratingExample-${key}`);
+      ex.classList.remove("hidden");
+      ex.innerHTML=`<strong>Example:</strong> If you can usually attach a file by yourself but sometimes choose the wrong file, a rating of <strong>3</strong> may be more honest than 5. The aim is to identify where practice will help.`;
+    };
+
+    const form=document.getElementById(`ratingForm-${key}`);
+    form.innerHTML=skills.map((sk,i)=>`
+      <div class="card" style="margin:14px 0;padding:18px">
+        <h4 style="margin:0 0 8px">${i+1}. ${esc(sk[0])}</h4>
+        <p class="small" style="margin-bottom:12px">${esc(sk[1])}</p>
+        <div role="radiogroup" aria-label="Confidence for ${esc(sk[0])}">
+          ${[1,2,3,4,5].map(v=>`<label class="option" style="display:inline-flex;width:auto;margin:4px 6px 4px 0;padding:10px 13px;min-height:0"><input type="radio" name="rating-${key}-${i}" value="${v}"> <strong>${v}</strong></label>`).join("")}
+        </div>
+      </div>
+    `).join("")+`<button type="button" class="primary" id="submitRatings-${key}">Submit My Self-Rating</button>`;
+
+    document.getElementById(`submitRatings-${key}`).onclick=async()=>{
+      const values=skills.map((_,i)=>content.querySelector(`input[name="rating-${key}-${i}"]:checked`));
+      const fb=document.getElementById(`ratingFeedback-${key}`);
+      if(values.some(v=>!v)){
+        fb.className="feedback warn";
+        fb.textContent=`Please rate every skill before submitting (${values.filter(Boolean).length}/${skills.length} completed).`;
+        return;
+      }
+      const ratings=values.map(v=>Number(v.value));
+      const average=ratings.reduce((a,b)=>a+b,0)/ratings.length;
+      const rounded=Math.round(average*10)/10;
+      const confidenceBand=average<2.5?"Needs strong support":average<3.5?"Developing confidence":average<4.5?"Confident":"Highly confident";
+      const comparison=S.quizTotal>0 ? (S.quizCorrect/S.quizTotal*100 > average*20+5 ? "Your diagnostic performance was stronger than your confidence rating suggests." : S.quizCorrect/S.quizTotal*100 < average*20-5 ? "Your confidence rating was higher than your diagnostic performance suggests; use the next activities to check the gap." : "Your confidence and diagnostic result are broadly aligned.") : "Complete the diagnostic to compare confidence with demonstrated performance.";
+      S.ratings={skills:skills.map((sk,i)=>({skill:sk[0],rating:ratings[i]})),average:rounded,band:confidenceBand,comparison,completedAt:new Date().toISOString()};
+      save();
+      fb.className="feedback ok";
+      fb.innerHTML=`<strong>Self-rating recorded.</strong> Your average confidence is <strong>${rounded}/5</strong> (${esc(confidenceBand)}).<br><br>${esc(comparison)}<br><br>Remember: confidence is useful evidence, but practical performance is the stronger evidence of mastery.`;
+      await completeActivity(key,10);
+      document.getElementById(`submitRatings-${key}`).disabled=true;
+      document.getElementById(`submitRatings-${key}`).textContent="✓ Self-Rating Completed";
+    };
+
+    if(completed && S.ratings){
+      form.innerHTML=`<div class="notice"><strong>Completed.</strong> Your recorded average confidence was <strong>${esc(S.ratings.average)}/5</strong> (${esc(S.ratings.band||"")}).</div>`;
+      document.getElementById(`ratingFeedback-${key}`).className="feedback ok";
+      document.getElementById(`ratingFeedback-${key}`).textContent="Your self-rating has already been recorded.";
+    }
+    return;
+  }
+
+  /* M0 Activity 6 — Mouse & keyboard warm-up: interactive practice */
+  if(moduleId==="M0" && index===5){
+    content.innerHTML=`
+      <div class="notice">
+        <strong>Goal:</strong> Practise basic mouse and keyboard actions before starting the main practical skills. You will complete three mini-challenges and receive feedback after each one.
+      </div>
+
+      <div class="step">
+        <h4 style="margin-top:0">🖱️ Demonstration 1 — Single click</h4>
+        <p>Move the pointer to the target and click it once. When successful, the target will change to show that the action was recognised.</p>
+        <button type="button" class="secondary" id="demoClick-${key}">Show me what a click does</button>
+        <div id="clickDemo-${key}" class="notice hidden" aria-live="polite"></div>
+      </div>
+      <div class="card" style="text-align:center">
+        <p><strong>Practice:</strong> Click the target below once.</p>
+        <button type="button" id="clickTarget-${key}" style="width:110px;height:70px;border-radius:14px;border:2px solid #315ea8;background:#eef3f8;font-weight:700;cursor:pointer">CLICK ME</button>
+        <div id="clickFeedback-${key}" class="feedback" aria-live="polite"></div>
+      </div>
+
+      <div class="step">
+        <h4 style="margin-top:0">⌨️ Demonstration 2 — Type accurately</h4>
+        <p>Read the phrase, then type it exactly. Accuracy is more important than speed.</p>
+        <div class="notice"><strong>Phrase:</strong> AFSHTS ICT Skills Lab</div>
+        <input id="typing-${key}" type="text" placeholder="Type the phrase here" autocomplete="off" aria-label="Type the practice phrase">
+        <button type="button" class="primary" id="checkTyping-${key}">Check Typing</button>
+        <div id="typingFeedback-${key}" class="feedback" aria-live="polite"></div>
+      </div>
+
+      <div class="step">
+        <h4 style="margin-top:0">⌨️ Demonstration 3 — Keyboard shortcuts</h4>
+        <p>Common shortcuts help you work efficiently. Select the correct shortcut for each action.</p>
+        <div id="shortcutBox-${key}"></div>
+        <div id="shortcutFeedback-${key}" class="feedback" aria-live="polite"></div>
+      </div>
+
+      <div id="warmupResult-${key}" class="notice" aria-live="polite"></div>
+    `;
+
+    let clickOK=false, typeOK=false, shortcutOK=false;
+    document.getElementById(`demoClick-${key}`).onclick=()=>{
+      const d=document.getElementById(`clickDemo-${key}`);
+      d.classList.remove("hidden");
+      d.innerHTML=`<strong>Demonstration:</strong> A single click selects or activates an item. Double-clicking is a different action and will be practised later in the course.`;
+    };
+    document.getElementById(`clickTarget-${key}`).onclick=()=>{
+      clickOK=true;
+      const fb=document.getElementById(`clickFeedback-${key}`);
+      fb.className="feedback ok";
+      fb.textContent="Correct. Your single click was recognised.";
+      checkFinish();
+    };
+    document.getElementById(`checkTyping-${key}`).onclick=()=>{
+      const value=document.getElementById(`typing-${key}`).value;
+      const fb=document.getElementById(`typingFeedback-${key}`);
+      if(value==="AFSHTS ICT Skills Lab"){
+        typeOK=true;
+        fb.className="feedback ok";
+        fb.textContent="Excellent. The phrase matches exactly.";
+      }else{
+        fb.className="feedback warn";
+        fb.textContent="Not yet. Check capital letters, spaces and spelling, then try again.";
+      }
+      checkFinish();
+    };
+
+    const shortcuts=[
+      ["Copy selected text",["Ctrl + C","Ctrl + P","Ctrl + Z"],0],
+      ["Paste copied text",["Ctrl + V","Ctrl + S","Ctrl + A"],0],
+      ["Select all text",["Ctrl + A","Ctrl + X","Ctrl + F"],0]
+    ];
+    let si=0;
+    const renderShortcut=()=>{
+      const q=shortcuts[si];
+      document.getElementById(`shortcutBox-${key}`).innerHTML=`
+        <p><strong>Question ${si+1} of ${shortcuts.length}:</strong> ${esc(q[0])}</p>
+        ${q[1].map((o,i)=>`<label class="option"><input type="radio" name="shortcut-${key}" value="${i}"> ${esc(o)}</label>`).join("")}
+        <button type="button" class="primary" id="shortcutBtn-${key}">Check Shortcut</button>`;
+      document.getElementById(`shortcutBtn-${key}`).onclick=()=>{
+        const selected=content.querySelector(`input[name="shortcut-${key}"]:checked`);
+        const fb=document.getElementById(`shortcutFeedback-${key}`);
+        if(!selected){fb.className="feedback warn";fb.textContent="Choose a shortcut first.";return;}
+        if(Number(selected.value)!==q[2]){
+          fb.className="feedback warn";
+          fb.textContent="Try again. Think about the first letter of the action: Copy, Paste or Select All.";
+          return;
+        }
+        fb.className="feedback ok";
+        fb.textContent="Correct. Good keyboard control.";
+        si++;
+        if(si<shortcuts.length) setTimeout(renderShortcut,450);
+        else {shortcutOK=true;document.getElementById(`shortcutBox-${key}`).innerHTML=`<div class="notice"><strong>Keyboard shortcut practice complete.</strong></div>`;checkFinish();}
+      };
+    };
+    renderShortcut();
+
+    const checkFinish=async()=>{
+      if(clickOK && typeOK && shortcutOK){
+        const result=document.getElementById(`warmupResult-${key}`);
+        result.innerHTML=`<strong>Warm-up completed!</strong> You successfully demonstrated a mouse click, accurate typing and three essential keyboard shortcuts. You are ready to continue to the browser and email skills.`;
+        result.className="notice";
+        await completeActivity(key,15);
+      }
+    };
+
+    if(completed){
+      document.getElementById(`warmupResult-${key}`).innerHTML=`<strong>Completed.</strong> You have already completed the mouse and keyboard warm-up.`;
+    }
     return;
   }
 
