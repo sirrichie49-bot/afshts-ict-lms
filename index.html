@@ -166,6 +166,145 @@ th{background:var(--light)}
 .admin-stat{border:1px solid var(--line);border-radius:10px;padding:16px;background:#fff}
 .user-row{display:flex;justify-content:space-between;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)}
 .user-row:last-child{border-bottom:0}
+
+/* =========================================================
+   MOBILE NAVIGATION — PHONE/TABLET OPTIMIZATION
+   Desktop layout remains unchanged.
+   ========================================================= */
+.mobile-menu-btn{
+  display:none;
+  border:1px solid rgba(255,255,255,.35);
+  background:rgba(255,255,255,.12);
+  color:#fff;
+  border-radius:8px;
+  min-width:44px;
+  min-height:44px;
+  padding:8px 12px;
+  font-size:24px;
+  line-height:1;
+  flex:0 0 auto;
+}
+.mobile-menu-label{
+  display:none;
+  font-size:12px;
+  margin-top:2px;
+}
+.mobile-overlay{
+  display:none;
+}
+@media(max-width:900px){
+  .mobile-menu-btn{display:block}
+  .mobile-menu-label{display:block}
+  .layout{
+    display:block;
+    min-height:calc(100vh - 76px);
+  }
+  aside{
+    position:fixed;
+    left:0;
+    top:0;
+    bottom:0;
+    width:min(300px,86vw);
+    height:100vh;
+    z-index:60;
+    border-right:1px solid var(--line);
+    border-bottom:0;
+    box-shadow:8px 0 24px rgba(0,0,0,.18);
+    padding:68px 10px 18px;
+    overflow-y:auto;
+    transform:translateX(-105%);
+    transition:transform .22s ease;
+  }
+  body.nav-open aside{transform:translateX(0)}
+  .mobile-overlay{
+    position:fixed;
+    inset:0;
+    z-index:55;
+    background:rgba(0,0,0,.42);
+    display:block;
+    opacity:0;
+    pointer-events:none;
+    transition:opacity .22s ease;
+  }
+  body.nav-open .mobile-overlay{
+    opacity:1;
+    pointer-events:auto;
+  }
+  header{
+    padding:10px 12px;
+  }
+  .top-row{
+    gap:10px;
+  }
+  header h1{
+    font-size:19px;
+    line-height:1.18;
+    padding-right:2px;
+  }
+  #top{
+    font-size:13px;
+    line-height:1.35;
+  }
+  #connectionStatus{
+    font-size:11px;
+    margin-top:3px;
+  }
+  .top-row > div:first-child{
+    min-width:0;
+    flex:1 1 auto;
+  }
+  .mobile-menu-wrap{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    flex:0 0 auto;
+  }
+  main{
+    width:100%;
+    max-width:none;
+    padding:12px;
+  }
+}
+@media(max-width:600px){
+  header h1{
+    font-size:18px;
+  }
+  #top{
+    font-size:12px;
+  }
+  main{
+    padding:10px;
+  }
+  .card{
+    border-radius:10px;
+    padding:15px;
+    margin-bottom:12px;
+  }
+  .activity-card{
+    padding:13px;
+    margin:9px 0;
+  }
+  .activity-content{
+    font-size:16px;
+    line-height:1.65;
+  }
+  .activity-content h4{
+    font-size:18px;
+  }
+  button{
+    min-height:44px;
+  }
+  nav button{
+    padding:14px 13px;
+    font-size:16px;
+    margin-bottom:4px;
+  }
+  .mobile-menu-btn{
+    min-width:46px;
+    min-height:46px;
+  }
+}
+
 @media(max-width:900px){
   .layout{grid-template-columns:1fr}
   aside{position:static;height:auto;border-right:0;border-bottom:1px solid var(--line)}
@@ -320,12 +459,18 @@ th{background:var(--light)}
         <div id="top">XP: 0 | Progress: 0% | AMBER — IN PROGRESS</div>
         <div id="connectionStatus">Connecting to LMS…</div>
       </div>
+      <div class="mobile-menu-wrap">
+        <button id="mobileMenuBtn" class="mobile-menu-btn" type="button"
+                aria-label="Open course menu" aria-expanded="false">☰</button>
+        <span class="mobile-menu-label">Menu</span>
+      </div>
       <div class="top-progress">
         <div class="small" style="color:#fff;margin-bottom:5px">Overall Progress</div>
         <div class="progress"><div id="globalProgressBar" class="progress-bar"></div></div>
       </div>
     </div>
   </header>
+  <div id="mobileOverlay" class="mobile-overlay" aria-hidden="true"></div>
   <div class="layout">
     <aside>
       <nav id="nav"></nav>
@@ -1198,6 +1343,40 @@ async function logout(){
   );
 }
 
+/* ---------- MOBILE NAVIGATION ---------- */
+function openMobileNav(){
+  document.body.classList.add("nav-open");
+  const btn = document.getElementById("mobileMenuBtn");
+  if(btn){
+    btn.setAttribute("aria-expanded","true");
+    btn.setAttribute("aria-label","Close course menu");
+    btn.textContent="✕";
+  }
+}
+function closeMobileNav(){
+  document.body.classList.remove("nav-open");
+  const btn = document.getElementById("mobileMenuBtn");
+  if(btn){
+    btn.setAttribute("aria-expanded","false");
+    btn.setAttribute("aria-label","Open course menu");
+    btn.textContent="☰";
+  }
+}
+function toggleMobileNav(){
+  if(document.body.classList.contains("nav-open")) closeMobileNav();
+  else openMobileNav();
+}
+
+document.addEventListener("DOMContentLoaded",()=>{
+  const btn=document.getElementById("mobileMenuBtn");
+  const overlay=document.getElementById("mobileOverlay");
+  if(btn) btn.addEventListener("click",toggleMobileNav);
+  if(overlay) overlay.addEventListener("click",closeMobileNav);
+  document.addEventListener("keydown",(e)=>{
+    if(e.key==="Escape") closeMobileNav();
+  });
+});
+
 /* ---------- STUDENT NAVIGATION ---------- */
 function buildNav(active="home"){
   const nav = document.getElementById("nav");
@@ -1218,12 +1397,14 @@ function buildNav(active="home"){
   nav.querySelectorAll("[data-page]").forEach(button=>{
     if(button.dataset.page===active) button.classList.add("sel");
     button.addEventListener("click",()=>{
+      closeMobileNav();
       buildNav(button.dataset.page);
       route(button.dataset.page);
     });
   });
 
   document.getElementById("resetBtn").addEventListener("click",()=>{
+    closeMobileNav();
     if(confirm("Reset this browser's learner progress?")){
       S = {...DEFAULT_STATE};
       save();
@@ -1233,7 +1414,10 @@ function buildNav(active="home"){
     }
   });
 
-  document.getElementById("logoutBtn").addEventListener("click",logout);
+  document.getElementById("logoutBtn").addEventListener("click",()=>{
+    closeMobileNav();
+    logout();
+  });
 }
 
 function route(page){
@@ -1253,6 +1437,9 @@ function home(){
     <div class="card">
       <h2>🎓 Learner Dashboard</h2>
       <p>Welcome, <strong>${esc(S.learnerName || currentProfile?.full_name || "Learner")}</strong></p>
+      <div class="notice" style="margin-top:10px">
+        📱 <strong>Using a phone?</strong> Tap the <strong>☰ Menu</strong> button at the top to open or close the course navigation.
+      </div>
 
       <div class="notice">
         Your dashboard updates whenever an activity is completed.
@@ -2605,6 +2792,7 @@ function buildAdminNav(){
 
   nav.querySelectorAll("[data-admin]").forEach(btn=>{
     btn.onclick=()=>{
+      closeMobileNav();
       nav.querySelectorAll("[data-admin]").forEach(x=>{
         x.classList.remove("sel");
       });
@@ -2618,7 +2806,10 @@ function buildAdminNav(){
     };
   });
 
-  document.getElementById("adminLogout").onclick=logout;
+  document.getElementById("adminLogout").onclick=()=>{
+    closeMobileNav();
+    logout();
+  };
 
   nav.querySelector('[data-admin="home"]').classList.add("sel");
 }
