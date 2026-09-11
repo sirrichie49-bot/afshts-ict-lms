@@ -66,6 +66,7 @@ main{padding:20px;max-width:1400px;width:100%;margin:0 auto}
 .module-card{border:1px solid var(--line);border-radius:10px;padding:15px;margin:10px 0;background:#fff}
 .module-card.completed{border-left:5px solid var(--green)}
 .activity-card{border:1px solid var(--line);border-radius:10px;padding:16px;margin:12px 0;background:#fff}
+.m0-nav-note{font-size:.95rem;color:#334155}
 .activity-card.completed{border-left:5px solid var(--green)}
 .activity-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
 .primary,.secondary,.danger-btn{
@@ -1361,8 +1362,42 @@ function modulePage(id){
 
   const activities = document.getElementById("activities");
 
+  // M0 navigator: make all six activities explicitly discoverable.
+  if(id === "M0") {
+    const nav = document.createElement("div");
+    nav.className = "card";
+    nav.innerHTML = `<h3 style="margin-top:0">M0 Activity Navigator</h3>
+      <p class="small">Select an activity to jump to it. All six activities are part of Orientation &amp; Diagnostic.</p>
+      <div class="grid" id="m0NavGrid"></div>`;
+    activities.before(nav);
+    const navGrid = nav.querySelector("#m0NavGrid");
+    m[2].forEach((title,index)=>{
+      const b=document.createElement("button");
+      b.type="button";
+      b.className="card";
+      b.style.cssText="text-align:left;cursor:pointer;padding:14px";
+      b.innerHTML=`<strong>${index+1}. ${esc(title)}</strong>`;
+      b.onclick=()=>{
+        const target=document.getElementById(`activity-${id}-${index}`);
+        if(target) target.scrollIntoView({behavior:"smooth",block:"start"});
+      };
+      navGrid.appendChild(b);
+    });
+  }
+
   m[2].forEach((title,index)=>{
-    activities.appendChild(createActivity(id,index,title));
+    try {
+      const card = createActivity(id,index,title);
+      card.id = `activity-${id}-${index}`;
+      activities.appendChild(card);
+    } catch(error) {
+      console.error(`Activity render failed: ${id}-${index}`, error);
+      const fallback=document.createElement("div");
+      fallback.className="activity-card";
+      fallback.id=`activity-${id}-${index}`;
+      fallback.innerHTML=`<h3>${index+1}. ${esc(title)}</h3><div class="feedback warn"><strong>Activity loading issue.</strong><br>Please refresh the page. If the problem continues, report this activity to your teacher.</div>`;
+      activities.appendChild(fallback);
+    }
   });
 }
 
