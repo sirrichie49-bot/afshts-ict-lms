@@ -82,18 +82,76 @@ main{padding:20px;max-width:1400px;width:100%;margin:0 auto}
 .amber{background:#fff1da;color:var(--amber)}
 .red{background:#fde8e7;color:var(--red)}
 .option{
-  border:1px solid var(--line);padding:12px;border-radius:8px;margin:8px 0;
-  background:#fff;cursor:pointer
+  display:flex;
+  align-items:flex-start;
+  gap:14px;
+  border:1px solid var(--line);
+  padding:16px 18px;
+  border-radius:10px;
+  margin:14px 0;
+  background:#fff;
+  cursor:pointer;
+  line-height:1.6;
+  font-size:16px;
+  box-sizing:border-box;
+  min-height:58px;
 }
 .option:hover{background:#f4f7fb}
+.option input[type="checkbox"],.option input[type="radio"]{
+  margin-top:3px;
+}
 .feedback{margin-top:10px;padding:10px;border-radius:7px}
 .feedback.ok{background:#e8f5e9;color:var(--green)}
 .feedback.warn{background:#fff1da;color:var(--amber)}
 .feedback.err{background:#fde8e7;color:var(--red)}
 input,textarea,select{
-  width:100%;padding:10px;border:1px solid #b7c1ce;border-radius:7px;margin:5px 0 10px
+  width:100%;padding:10px;border:1px solid #b7c1ce;border-radius:7px;margin:5px 0 10px;
+  box-sizing:border-box
+}
+/* Checkbox/radio controls must not inherit the full-width form-field rule.
+   This prevents readiness options from becoming stretched/overlapping on
+   laptop and phone screens. */
+input[type="checkbox"],input[type="radio"]{
+  width:auto;
+  min-width:20px;
+  height:20px;
+  padding:0;
+  margin:3px 0 0;
+  flex:0 0 auto;
+  accent-color:#315ea8;
 }
 textarea{min-height:100px;resize:vertical}
+.activity-content{
+  line-height:1.65;
+  font-size:16px;
+}
+.activity-content h4{
+  margin:28px 0 10px;
+  font-size:20px;
+  line-height:1.35;
+  color:var(--navy);
+}
+.activity-content p{
+  margin:0 0 16px;
+}
+.activity-content .grid{
+  gap:18px;
+  margin:20px 0 28px;
+}
+.activity-content .card{
+  padding:20px;
+  border-radius:12px;
+  min-height:140px;
+  box-sizing:border-box;
+}
+.activity-content .card h4{
+  margin:0 0 12px;
+  font-size:18px;
+}
+.activity-content .card p{
+  margin:0;
+  line-height:1.6;
+}
 table{width:100%;border-collapse:collapse}
 th,td{border:1px solid var(--line);padding:9px;text-align:left}
 th{background:var(--light)}
@@ -118,6 +176,11 @@ th{background:var(--light)}
   main{padding:12px}
   .grid{grid-template-columns:1fr}
   header h1{font-size:21px}
+  .activity-card{padding:14px;margin:10px 0}
+  .activity-content{font-size:16px;line-height:1.7}
+  .activity-content h4{font-size:19px;margin-top:24px}
+  .activity-content .card{padding:17px;min-height:0}
+  .option{padding:15px 14px;margin:12px 0;gap:12px;line-height:1.65}
 }
 </style>
 </head>
