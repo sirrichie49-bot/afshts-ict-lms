@@ -1496,7 +1496,7 @@ function renderActivityContent(moduleId,index,title,key,content,actions,complete
     `;
     content.querySelectorAll(`[data-path]`).forEach(btn=>btn.addEventListener("click",()=>{
       const i=Number(btn.dataset.path);
-      document.getElementById(`pathwayDetail-${key}`).innerHTML=`<strong>${esc(steps[i][0])}</strong><p>${esc(steps[i][1])}</p>`;
+      content.querySelector(`#pathwayDetail-${key}`).innerHTML=`<strong>${esc(steps[i][0])}</strong><p>${esc(steps[i][1])}</p>`;
     }));
     const qs=[
       ["What is the main purpose of the diagnostic?",["To find what I can already do and what I need to improve","To replace all practical work","To give me internet access"],0],
@@ -1506,14 +1506,14 @@ function renderActivityContent(moduleId,index,title,key,content,actions,complete
     let qIndex=0, correct=0;
     const renderCheck=()=>{
       const q=qs[qIndex];
-      document.getElementById(`courseCheck-${key}`).innerHTML=`
+      content.querySelector(`#courseCheck-${key}`).innerHTML=`
         <p><strong>Question ${qIndex+1} of ${qs.length}</strong></p>
         <p>${esc(q[0])}</p>
         ${q[1].map((opt,i)=>`<label class="option"><input type="radio" name="course-${key}" value="${i}"> ${esc(opt)}</label>`).join("")}
         <button type="button" class="primary" id="courseCheckBtn-${key}">Check Answer</button>`;
-      document.getElementById(`courseCheckBtn-${key}`).onclick=async()=>{
+      content.querySelector(`#courseCheckBtn-${key}`).onclick=async()=>{
         const selected=content.querySelector(`input[name="course-${key}"]:checked`);
-        const fb=document.getElementById(`courseFeedback-${key}`);
+        const fb=content.querySelector(`#courseFeedback-${key}`);
         if(!selected){fb.className="feedback warn";fb.textContent="Choose an answer first.";return;}
         if(Number(selected.value)===q[2]){
           correct++;
@@ -1527,13 +1527,13 @@ function renderActivityContent(moduleId,index,title,key,content,actions,complete
         qIndex++;
         if(qIndex<qs.length){setTimeout(renderCheck,450);}
         else{
-          document.getElementById(`courseCheck-${key}`).innerHTML=`<div class="notice"><strong>Course pathway understood.</strong> You are ready for the diagnostic and practical learning activities.</div>`;
+          content.querySelector(`#courseCheck-${key}`).innerHTML=`<div class="notice"><strong>Course pathway understood.</strong> You are ready for the diagnostic and practical learning activities.</div>`;
           await completeActivity(key,10);
         }
       };
     };
     if(completed){
-      document.getElementById(`courseCheck-${key}`).innerHTML=`<div class="notice"><strong>Completed.</strong> You have already demonstrated understanding of the course pathway.</div>`;
+      content.querySelector(`#courseCheck-${key}`).innerHTML=`<div class="notice"><strong>Completed.</strong> You have already demonstrated understanding of the course pathway.</div>`;
     }else renderCheck();
     return;
   }
@@ -1585,9 +1585,9 @@ function renderActivityContent(moduleId,index,title,key,content,actions,complete
     `;
 
     let qIndex=0, correct=0;
-    const box=document.getElementById(`safetyBox-${key}`);
-    const feedback=document.getElementById(`safetyFeedback-${key}`);
-    const progress=document.getElementById(`safetyProgress-${key}`);
+    const box=content.querySelector(`#safetyBox-${key}`);
+    const feedback=content.querySelector(`#safetyFeedback-${key}`);
+    const progress=content.querySelector(`#safetyProgress-${key}`);
 
     const renderSafety=()=>{
       const q=scenarios[qIndex];
@@ -1598,7 +1598,7 @@ function renderActivityContent(moduleId,index,title,key,content,actions,complete
         <button type="button" class="primary" id="safetyBtn-${key}">Check Decision</button>
       `;
       feedback.textContent="";
-      document.getElementById(`safetyBtn-${key}`).onclick=async()=>{
+      content.querySelector(`#safetyBtn-${key}`).onclick=async()=>{
         const selected=content.querySelector(`input[name="safety-${key}"]:checked`);
         if(!selected){feedback.className="feedback warn";feedback.textContent="Choose the safest action first.";return;}
         if(Number(selected.value)!==q.a){
@@ -1650,9 +1650,9 @@ function renderActivityContent(moduleId,index,title,key,content,actions,complete
 
     let difficulty=1, asked=0, correct=0, maxDifficulty=1, minDifficulty=3;
     const askedIds=[];
-    const box=document.getElementById(`adaptiveBox-${key}`);
-    const feedback=document.getElementById(`adaptiveFeedback-${key}`);
-    const progress=document.getElementById(`adaptiveProgress-${key}`);
+    const box=content.querySelector(`#adaptiveBox-${key}`);
+    const feedback=content.querySelector(`#adaptiveFeedback-${key}`);
+    const progress=content.querySelector(`#adaptiveProgress-${key}`);
 
     const pickQuestion=()=>{
       let pool=questions.filter(q=>q.d===difficulty && !askedIds.includes(q));
@@ -1698,7 +1698,7 @@ function renderActivityContent(moduleId,index,title,key,content,actions,complete
         ${q.o.map((o,i)=>`<label class="option"><input type="radio" name="adaptive-${key}" value="${i}"> ${esc(o)}</label>`).join("")}
         <button type="button" class="primary" id="adaptiveBtn-${key}">Check Answer</button>
       `;
-      document.getElementById(`adaptiveBtn-${key}`).onclick=()=>{
+      content.querySelector(`#adaptiveBtn-${key}`).onclick=()=>{
         const selected=content.querySelector(`input[name="adaptive-${key}"]:checked`);
         if(!selected){feedback.className="feedback warn";feedback.textContent="Choose an answer first.";return;}
         if(Number(selected.value)===q.a){
@@ -1763,13 +1763,13 @@ function renderActivityContent(moduleId,index,title,key,content,actions,complete
       <div id="ratingFeedback-${key}" class="feedback" aria-live="polite"></div>
     `;
 
-    document.getElementById(`showRatingExample-${key}`).onclick=()=>{
-      const ex=document.getElementById(`ratingExample-${key}`);
+    content.querySelector(`#showRatingExample-${key}`).onclick=()=>{
+      const ex=content.querySelector(`#ratingExample-${key}`);
       ex.classList.remove("hidden");
       ex.innerHTML=`<strong>Example:</strong> If you can usually attach a file by yourself but sometimes choose the wrong file, a rating of <strong>3</strong> may be more honest than 5. The aim is to identify where practice will help.`;
     };
 
-    const form=document.getElementById(`ratingForm-${key}`);
+    const form=content.querySelector(`#ratingForm-${key}`);
     form.innerHTML=skills.map((sk,i)=>`
       <div class="card" style="margin:14px 0;padding:18px">
         <h4 style="margin:0 0 8px">${i+1}. ${esc(sk[0])}</h4>
@@ -1780,9 +1780,9 @@ function renderActivityContent(moduleId,index,title,key,content,actions,complete
       </div>
     `).join("")+`<button type="button" class="primary" id="submitRatings-${key}">Submit My Self-Rating</button>`;
 
-    document.getElementById(`submitRatings-${key}`).onclick=async()=>{
+    content.querySelector(`#submitRatings-${key}`).onclick=async()=>{
       const values=skills.map((_,i)=>content.querySelector(`input[name="rating-${key}-${i}"]:checked`));
-      const fb=document.getElementById(`ratingFeedback-${key}`);
+      const fb=content.querySelector(`#ratingFeedback-${key}`);
       if(values.some(v=>!v)){
         fb.className="feedback warn";
         fb.textContent=`Please rate every skill before submitting (${values.filter(Boolean).length}/${skills.length} completed).`;
@@ -1798,14 +1798,14 @@ function renderActivityContent(moduleId,index,title,key,content,actions,complete
       fb.className="feedback ok";
       fb.innerHTML=`<strong>Self-rating recorded.</strong> Your average confidence is <strong>${rounded}/5</strong> (${esc(confidenceBand)}).<br><br>${esc(comparison)}<br><br>Remember: confidence is useful evidence, but practical performance is the stronger evidence of mastery.`;
       await completeActivity(key,10);
-      document.getElementById(`submitRatings-${key}`).disabled=true;
-      document.getElementById(`submitRatings-${key}`).textContent="✓ Self-Rating Completed";
+      content.querySelector(`#submitRatings-${key}`).disabled=true;
+      content.querySelector(`#submitRatings-${key}`).textContent="✓ Self-Rating Completed";
     };
 
     if(completed && S.ratings){
       form.innerHTML=`<div class="notice"><strong>Completed.</strong> Your recorded average confidence was <strong>${esc(S.ratings.average)}/5</strong> (${esc(S.ratings.band||"")}).</div>`;
-      document.getElementById(`ratingFeedback-${key}`).className="feedback ok";
-      document.getElementById(`ratingFeedback-${key}`).textContent="Your self-rating has already been recorded.";
+      content.querySelector(`#ratingFeedback-${key}`).className="feedback ok";
+      content.querySelector(`#ratingFeedback-${key}`).textContent="Your self-rating has already been recorded.";
     }
     return;
   }
@@ -1849,21 +1849,21 @@ function renderActivityContent(moduleId,index,title,key,content,actions,complete
     `;
 
     let clickOK=false, typeOK=false, shortcutOK=false;
-    document.getElementById(`demoClick-${key}`).onclick=()=>{
-      const d=document.getElementById(`clickDemo-${key}`);
+    content.querySelector(`#demoClick-${key}`).onclick=()=>{
+      const d=content.querySelector(`#clickDemo-${key}`);
       d.classList.remove("hidden");
       d.innerHTML=`<strong>Demonstration:</strong> A single click selects or activates an item. Double-clicking is a different action and will be practised later in the course.`;
     };
-    document.getElementById(`clickTarget-${key}`).onclick=()=>{
+    content.querySelector(`#clickTarget-${key}`).onclick=()=>{
       clickOK=true;
-      const fb=document.getElementById(`clickFeedback-${key}`);
+      const fb=content.querySelector(`#clickFeedback-${key}`);
       fb.className="feedback ok";
       fb.textContent="Correct. Your single click was recognised.";
       checkFinish();
     };
-    document.getElementById(`checkTyping-${key}`).onclick=()=>{
-      const value=document.getElementById(`typing-${key}`).value;
-      const fb=document.getElementById(`typingFeedback-${key}`);
+    content.querySelector(`#checkTyping-${key}`).onclick=()=>{
+      const value=content.querySelector(`#typing-${key}`).value;
+      const fb=content.querySelector(`#typingFeedback-${key}`);
       if(value==="AFSHTS ICT Skills Lab"){
         typeOK=true;
         fb.className="feedback ok";
@@ -1883,13 +1883,13 @@ function renderActivityContent(moduleId,index,title,key,content,actions,complete
     let si=0;
     const renderShortcut=()=>{
       const q=shortcuts[si];
-      document.getElementById(`shortcutBox-${key}`).innerHTML=`
+      content.querySelector(`#shortcutBox-${key}`).innerHTML=`
         <p><strong>Question ${si+1} of ${shortcuts.length}:</strong> ${esc(q[0])}</p>
         ${q[1].map((o,i)=>`<label class="option"><input type="radio" name="shortcut-${key}" value="${i}"> ${esc(o)}</label>`).join("")}
         <button type="button" class="primary" id="shortcutBtn-${key}">Check Shortcut</button>`;
-      document.getElementById(`shortcutBtn-${key}`).onclick=()=>{
+      content.querySelector(`#shortcutBtn-${key}`).onclick=()=>{
         const selected=content.querySelector(`input[name="shortcut-${key}"]:checked`);
-        const fb=document.getElementById(`shortcutFeedback-${key}`);
+        const fb=content.querySelector(`#shortcutFeedback-${key}`);
         if(!selected){fb.className="feedback warn";fb.textContent="Choose a shortcut first.";return;}
         if(Number(selected.value)!==q[2]){
           fb.className="feedback warn";
@@ -1900,14 +1900,14 @@ function renderActivityContent(moduleId,index,title,key,content,actions,complete
         fb.textContent="Correct. Good keyboard control.";
         si++;
         if(si<shortcuts.length) setTimeout(renderShortcut,450);
-        else {shortcutOK=true;document.getElementById(`shortcutBox-${key}`).innerHTML=`<div class="notice"><strong>Keyboard shortcut practice complete.</strong></div>`;checkFinish();}
+        else {shortcutOK=true;content.querySelector(`#shortcutBox-${key}`).innerHTML=`<div class="notice"><strong>Keyboard shortcut practice complete.</strong></div>`;checkFinish();}
       };
     };
     renderShortcut();
 
     const checkFinish=async()=>{
       if(clickOK && typeOK && shortcutOK){
-        const result=document.getElementById(`warmupResult-${key}`);
+        const result=content.querySelector(`#warmupResult-${key}`);
         result.innerHTML=`<strong>Warm-up completed!</strong> You successfully demonstrated a mouse click, accurate typing and three essential keyboard shortcuts. You are ready to continue to the browser and email skills.`;
         result.className="notice";
         await completeActivity(key,15);
@@ -1915,7 +1915,7 @@ function renderActivityContent(moduleId,index,title,key,content,actions,complete
     };
 
     if(completed){
-      document.getElementById(`warmupResult-${key}`).innerHTML=`<strong>Completed.</strong> You have already completed the mouse and keyboard warm-up.`;
+      content.querySelector(`#warmupResult-${key}`).innerHTML=`<strong>Completed.</strong> You have already completed the mouse and keyboard warm-up.`;
     }
     return;
   }
