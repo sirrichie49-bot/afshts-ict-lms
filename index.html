@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AFSHTS Practical ICT Skills Lab</title>
-<meta name="description" content="AFSHTS Interactive ICT Skills Learning Management System">
+<title>ARMED FORCES SENIOR HIGH Practical ICT Skills Lab</title>
+<meta name="description" content="ARMED FORCES SENIOR HIGH Interactive ICT Skills Learning Management System">
 
 <style>
 :root{
@@ -193,7 +193,7 @@ th{background:var(--light)}
     <!-- ================= LOGIN ================= -->
     <div id="loginView">
 
-      <h1>🎓 AFSHTS Practical ICT Skills Lab</h1>
+      <h1>🎓 ARMED FORCES SENIOR HIGH Practical ICT Skills Lab</h1>
       <p>Interactive LMS — Secure Login</p>
 
       <div id="loginMessage"></div>
@@ -245,7 +245,7 @@ th{background:var(--light)}
       <h1>🎓 Create Student Account</h1>
 
       <p>
-        Register to access the AFSHTS Practical ICT Skills Lab.
+        Register to access the ARMED FORCES SENIOR HIGH Practical ICT Skills Lab.
       </p>
 
       <div id="registerMessage"></div>
@@ -316,7 +316,7 @@ th{background:var(--light)}
   <header>
     <div class="top-row">
       <div>
-        <h1>🎓 AFSHTS Practical ICT Skills Lab</h1>
+        <h1>🎓 ARMED FORCES SENIOR HIGH Practical ICT Skills Lab</h1>
         <div id="top">XP: 0 | Progress: 0% | AMBER — IN PROGRESS</div>
         <div id="connectionStatus">Connecting to LMS…</div>
       </div>
@@ -338,7 +338,7 @@ th{background:var(--light)}
 
 <script>
 /* =========================================================
-   AFSHTS PRACTICAL ICT SKILLS LAB
+   ARMED FORCES SENIOR HIGH PRACTICAL ICT SKILLS LAB
    Clean single-file replacement
    ========================================================= */
 
@@ -1832,7 +1832,7 @@ function renderActivityContent(moduleId,index,title,key,content,actions,complete
       <div class="step">
         <h4 style="margin-top:0">⌨️ Demonstration 2 — Type accurately</h4>
         <p>Read the phrase, then type it exactly. Accuracy is more important than speed.</p>
-        <div class="notice"><strong>Phrase:</strong> AFSHTS ICT Skills Lab</div>
+        <div class="notice"><strong>Phrase:</strong> ARMED FORCES SENIOR HIGH ICT Skills Lab</div>
         <input id="typing-${key}" type="text" placeholder="Type the phrase here" autocomplete="off" aria-label="Type the practice phrase">
         <button type="button" class="primary" id="checkTyping-${key}">Check Typing</button>
         <div id="typingFeedback-${key}" class="feedback" aria-live="polite"></div>
@@ -1864,7 +1864,7 @@ function renderActivityContent(moduleId,index,title,key,content,actions,complete
     content.querySelector(`#checkTyping-${key}`).onclick=()=>{
       const value=content.querySelector(`#typing-${key}`).value;
       const fb=content.querySelector(`#typingFeedback-${key}`);
-      if(value==="AFSHTS ICT Skills Lab"){
+      if(value==="ARMED FORCES SENIOR HIGH ICT Skills Lab"){
         typeOK=true;
         fb.className="feedback ok";
         fb.textContent="Excellent. The phrase matches exactly.";
@@ -2059,6 +2059,155 @@ function renderActivityContent(moduleId,index,title,key,content,actions,complete
       updateTop();
     };
     actions.appendChild(btn);
+    return;
+  }
+
+  /* M1 Activity 1 — Meet the browser */
+  if(moduleId==="M1" && index===0){
+    const parts=[
+      ["Back","Returns to the previous page you visited."],
+      ["Forward","Moves forward when you have previously gone back."],
+      ["Refresh","Loads the current page again."],
+      ["Address bar","Shows the current web address and can be used to enter a URL."],
+      ["New tab","Opens another browser tab for a separate page."],
+      ["Tab","Represents an open page inside the browser window."]
+    ];
+    content.innerHTML=`
+      <p><strong>Goal:</strong> recognise the main browser controls before you begin practical browsing.</p>
+      <div class="notice"><strong>Interactive demonstration</strong><br>Click a browser part below. The explanation will appear immediately.</div>
+      <div class="grid" id="browserParts-${key}">
+        ${parts.map((p,i)=>`<button type="button" class="card" data-part="${i}" style="text-align:left;cursor:pointer"><strong>${esc(p[0])}</strong><p class="small">Click to identify</p></button>`).join("")}
+      </div>
+      <div id="browserPartDetail-${key}" class="notice" aria-live="polite">Select a browser part.</div>
+      <hr>
+      <h4>Quick recognition check</h4>
+      <p>Which browser control is normally used to enter a web address such as <code>https://example.com</code>?</p>
+      <div id="browserCheck-${key}"></div>
+      <div id="browserFeedback-${key}" class="feedback" aria-live="polite"></div>
+    `;
+    content.querySelectorAll(`[data-part]`).forEach(btn=>btn.addEventListener("click",()=>{
+      const p=parts[Number(btn.dataset.part)];
+      content.querySelector(`#browserPartDetail-${key}`).innerHTML=`<strong>${esc(p[0])}</strong><p>${esc(p[1])}</p>`;
+    }));
+    if(completed){
+      content.querySelector(`#browserCheck-${key}`).innerHTML=`<div class="notice"><strong>Completed.</strong> You have already demonstrated basic browser recognition.</div>`;
+      const done=document.createElement("button"); done.className="secondary"; done.textContent="✓ Browser recognition completed"; done.disabled=true; actions.appendChild(done);
+      return;
+    }
+    content.querySelector(`#browserCheck-${key}`).innerHTML=`
+      <label class="option"><input type="radio" name="browser-check-${key}" value="0"> Back button</label>
+      <label class="option"><input type="radio" name="browser-check-${key}" value="1"> Address bar</label>
+      <label class="option"><input type="radio" name="browser-check-${key}" value="2"> Refresh button</label>
+      <button type="button" class="primary" id="browserCheckBtn-${key}">Check Answer</button>`;
+    content.querySelector(`#browserCheckBtn-${key}`).onclick=async()=>{
+      const selected=content.querySelector(`input[name="browser-check-${key}"]:checked`);
+      const fb=content.querySelector(`#browserFeedback-${key}`);
+      if(!selected){fb.className="feedback warn";fb.textContent="Choose an answer first.";return;}
+      if(Number(selected.value)!==1){fb.className="feedback warn";fb.textContent="Not quite. The address bar is where you enter a URL.";return;}
+      fb.className="feedback ok";fb.textContent="Correct. You identified the address bar.";
+      await completeActivity(key,10);
+      const b=content.querySelector(`#browserCheckBtn-${key}`); b.disabled=true; b.textContent="✓ Completed";
+    };
+    return;
+  }
+
+  /* M1 Activity 2 — Icon challenge */
+  if(moduleId==="M1" && index===1){
+    const qs=[
+      ["Which icon normally reloads the current page?",["↻","←","→"],0,"The circular arrow represents Refresh."],
+      ["Which control normally takes you to the previous page?",["→","←","＋"],1,"The left arrow represents Back."],
+      ["Which control normally opens a new tab?",["＋","↻","←"],0,"The plus sign commonly opens a new tab."]
+    ];
+    let qi=0;
+    content.innerHTML=`<p><strong>Goal:</strong> recognise common browser icons quickly and accurately.</p><div class="notice">Choose the icon that best answers each question. You may retry any incorrect answer.</div><div id="iconChallenge-${key}"></div><div id="iconFeedback-${key}" class="feedback" aria-live="polite"></div>`;
+    const render=()=>{
+      const q=qs[qi];
+      content.querySelector(`#iconChallenge-${key}`).innerHTML=`<p><strong>Challenge ${qi+1} of ${qs.length}</strong></p><p>${esc(q[0])}</p><div class="grid">${q[1].map((x,i)=>`<button type="button" class="card" data-icon="${i}" style="font-size:32px;cursor:pointer">${esc(x)}</button>`).join("")}</div>`;
+      content.querySelectorAll(`[data-icon]`).forEach(btn=>btn.onclick=async()=>{
+        const fb=content.querySelector(`#iconFeedback-${key}`);
+        if(Number(btn.dataset.icon)!==q[2]){fb.className="feedback warn";fb.textContent="Try again. Think about what the icon usually means.";return;}
+        fb.className="feedback ok";fb.textContent=q[3];
+        qi++;
+        if(qi<qs.length) setTimeout(render,450);
+        else {content.querySelector(`#iconChallenge-${key}`).innerHTML=`<div class="notice"><strong>Icon challenge complete.</strong> You recognised the three browser controls.</div>`;await completeActivity(key,10);}
+      });
+    };
+    if(completed){content.querySelector(`#iconChallenge-${key}`).innerHTML=`<div class="notice"><strong>Completed.</strong> Browser icon challenge already passed.</div>`;const b=document.createElement("button");b.className="secondary";b.textContent="✓ Icon challenge completed";b.disabled=true;actions.appendChild(b);} else render();
+    return;
+  }
+
+  /* M1 Activity 3 — Address bar vs search */
+  if(moduleId==="M1" && index===2){
+    const qs=[
+      ["You know the exact website address you want to open: https://www.example.com. What should you use?",["Address bar","Search engine"],0],
+      ["You want to find information about Ghana's digital learning resources but do not know a specific website. What should you use?",["Address bar","Search engine"],1],
+      ["You have copied a complete URL from your teacher and want to open it. What is the most direct choice?",["Address bar","Search engine"],0],
+      ["You only know the topic 'safe email practices' and want several possible websites. What should you use?",["Address bar","Search engine"],1]
+    ];
+    let qi=0;
+    content.innerHTML=`<p><strong>Key idea:</strong> the address bar is for a known web address; a search engine helps you discover information when you do not know the exact address.</p><div id="barSearch-${key}"></div><div id="barSearchFeedback-${key}" class="feedback" aria-live="polite"></div>`;
+    const render=()=>{
+      const q=qs[qi];
+      content.querySelector(`#barSearch-${key}`).innerHTML=`<p><strong>Scenario ${qi+1} of ${qs.length}</strong></p><p>${esc(q[0])}</p>${q[1].map((x,i)=>`<label class="option"><input type="radio" name="bars-${key}" value="${i}"> ${esc(x)}</label>`).join("")}<button type="button" class="primary" id="barSearchBtn-${key}">Check Answer</button>`;
+      content.querySelector(`#barSearchBtn-${key}`).onclick=async()=>{
+        const s=content.querySelector(`input[name="bars-${key}"]:checked`),fb=content.querySelector(`#barSearchFeedback-${key}`);
+        if(!s){fb.className="feedback warn";fb.textContent="Choose an option first.";return;}
+        if(Number(s.value)!==q[2]){fb.className="feedback warn";fb.textContent="Not quite. Re-read the scenario and decide whether you know the exact URL.";return;}
+        fb.className="feedback ok";fb.textContent="Correct.";qi++;if(qi<qs.length)setTimeout(render,450);else{content.querySelector(`#barSearch-${key}`).innerHTML=`<div class="notice"><strong>Excellent.</strong> You can now distinguish direct URL entry from information searching.</div>`;await completeActivity(key,10);}
+      };
+    };
+    if(completed) content.querySelector(`#barSearch-${key}`).innerHTML=`<div class="notice"><strong>Completed.</strong> Address bar vs search distinction already demonstrated.</div>`; else render();
+    return;
+  }
+
+  /* M1 Activity 4 — Guided practice */
+  if(moduleId==="M1" && index===3){
+    content.innerHTML=`
+      <p><strong>Guided practice:</strong> complete the simulated browser task in the correct order.</p>
+      <div class="notice"><strong>Task:</strong> You want to open a known website. Click the address bar, enter the URL, then choose Go.</div>
+      <div class="card" style="background:#f7f9fc">
+        <div class="small"><strong>Simulated browser</strong></div>
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:12px 0">
+          <button type="button" class="secondary" id="guidedBack-${key}">←</button>
+          <button type="button" class="secondary" id="guidedRefresh-${key}">↻</button>
+          <input id="guidedUrl-${key}" type="text" placeholder="Enter a web address" aria-label="Simulated address bar" style="flex:1;min-width:240px">
+          <button type="button" class="primary" id="guidedGo-${key}">Go</button>
+        </div>
+        <div id="guidedScreen-${key}" class="notice">Browser is ready. Follow the task.</div>
+      </div>
+      <div id="guidedFeedback-${key}" class="feedback" aria-live="polite"></div>`;
+    if(completed){content.querySelector(`#guidedScreen-${key}`).innerHTML=`<strong>Completed.</strong> Guided browser task already passed.`;const b=document.createElement("button");b.className="secondary";b.textContent="✓ Guided practice completed";b.disabled=true;actions.appendChild(b);return;}
+    content.querySelector(`#guidedGo-${key}`).onclick=async()=>{
+      const url=content.querySelector(`#guidedUrl-${key}`).value.trim();const fb=content.querySelector(`#guidedFeedback-${key}`),screen=content.querySelector(`#guidedScreen-${key}`);
+      if(!url){fb.className="feedback warn";fb.textContent="Enter a web address in the address bar first.";return;}
+      if(!/^https?:\/\//i.test(url)){fb.className="feedback warn";fb.textContent="Good attempt. For this practice, enter a complete address beginning with http:// or https://.";return;}
+      screen.innerHTML=`<strong>Page opened in the simulation.</strong><p>${esc(url)}</p>`;fb.className="feedback ok";fb.textContent="Correct sequence: enter the URL in the address bar, then select Go.";await completeActivity(key,15);content.querySelector(`#guidedGo-${key}`).disabled=true;content.querySelector(`#guidedUrl-${key}`).disabled=true;
+    };
+    return;
+  }
+
+  /* M1 Activity 5 — Independence check */
+  if(moduleId==="M1" && index===4){
+    const qs=[
+      ["You know the exact URL of a school portal. What is your first choice?",["Type the URL in the address bar","Search random keywords"],0],
+      ["A page is not displaying correctly. Which browser control can reload it?",["Refresh","New tab"],0],
+      ["You need information on a topic but do not know a website address. What is appropriate?",["Use a search engine","Use the Back button"],0],
+      ["You accidentally returned to a previous page and want to move forward again. Which control helps?",["Forward","Refresh"],0],
+      ["Before using a link from an unknown source, what is the safest habit?",["Check the destination and context before opening","Open it immediately"],0]
+    ];
+    let qi=0;
+    content.innerHTML=`<p><strong>Independence check:</strong> complete these scenarios without relying on the earlier explanations.</p><div id="independence-${key}"></div><div id="independenceFeedback-${key}" class="feedback" aria-live="polite"></div>`;
+    const render=()=>{
+      const q=qs[qi];
+      content.querySelector(`#independence-${key}`).innerHTML=`<p><strong>Scenario ${qi+1} of ${qs.length}</strong></p><p>${esc(q[0])}</p>${q[1].map((x,i)=>`<label class="option"><input type="radio" name="ind-${key}" value="${i}"> ${esc(x)}</label>`).join("")}<button type="button" class="primary" id="indBtn-${key}">Check Answer</button>`;
+      content.querySelector(`#indBtn-${key}`).onclick=async()=>{
+        const s=content.querySelector(`input[name="ind-${key}"]:checked`),fb=content.querySelector(`#independenceFeedback-${key}`);
+        if(!s){fb.className="feedback warn";fb.textContent="Choose an answer first.";return;}
+        if(Number(s.value)!==q[2]){fb.className="feedback warn";fb.textContent="Not quite. Try the scenario again.";return;}
+        fb.className="feedback ok";fb.textContent="Correct. Keep going.";qi++;if(qi<qs.length)setTimeout(render,350);else{content.querySelector(`#independence-${key}`).innerHTML=`<div class="notice"><strong>Browser Foundations mastered.</strong><br>You can distinguish common browser controls, direct URL entry and search behaviour.</div>`;await completeActivity(key,20);}
+      };
+    };
+    if(completed) content.querySelector(`#independence-${key}`).innerHTML=`<div class="notice"><strong>Completed.</strong> Independence check already passed.</div>`; else render();
     return;
   }
 
@@ -2378,7 +2527,7 @@ async function adminHome(){
       </p>
 
       <div class="notice">
-        Welcome to the AFSHTS Teacher Administration Area.
+        Welcome to the ARMED FORCES SENIOR HIGH Teacher Administration Area.
         Use the Teacher Control Centre to monitor learner progress,
         identify students who need support and inspect individual
         learning performance.
