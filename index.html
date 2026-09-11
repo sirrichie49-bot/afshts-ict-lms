@@ -1520,7 +1520,7 @@ function renderActivityContent(moduleId,index,title,key,content,actions,complete
     `;
     content.querySelectorAll(`[data-path]`).forEach(btn=>btn.addEventListener("click",()=>{
       const i=Number(btn.dataset.path);
-      document.getElementById(`pathwayDetail-${key}`).innerHTML=`<strong>${esc(steps[i][0])}</strong><p>${esc(steps[i][1])}</p>`;
+      content.querySelector(`#pathwayDetail-${key}`).innerHTML=`<strong>${esc(steps[i][0])}</strong><p>${esc(steps[i][1])}</p>`;
     }));
     const qs=[
       ["What is the main purpose of the diagnostic?",["To find what I can already do and what I need to improve","To replace all practical work","To give me internet access"],0],
@@ -1530,14 +1530,14 @@ function renderActivityContent(moduleId,index,title,key,content,actions,complete
     let qIndex=0, correct=0;
     const renderCheck=()=>{
       const q=qs[qIndex];
-      document.getElementById(`courseCheck-${key}`).innerHTML=`
+      content.querySelector(`#courseCheck-${key}`).innerHTML=`
         <p><strong>Question ${qIndex+1} of ${qs.length}</strong></p>
         <p>${esc(q[0])}</p>
         ${q[1].map((opt,i)=>`<label class="option"><input type="radio" name="course-${key}" value="${i}"> ${esc(opt)}</label>`).join("")}
         <button type="button" class="primary" id="courseCheckBtn-${key}">Check Answer</button>`;
-      document.getElementById(`courseCheckBtn-${key}`).onclick=async()=>{
+      content.querySelector(`#courseCheckBtn-${key}`).onclick=async()=>{
         const selected=content.querySelector(`input[name="course-${key}"]:checked`);
-        const fb=document.getElementById(`courseFeedback-${key}`);
+        const fb=content.querySelector(`#courseFeedback-${key}`);
         if(!selected){fb.className="feedback warn";fb.textContent="Choose an answer first.";return;}
         if(Number(selected.value)===q[2]){
           correct++;
@@ -1551,13 +1551,13 @@ function renderActivityContent(moduleId,index,title,key,content,actions,complete
         qIndex++;
         if(qIndex<qs.length){setTimeout(renderCheck,450);}
         else{
-          document.getElementById(`courseCheck-${key}`).innerHTML=`<div class="notice"><strong>Course pathway understood.</strong> You are ready for the diagnostic and practical learning activities.</div>`;
+          content.querySelector(`#courseCheck-${key}`).innerHTML=`<div class="notice"><strong>Course pathway understood.</strong> You are ready for the diagnostic and practical learning activities.</div>`;
           await completeActivity(key,10);
         }
       };
     };
     if(completed){
-      document.getElementById(`courseCheck-${key}`).innerHTML=`<div class="notice"><strong>Completed.</strong> You have already demonstrated understanding of the course pathway.</div>`;
+      content.querySelector(`#courseCheck-${key}`).innerHTML=`<div class="notice"><strong>Completed.</strong> You have already demonstrated understanding of the course pathway.</div>`;
     }else renderCheck();
     return;
   }
@@ -1609,9 +1609,9 @@ function renderActivityContent(moduleId,index,title,key,content,actions,complete
     `;
 
     let qIndex=0, correct=0;
-    const box=document.getElementById(`safetyBox-${key}`);
-    const feedback=document.getElementById(`safetyFeedback-${key}`);
-    const progress=document.getElementById(`safetyProgress-${key}`);
+    const box=content.querySelector(`#safetyBox-${key}`);
+    const feedback=content.querySelector(`#safetyFeedback-${key}`);
+    const progress=content.querySelector(`#safetyProgress-${key}`);
 
     const renderSafety=()=>{
       const q=scenarios[qIndex];
@@ -1622,7 +1622,7 @@ function renderActivityContent(moduleId,index,title,key,content,actions,complete
         <button type="button" class="primary" id="safetyBtn-${key}">Check Decision</button>
       `;
       feedback.textContent="";
-      document.getElementById(`safetyBtn-${key}`).onclick=async()=>{
+      content.querySelector(`#safetyBtn-${key}`).onclick=async()=>{
         const selected=content.querySelector(`input[name="safety-${key}"]:checked`);
         if(!selected){feedback.className="feedback warn";feedback.textContent="Choose the safest action first.";return;}
         if(Number(selected.value)!==q.a){
@@ -1674,9 +1674,9 @@ function renderActivityContent(moduleId,index,title,key,content,actions,complete
 
     let difficulty=1, asked=0, correct=0, maxDifficulty=1, minDifficulty=3;
     const askedIds=[];
-    const box=document.getElementById(`adaptiveBox-${key}`);
-    const feedback=document.getElementById(`adaptiveFeedback-${key}`);
-    const progress=document.getElementById(`adaptiveProgress-${key}`);
+    const box=content.querySelector(`#adaptiveBox-${key}`);
+    const feedback=content.querySelector(`#adaptiveFeedback-${key}`);
+    const progress=content.querySelector(`#adaptiveProgress-${key}`);
 
     const pickQuestion=()=>{
       let pool=questions.filter(q=>q.d===difficulty && !askedIds.includes(q));
@@ -1722,7 +1722,7 @@ function renderActivityContent(moduleId,index,title,key,content,actions,complete
         ${q.o.map((o,i)=>`<label class="option"><input type="radio" name="adaptive-${key}" value="${i}"> ${esc(o)}</label>`).join("")}
         <button type="button" class="primary" id="adaptiveBtn-${key}">Check Answer</button>
       `;
-      document.getElementById(`adaptiveBtn-${key}`).onclick=()=>{
+      content.querySelector(`#adaptiveBtn-${key}`).onclick=()=>{
         const selected=content.querySelector(`input[name="adaptive-${key}"]:checked`);
         if(!selected){feedback.className="feedback warn";feedback.textContent="Choose an answer first.";return;}
         if(Number(selected.value)===q.a){
