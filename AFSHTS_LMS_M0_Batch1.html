@@ -1,0 +1,2937 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AFSHTS Practical ICT Skills Lab</title>
+<meta name="description" content="AFSHTS Interactive ICT Skills Learning Management System">
+
+<style>
+:root{
+  --navy:#17365d;
+  --navy2:#1f4775;
+  --blue:#315ea8;
+  --light:#eef3f8;
+  --line:#d6dee8;
+  --text:#17365d;
+  --muted:#5d6675;
+  --green:#217a45;
+  --amber:#a96800;
+  --red:#b42318;
+  --white:#fff;
+  --shadow:0 2px 10px rgba(20,45,75,.08);
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;font-family:Arial,Helvetica,sans-serif;color:#17253a;background:#f4f7fb}
+body{min-height:100vh}
+button,input,textarea,select{font:inherit}
+button{cursor:pointer}
+header{
+  background:var(--navy);
+  color:#fff;
+  padding:18px 22px;
+  position:sticky;
+  top:0;
+  z-index:20;
+  box-shadow:0 2px 8px rgba(0,0,0,.15);
+}
+.top-row{display:flex;gap:25px;align-items:center;justify-content:space-between}
+header h1{margin:0 0 3px;font-size:25px}
+#top{font-size:16px}
+#connectionStatus{font-size:12px;opacity:.9;margin-top:5px}
+.top-progress{width:260px;min-width:220px}
+.progress{height:12px;background:#e1e6ed;border-radius:999px;overflow:hidden}
+.progress-bar{height:100%;width:0;background:#315ea8;transition:width .3s ease}
+.layout{display:grid;grid-template-columns:292px 1fr;min-height:calc(100vh - 91px)}
+aside{background:#fff;border-right:1px solid var(--line);padding:10px;overflow:auto;position:sticky;top:91px;height:calc(100vh - 91px)}
+nav button{
+  width:100%;text-align:left;border:0;background:transparent;color:var(--text);
+  padding:12px 13px;border-radius:8px;margin-bottom:3px;font-size:16px;
+}
+nav button:hover,nav button.sel{background:#edf2f7}
+nav hr{border:0;border-top:1px solid #cfd6df;margin:10px 4px}
+nav .danger{color:#9b1c1c}
+main{padding:20px;max-width:1400px;width:100%;margin:0 auto}
+.card{
+  background:#fff;border:1px solid var(--line);border-radius:12px;
+  padding:20px;margin-bottom:18px;box-shadow:var(--shadow)
+}
+.card h2,.card h3{color:var(--text);margin-top:0}
+.grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+.kpi-card{min-height:150px}
+.kpi-number{font-size:34px;font-weight:700;color:#132f55;margin:8px 0}
+.small{font-size:13px;color:var(--muted)}
+.notice{padding:13px;border-radius:8px;background:#eef3f8;margin:12px 0}
+.step{border:1px solid var(--line);padding:13px;border-radius:8px;background:#fafcff;margin:8px 0}
+.module-card{border:1px solid var(--line);border-radius:10px;padding:15px;margin:10px 0;background:#fff}
+.module-card.completed{border-left:5px solid var(--green)}
+.activity-card{border:1px solid var(--line);border-radius:10px;padding:16px;margin:12px 0;background:#fff}
+.activity-card.completed{border-left:5px solid var(--green)}
+.activity-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.primary,.secondary,.danger-btn{
+  border:0;border-radius:7px;padding:10px 16px;color:#fff;font-weight:600
+}
+.primary{background:#315ea8}
+.primary:hover{background:#274d8d}
+.secondary{background:#64748b}
+.danger-btn{background:#a33}
+.badge{
+  display:inline-block;padding:6px 10px;border-radius:999px;font-size:12px;font-weight:700
+}
+.green{background:#e8f5e9;color:var(--green)}
+.amber{background:#fff1da;color:var(--amber)}
+.red{background:#fde8e7;color:var(--red)}
+.option{
+  border:1px solid var(--line);padding:12px;border-radius:8px;margin:8px 0;
+  background:#fff;cursor:pointer
+}
+.option:hover{background:#f4f7fb}
+.feedback{margin-top:10px;padding:10px;border-radius:7px}
+.feedback.ok{background:#e8f5e9;color:var(--green)}
+.feedback.warn{background:#fff1da;color:var(--amber)}
+.feedback.err{background:#fde8e7;color:var(--red)}
+input,textarea,select{
+  width:100%;padding:10px;border:1px solid #b7c1ce;border-radius:7px;margin:5px 0 10px
+}
+textarea{min-height:100px;resize:vertical}
+table{width:100%;border-collapse:collapse}
+th,td{border:1px solid var(--line);padding:9px;text-align:left}
+th{background:var(--light)}
+.video{background:#17253a;color:#fff;border-radius:9px;padding:20px;text-align:center;margin:10px 0}
+.play{font-size:38px}
+.login-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;background:#eef3f8}
+.login-card{width:min(460px,100%);background:#fff;border:1px solid var(--line);border-radius:14px;padding:30px;box-shadow:0 8px 30px rgba(20,45,75,.12)}
+.login-card h1{color:var(--navy);margin-top:0}
+.hidden{display:none!important}
+.loading{text-align:center;padding:60px 20px;color:var(--muted)}
+.admin-stat{border:1px solid var(--line);border-radius:10px;padding:16px;background:#fff}
+.user-row{display:flex;justify-content:space-between;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)}
+.user-row:last-child{border-bottom:0}
+@media(max-width:900px){
+  .layout{grid-template-columns:1fr}
+  aside{position:static;height:auto;border-right:0;border-bottom:1px solid var(--line)}
+  .grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .top-row{align-items:flex-start}
+  .top-progress{display:none}
+}
+@media(max-width:600px){
+  main{padding:12px}
+  .grid{grid-template-columns:1fr}
+  header h1{font-size:21px}
+}
+</style>
+</head>
+
+<body>
+<div id="loginScreen" class="login-wrap">
+  <div class="login-card">
+
+    <!-- ================= LOGIN ================= -->
+    <div id="loginView">
+
+      <h1>🎓 AFSHTS Practical ICT Skills Lab</h1>
+      <p>Interactive LMS — Secure Login</p>
+
+      <div id="loginMessage"></div>
+
+      <label for="loginEmail">Email address</label>
+      <input
+        id="loginEmail"
+        type="email"
+        placeholder="Enter your email"
+        autocomplete="username"
+      >
+
+      <label for="loginPassword">Password</label>
+      <input
+        id="loginPassword"
+        type="password"
+        placeholder="Enter your password"
+        autocomplete="current-password"
+      >
+
+      <button
+        id="loginBtn"
+        class="primary"
+        style="width:100%"
+        type="button"
+      >
+        Sign In
+      </button>
+
+      <button
+        id="showRegisterBtn"
+        class="secondary"
+        style="width:100%;margin-top:10px"
+        type="button"
+      >
+        Create Student Account
+      </button>
+
+      <p class="small" style="margin-top:15px">
+        Sign in with your administrator or student account.
+      </p>
+
+    </div>
+
+
+    <!-- ================= STUDENT REGISTRATION ================= -->
+    <div id="registerView" class="hidden">
+
+      <h1>🎓 Create Student Account</h1>
+
+      <p>
+        Register to access the AFSHTS Practical ICT Skills Lab.
+      </p>
+
+      <div id="registerMessage"></div>
+
+      <label for="registerFullName">Full name</label>
+      <input
+        id="registerFullName"
+        type="text"
+        placeholder="Enter your full name"
+        autocomplete="name"
+      >
+
+      <label for="registerEmail">Email address</label>
+      <input
+        id="registerEmail"
+        type="email"
+        placeholder="Enter your email"
+        autocomplete="email"
+      >
+
+      <label for="registerPassword">Password</label>
+      <input
+        id="registerPassword"
+        type="password"
+        placeholder="At least 6 characters"
+        autocomplete="new-password"
+        minlength="6"
+      >
+
+      <label for="registerConfirmPassword">Confirm password</label>
+      <input
+        id="registerConfirmPassword"
+        type="password"
+        placeholder="Re-enter your password"
+        autocomplete="new-password"
+        minlength="6"
+      >
+
+      <button
+        id="registerBtn"
+        class="primary"
+        style="width:100%"
+        type="button"
+      >
+        Create Student Account
+      </button>
+
+      <button
+        id="backToLoginBtn"
+        class="secondary"
+        style="width:100%;margin-top:10px"
+        type="button"
+      >
+        ← Back to Sign In
+      </button>
+
+      <p class="small" style="margin-top:15px">
+        New accounts created here are automatically registered as
+        <strong>student</strong> accounts.
+      </p>
+
+    </div>
+
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+/* =========================================================
+   AFSHTS PRACTICAL ICT SKILLS LAB
+   Clean single-file replacement
+   ========================================================= */
+
+/* ---------- SUPABASE ---------- */
+const SUPABASE_URL = "https://mfuvtilepoyyddbzkbrd.supabase.co";
+const SUPABASE_KEY = "sb_publishable_XEHJaJD0sXLwzWi0AWBrSA_L4ARsztu";
+
+let supabaseClient = null;
+let currentUser = null;
+let currentProfile = null;
+
+try{
+  if(window.supabase && typeof window.supabase.createClient === "function"){
+    supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    console.log("Supabase client created successfully.");
+  }
+}catch(error){
+  console.error("Supabase initialization failed:", error);
+}
+
+/* ---------- COURSE DATA ---------- */
+const M = [
+  ["M0","🎯 Orientation & Diagnostic",[
+    "Welcome","How the course works","Digital safety",
+    "Adaptive diagnostic","Self-rating","Mouse & keyboard warm-up"
+  ]],
+  ["M1","🌐 Browser Foundations",[
+    "Meet the browser","Icon challenge","Address bar vs search",
+    "Guided practice","Independence check"
+  ]],
+  ["M2","🔎 URLs & Searching",[
+    "What is a URL?","URL mission","Search keyword challenge",
+    "Choose a useful result","Find → verify → retrieve"
+  ]],
+  ["M3","🔐 Email Login",[
+    "What is email?","Secure login","Login error clinic","Independent login"
+  ]],
+  ["M4","✉️ Composing Email",[
+    "Compose","Recipient challenge","Subject challenge",
+    "Message builder","Composition check"
+  ]],
+  ["M5","📎 File Attachment",[
+    "Why attachments matter","Locate the file","Attach the file",
+    "Attachment error lab","Attachment mastery"
+  ]],
+  ["M6","✅ Send & Verify",[
+    "Final checks","Send","Verify in Sent","Send-and-verify challenge"
+  ]],
+  ["M7","🛡️ Netiquette",[
+    "Email netiquette","Privacy & safe links","Responsible search"
+  ]],
+  ["M8","🏆 Integrated Challenge",[
+    "Prepare","Perform authentic task","Self-check"
+  ]],
+  ["M9","📈 Remediation & Mastery",[
+    "Mastery status","Targeted remediation","Adaptive reassessment",
+    "Troubleshoot with a peer","Completion & transfer"
+  ]]
+];
+
+const TOTAL_ACTIVITIES = M.reduce((n,m)=>n + m[2].length,0);
+
+/* ---------- LOCAL LEARNER STATE ---------- */
+const DEFAULT_STATE = {
+  learnerName:"",
+  done:[],
+  xp:0,
+  mastery:null,
+  score:null,
+  posts:[],
+  diagnosticLevel:"not assessed",
+  diagnosticDetails:null,
+  quizCorrect:0,
+  quizTotal:0
+};
+
+function loadState(){
+  try{
+    const raw = localStorage.getItem("afshts_lms_state");
+    const saved = raw ? JSON.parse(raw) : null;
+    if(saved && typeof saved === "object"){
+      return {...DEFAULT_STATE,...saved};
+    }
+  }catch(error){
+    console.warn("Could not load local state:",error);
+  }
+  return {...DEFAULT_STATE};
+}
+
+let S = loadState();
+
+const app = document.getElementById("app");
+
+function save(){
+  localStorage.setItem("afshts_lms_state", JSON.stringify(S));
+}
+
+function esc(value){
+  return String(value ?? "")
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#039;");
+}
+
+function pct(){
+  return TOTAL_ACTIVITIES
+    ? Math.min(100,Math.round((S.done.length/TOTAL_ACTIVITIES)*100))
+    : 0;
+}
+
+function status(){
+  if(S.mastery === true) return ["green","GREEN — MASTERED"];
+  if(S.mastery === false) return ["red","RED — REMEDIATION"];
+  return ["amber","AMBER — IN PROGRESS"];
+}
+
+function moduleProgress(moduleId){
+  const m = M.find(x=>x[0]===moduleId);
+  if(!m) return {completed:0,total:0,percent:0};
+  const total = m[2].length;
+  const completed = S.done.filter(k=>k.startsWith(moduleId+"-")).length;
+  return {
+    completed,
+    total,
+    percent: total ? Math.round(completed/total*100) : 0
+  };
+}
+
+function updateTop(){
+  const el = document.getElementById("top");
+  const bar = document.getElementById("globalProgressBar");
+  if(el) el.textContent = `XP: ${S.xp} | Progress: ${pct()}% | ${status()[1]}`;
+  if(bar) bar.style.width = pct()+"%";
+}
+
+/* ---------- SUPABASE PROGRESS SYNC ---------- */
+async function syncProgress(moduleId, activityId, xpAmount){
+  if(!supabaseClient || !currentUser) return false;
+
+  try{
+    const userId = currentUser.id;
+    const learnerName =
+      S.learnerName ||
+      currentProfile?.full_name ||
+      currentUser.email ||
+      "Learner";
+
+    // Check whether this activity has already been saved
+    const { data: existing, error: checkError } = await supabaseClient
+      .from("learner_progress")
+      .select("id")
+      .eq("user_id", userId)
+      .eq("module_id", moduleId)
+      .eq("activity_id", activityId)
+      .maybeSingle();
+
+    if(checkError){
+      console.error("Progress check failed:", checkError);
+      setConnection("✓ LMS working locally; cloud sync unavailable.");
+      return false;
+    }
+
+    // Insert only when this activity is not already recorded
+    if(!existing){
+      const { error: insertError } = await supabaseClient
+        .from("learner_progress")
+        .insert({
+          user_id: userId,
+          learner_name: learnerName,
+          module_id: moduleId,
+          activity_id: activityId,
+          completed: true,
+          xp: xpAmount
+        });
+
+      if(insertError){
+        console.error("Progress insert failed:", insertError);
+        setConnection("✓ LMS working locally; cloud sync unavailable.");
+        return false;
+      }
+    }
+
+    setConnection("✓ Progress saved locally and synced to Supabase.");
+    return true;
+
+  }catch(error){
+    console.error("Progress sync exception:", error);
+    setConnection("✓ LMS working locally; cloud sync unavailable.");
+    return false;
+  }
+}
+
+function setConnection(text){
+  const el = document.getElementById("connectionStatus");
+  if(el) el.textContent = text;
+}
+
+async function completeActivity(key,xpAmount=10){
+  if(!S.done.includes(key)){
+    S.done.push(key);
+    S.xp += xpAmount;
+    save();
+
+    const parts = key.split("-");
+    const moduleId = parts.shift();
+    const activityId = parts.join("-");
+
+    await syncProgress(moduleId,activityId,xpAmount);
+  }
+  updateTop();
+  buildNav(getActivePage());
+}
+
+function getActivePage(){
+  const selected = document.querySelector("nav button.sel");
+  return selected?.dataset.page || "home";
+}
+
+/* =========================================================
+   AUTHENTICATION
+   LOGIN + STUDENT REGISTRATION
+   ========================================================= */
+
+function showLoginMessage(message,type="warn"){
+  const box = document.getElementById("loginMessage");
+
+  if(!box) return;
+
+  box.innerHTML =
+    `<div class="feedback ${type}">${esc(message)}</div>`;
+}
+
+
+function showRegisterMessage(message,type="warn"){
+  const box = document.getElementById("registerMessage");
+
+  if(!box) return;
+
+  box.innerHTML =
+    `<div class="feedback ${type}">${esc(message)}</div>`;
+}
+
+
+/* ---------- SHOW LOGIN FORM ---------- */
+
+function showLoginView(){
+
+  document.getElementById("loginView")
+    .classList.remove("hidden");
+
+  document.getElementById("registerView")
+    .classList.add("hidden");
+
+  const msg = document.getElementById("registerMessage");
+
+  if(msg) msg.innerHTML = "";
+
+}
+
+
+/* ---------- SHOW REGISTRATION FORM ---------- */
+
+function showRegisterView(){
+
+  document.getElementById("loginView")
+    .classList.add("hidden");
+
+  document.getElementById("registerView")
+    .classList.remove("hidden");
+
+  const msg = document.getElementById("loginMessage");
+
+  if(msg) msg.innerHTML = "";
+
+}
+
+
+/* =========================================================
+   LOGIN
+   ========================================================= */
+
+async function login(){
+
+  if(!supabaseClient){
+
+    showLoginMessage(
+      "Supabase could not be initialized. Check the browser console."
+    );
+
+    return;
+  }
+
+
+  const email =
+    document.getElementById("loginEmail")
+      .value
+      .trim()
+      .toLowerCase();
+
+  const password =
+    document.getElementById("loginPassword")
+      .value;
+
+
+  if(!email || !password){
+
+    showLoginMessage(
+      "Enter both email address and password."
+    );
+
+    return;
+  }
+
+
+  const btn =
+    document.getElementById("loginBtn");
+
+
+  btn.disabled = true;
+  btn.textContent = "Signing in…";
+
+
+  showLoginMessage(
+    "Checking your account…",
+    "warn"
+  );
+
+
+  try{
+
+    const {data,error} =
+      await supabaseClient.auth.signInWithPassword({
+        email,
+        password
+      });
+
+
+    if(error) throw error;
+
+
+    currentUser = data.user;
+
+
+    /*
+      Get the user's LMS profile.
+    */
+
+    let {
+      data:profile,
+      error:profileError
+    } =
+      await supabaseClient
+        .from("profiles")
+        .select("id,full_name,email,role")
+        .eq("id",currentUser.id)
+        .maybeSingle();
+
+
+    if(profileError)
+      throw profileError;
+
+
+    /*
+      If the student was created through
+      the registration form but the profile
+      does not yet exist, create it now.
+
+      The role is ALWAYS student here.
+    */
+
+    if(!profile){
+
+      const fullName =
+        currentUser.user_metadata?.full_name ||
+        currentUser.email?.split("@")[0] ||
+        "Student";
+
+
+      const {
+        data:newProfile,
+        error:createProfileError
+      } =
+        await supabaseClient
+          .from("profiles")
+          .insert({
+            id: currentUser.id,
+            full_name: fullName,
+            email: currentUser.email,
+            role: "student"
+          })
+          .select("id,full_name,email,role")
+          .single();
+
+
+      if(createProfileError){
+
+        await supabaseClient.auth.signOut();
+
+        throw new Error(
+          "Your account was created, but your student profile could not be created. " +
+          createProfileError.message
+        );
+      }
+
+
+      profile = newProfile;
+    }
+
+
+    /*
+      Only admin and student are allowed.
+    */
+
+    if(!["admin","student"].includes(profile.role)){
+
+      await supabaseClient.auth.signOut();
+
+      throw new Error(
+        "The profile role must be either admin or student."
+      );
+    }
+
+
+    currentProfile = profile;
+
+
+    /*
+      Use the student's real name.
+    */
+
+    if(profile.full_name && !S.learnerName){
+
+      S.learnerName = profile.full_name;
+
+      save();
+    }
+
+
+    /*
+      Hide login screen.
+    */
+
+    document
+      .getElementById("loginScreen")
+      .classList.add("hidden");
+
+
+    document
+      .getElementById("appShell")
+      .classList.remove("hidden");
+
+
+    setConnection(
+      "✓ Signed in. Supabase connected."
+    );
+
+
+    updateTop();
+
+
+    /*
+      Role-based routing.
+    */
+
+    if(profile.role === "admin"){
+
+      buildAdminNav();
+
+      adminHome();
+
+    }else{
+
+      buildNav("home");
+
+      home();
+
+    }
+
+
+  }catch(error){
+
+    console.error(
+      "Login error:",
+      error
+    );
+
+
+    showLoginMessage(
+      error.message || "Login failed.",
+      "err"
+    );
+
+
+  }finally{
+
+    btn.disabled = false;
+
+    btn.textContent = "Sign In";
+  }
+}
+
+
+/* =========================================================
+   STUDENT REGISTRATION
+   ========================================================= */
+
+async function registerStudent(){
+
+  if(!supabaseClient){
+
+    showRegisterMessage(
+      "Supabase could not be initialized. Please refresh the page.",
+      "err"
+    );
+
+    return;
+  }
+
+
+  const fullName =
+    document
+      .getElementById("registerFullName")
+      .value
+      .trim();
+
+
+  const email =
+    document
+      .getElementById("registerEmail")
+      .value
+      .trim()
+      .toLowerCase();
+
+
+  const password =
+    document
+      .getElementById("registerPassword")
+      .value;
+
+
+  const confirmPassword =
+    document
+      .getElementById("registerConfirmPassword")
+      .value;
+
+
+  /* ---------- VALIDATION ---------- */
+
+  if(!fullName){
+
+    showRegisterMessage(
+      "Please enter your full name.",
+      "warn"
+    );
+
+    return;
+  }
+
+
+  if(!email){
+
+    showRegisterMessage(
+      "Please enter your email address.",
+      "warn"
+    );
+
+    return;
+  }
+
+
+  if(password.length < 6){
+
+    showRegisterMessage(
+      "Password must be at least 6 characters.",
+      "warn"
+    );
+
+    return;
+  }
+
+
+  if(password !== confirmPassword){
+
+    showRegisterMessage(
+      "The two passwords do not match.",
+      "warn"
+    );
+
+    return;
+  }
+
+
+  const btn =
+    document.getElementById("registerBtn");
+
+
+  btn.disabled = true;
+
+  btn.textContent =
+    "Creating account…";
+
+
+  showRegisterMessage(
+    "Please wait while your student account is created…",
+    "warn"
+  );
+
+
+  try{
+
+    /*
+      IMPORTANT:
+      The role is deliberately fixed to "student".
+      A visitor cannot create an admin account.
+    */
+
+    const {
+      data,
+      error
+    } =
+      await supabaseClient.auth.signUp({
+
+        email: email,
+
+        password: password,
+
+        options:{
+
+          data:{
+            full_name: fullName,
+            role: "student"
+          }
+
+        }
+
+      });
+
+
+    if(error) throw error;
+
+
+    /*
+      Supabase may return an active session
+      immediately, or may require email confirmation.
+    */
+
+    if(data?.user){
+
+      /*
+        If a session exists, create the
+        student profile immediately.
+      */
+
+      if(data.session){
+
+        const {
+          data:profile,
+          error:profileError
+        } =
+          await supabaseClient
+            .from("profiles")
+            .insert({
+
+              id: data.user.id,
+
+              full_name: fullName,
+
+              email: email,
+
+              role: "student"
+
+            })
+            .select("id,full_name,email,role")
+            .single();
+
+
+        /*
+          If the profile already exists because
+          Supabase has a database trigger, do not
+          treat that as a fatal problem.
+        */
+
+        if(profileError){
+
+          const existing =
+            await supabaseClient
+              .from("profiles")
+              .select("id,full_name,email,role")
+              .eq("id",data.user.id)
+              .maybeSingle();
+
+
+          if(existing.error || !existing.data){
+
+            throw new Error(
+              "Account was created, but the student profile could not be created. " +
+              profileError.message
+            );
+          }
+        }
+
+
+        /*
+          Go directly into the LMS.
+        */
+
+        currentUser = data.user;
+
+
+        const profileResult =
+          await supabaseClient
+            .from("profiles")
+            .select("id,full_name,email,role")
+            .eq("id",data.user.id)
+            .maybeSingle();
+
+
+        if(profileResult.data){
+
+          currentProfile =
+            profileResult.data;
+
+          S.learnerName =
+            currentProfile.full_name || fullName;
+
+          save();
+
+          document
+            .getElementById("loginScreen")
+            .classList.add("hidden");
+
+          document
+            .getElementById("appShell")
+            .classList.remove("hidden");
+
+          setConnection(
+            "✓ Student account created successfully."
+          );
+
+          updateTop();
+
+          buildNav("home");
+
+          home();
+
+          return;
+        }
+      }
+
+
+      /*
+        Email confirmation is enabled.
+      */
+
+      showRegisterMessage(
+        "Your student account has been created successfully. " +
+        "Please check your email and confirm your account. " +
+        "After confirmation, return here and sign in.",
+        "ok"
+      );
+
+
+      /*
+        Clear password fields.
+      */
+
+      document
+        .getElementById("registerPassword")
+        .value = "";
+
+      document
+        .getElementById("registerConfirmPassword")
+        .value = "";
+
+    }
+
+
+  }catch(error){
+
+    console.error(
+      "Student registration error:",
+      error
+    );
+
+
+    showRegisterMessage(
+      error.message ||
+      "Student registration failed. Please try again.",
+      "err"
+    );
+
+
+  }finally{
+
+    btn.disabled = false;
+
+    btn.textContent =
+      "Create Student Account";
+  }
+}
+
+
+/* =========================================================
+   LOGOUT
+   ========================================================= */
+
+async function logout(){
+
+  try{
+
+    if(supabaseClient){
+
+      await supabaseClient
+        .auth
+        .signOut();
+    }
+
+  }catch(error){
+
+    console.warn(
+      "Sign out warning:",
+      error
+    );
+
+  }
+
+
+  currentUser = null;
+
+  currentProfile = null;
+
+
+  document
+    .getElementById("appShell")
+    .classList.add("hidden");
+
+
+  document
+    .getElementById("loginScreen")
+    .classList.remove("hidden");
+
+
+  document
+    .getElementById("loginPassword")
+    .value = "";
+
+
+  showLoginView();
+
+
+  showLoginMessage(
+    "You have been signed out.",
+    "ok"
+  );
+}
+
+/* ---------- STUDENT NAVIGATION ---------- */
+function buildNav(active="home"){
+  const nav = document.getElementById("nav");
+
+  nav.innerHTML = `
+    <button data-page="home">🏠 Dashboard</button>
+    ${M.map(m=>`<button data-page="${m[0]}">${m[1]}</button>`).join("")}
+    <hr>
+    <button data-page="peer">🤝 Peer Collaboration</button>
+    <button data-page="analytics">📊 Analytics</button>
+    <button data-page="badges">🏅 Achievements</button>
+    <button data-page="about">ℹ️ Design Notes</button>
+    <hr>
+    <button id="resetBtn">↺ Reset Local Progress</button>
+    <button id="logoutBtn" class="danger">🚪 Sign Out</button>
+  `;
+
+  nav.querySelectorAll("[data-page]").forEach(button=>{
+    if(button.dataset.page===active) button.classList.add("sel");
+    button.addEventListener("click",()=>{
+      buildNav(button.dataset.page);
+      route(button.dataset.page);
+    });
+  });
+
+  document.getElementById("resetBtn").addEventListener("click",()=>{
+    if(confirm("Reset this browser's learner progress?")){
+      S = {...DEFAULT_STATE};
+      save();
+      updateTop();
+      buildNav("home");
+      home();
+    }
+  });
+
+  document.getElementById("logoutBtn").addEventListener("click",logout);
+}
+
+function route(page){
+  if(page==="home") return home();
+  if(page==="peer") return peer();
+  if(page==="analytics") return analytics();
+  if(page==="badges") return badges();
+  if(page==="about") return about();
+  modulePage(page);
+}
+
+/* ---------- STUDENT DASHBOARD ---------- */
+function home(){
+  const s = status();
+
+  app.innerHTML = `
+    <div class="card">
+      <h2>🎓 Learner Dashboard</h2>
+      <p>Welcome, <strong>${esc(S.learnerName || currentProfile?.full_name || "Learner")}</strong></p>
+
+      <div class="notice">
+        Your dashboard updates whenever an activity is completed.
+        Practical performance remains the main evidence of mastery.
+      </div>
+
+      <div class="grid">
+        <div class="card kpi-card">
+          <h3>📊 Overall Progress</h3>
+          <div class="progress"><div class="progress-bar" style="width:${pct()}%"></div></div>
+          <p class="kpi-number">${pct()}%</p>
+          <p class="small">${S.done.length} of ${TOTAL_ACTIVITIES} activities completed</p>
+        </div>
+
+        <div class="card kpi-card">
+          <h3>⭐ XP Points</h3>
+          <p class="kpi-number">${S.xp}</p>
+          <p class="small">Experience points earned</p>
+        </div>
+
+        <div class="card kpi-card">
+          <h3>✅ Completed</h3>
+          <p class="kpi-number">${S.done.length}</p>
+          <p class="small">Learning activities completed</p>
+        </div>
+
+        <div class="card kpi-card">
+          <h3>🏆 Mastery</h3>
+          <p><span class="badge ${s[0]}">${s[1]}</span></p>
+          <p class="small">Diagnostic: ${esc(S.diagnosticLevel)}</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>👤 Learner Information</h3>
+      <label for="learnerNameInput">Learner name</label>
+      <input id="learnerNameInput" value="${esc(S.learnerName)}" placeholder="Enter learner name">
+      <button class="primary" id="saveNameBtn">Save Learner Name</button>
+    </div>
+
+    <div class="card">
+      <h3>📚 Learning Modules</h3>
+      <p>Select a module below to continue.</p>
+      <div id="dashboardModules"></div>
+    </div>
+  `;
+
+  document.getElementById("saveNameBtn").addEventListener("click",setLearnerName);
+
+  const box = document.getElementById("dashboardModules");
+
+  M.forEach(m=>{
+    const p = moduleProgress(m[0]);
+    const div = document.createElement("div");
+    div.className = "module-card" + (p.percent===100 ? " completed" : "");
+
+    div.innerHTML = `
+      <h3>${m[1]}</h3>
+      <div class="progress"><div class="progress-bar" style="width:${p.percent}%"></div></div>
+      <p>${p.completed} of ${p.total} activities completed — <strong>${p.percent}%</strong></p>
+      <button class="primary">Open Module</button>
+    `;
+
+    div.querySelector("button").addEventListener("click",()=>{
+      buildNav(m[0]);
+      modulePage(m[0]);
+      window.scrollTo({top:0,behavior:"smooth"});
+    });
+
+    box.appendChild(div);
+  });
+}
+
+function setLearnerName(){
+  const input = document.getElementById("learnerNameInput");
+  if(!input) return;
+  const name = input.value.trim();
+
+  if(!name){
+    alert("Please enter the learner's name.");
+    return;
+  }
+
+  S.learnerName = name;
+  save();
+  updateTop();
+  home();
+}
+
+/* ---------- MODULE PAGE ---------- */
+function modulePage(id){
+  const m = M.find(x=>x[0]===id);
+  if(!m){home();return}
+
+  const p = moduleProgress(id);
+
+  app.innerHTML = `
+    <div class="card">
+      <h2>${m[1]}</h2>
+      <p>Complete the activities below. Use the practical task where instructed.</p>
+      <div class="progress"><div class="progress-bar" style="width:${p.percent}%"></div></div>
+      <p>Module progress: <strong>${p.percent}%</strong> (${p.completed}/${p.total})</p>
+    </div>
+    <div id="activities"></div>
+  `;
+
+  const activities = document.getElementById("activities");
+
+  m[2].forEach((title,index)=>{
+    activities.appendChild(createActivity(id,index,title));
+  });
+}
+
+/* ---------- ACTIVITY ENGINE ---------- */
+function createActivity(moduleId,index,title){
+  const key = `${moduleId}-${index}`;
+  const completed = S.done.includes(key);
+
+  const card = document.createElement("div");
+  card.className = "activity-card" + (completed ? " completed" : "");
+
+  card.innerHTML = `
+    <h3>${index+1}. ${esc(title)}
+      ${completed ? '<span class="badge green">Completed</span>' : ''}
+    </h3>
+    <div class="activity-content"></div>
+    <div class="activity-actions"></div>
+  `;
+
+  const content = card.querySelector(".activity-content");
+  const actions = card.querySelector(".activity-actions");
+
+  renderActivityContent(moduleId,index,title,key,content,actions,completed);
+  return card;
+}
+
+function renderActivityContent(moduleId,index,title,key,content,actions,completed){
+
+  /* M0 Activity 1 — Welcome */
+  if(moduleId==="M0" && index===0){
+    const learner = S.learnerName || currentProfile?.full_name || "Learner";
+    content.innerHTML = `
+      <div class="notice">
+        <strong>Welcome, ${esc(learner)}!</strong><br>
+        You are about to build practical confidence in browser use, internet searching,
+        email communication, file attachments and digital safety.
+      </div>
+      <div class="grid">
+        <div class="card"><h4>🎯 Your goal</h4><p>Become able to complete common internet-and-email tasks accurately and safely.</p></div>
+        <div class="card"><h4>🧭 How you will learn</h4><p>Learn a skill, practise it, receive feedback, retry when needed, and then perform it independently.</p></div>
+        <div class="card"><h4>🏆 What counts as mastery</h4><p>The LMS records your learning progress, while practical performance can be verified by your teacher.</p></div>
+      </div>
+      <h4>Before you begin</h4>
+      <p>Tick all three statements to confirm that you are ready.</p>
+      ${[
+        "I understand that this course is practical and I should practise the tasks, not only read them.",
+        "I will use safe and responsible behaviour when working online or with email.",
+        "I am ready to learn, practise, receive feedback and try again when I make a mistake."
+      ].map((x,i)=>`<label class="option"><input type="checkbox" class="m0-ready-${key}" data-ready="${i}"> ${esc(x)}</label>`).join("")}
+      <div id="welcomeFeedback-${key}" class="feedback" aria-live="polite"></div>
+    `;
+    const btn=document.createElement("button");
+    btn.className=completed ? "secondary" : "primary";
+    btn.textContent=completed ? "✓ Welcome Completed" : "Confirm Readiness & Continue";
+    btn.disabled=completed;
+    btn.onclick=async()=>{
+      const checks=content.querySelectorAll(`.m0-ready-${key}:checked`).length;
+      const feedback=document.getElementById(`welcomeFeedback-${key}`);
+      if(checks<3){
+        feedback.className="feedback warn";
+        feedback.textContent=`Please confirm all three readiness statements (${checks}/3 selected).`;
+        return;
+      }
+      feedback.className="feedback ok";
+      feedback.textContent="Great. You are ready to begin the course.";
+      await completeActivity(key,10);
+      btn.disabled=true;
+      btn.className="secondary";
+      btn.textContent="✓ Welcome Completed";
+    };
+    actions.appendChild(btn);
+    return;
+  }
+
+  /* M0 Activity 2 — How the Course Works */
+  if(moduleId==="M0" && index===1){
+    const steps=[
+      ["1. Diagnose","Find out what you already know and where support is needed."],
+      ["2. Learn","Study the skill and observe the correct process."],
+      ["3. Practise","Try the task in a safe practice environment."],
+      ["4. Feedback","Check your result and understand what needs improvement."],
+      ["5. Retry","Correct the mistake and practise again."],
+      ["6. Perform","Complete the practical task independently."],
+    ];
+    content.innerHTML=`
+      <p><strong>This course follows a practical learning cycle.</strong> Click each stage below to see what you should do.</p>
+      <div class="grid" id="pathway-${key}">
+        ${steps.map((st,i)=>`<button type="button" class="card" data-path="${i}" style="text-align:left;cursor:pointer"><strong>${esc(st[0])}</strong><p class="small">Click to explore</p></button>`).join("")}
+      </div>
+      <div id="pathwayDetail-${key}" class="notice" aria-live="polite">Select a stage to explore it.</div>
+      <hr>
+      <h4>Quick check</h4>
+      <p>Answer all three questions correctly. If you miss one, you can try again immediately.</p>
+      <div id="courseCheck-${key}"></div>
+      <div id="courseFeedback-${key}" class="feedback" aria-live="polite"></div>
+    `;
+    content.querySelectorAll(`[data-path]`).forEach(btn=>btn.addEventListener("click",()=>{
+      const i=Number(btn.dataset.path);
+      document.getElementById(`pathwayDetail-${key}`).innerHTML=`<strong>${esc(steps[i][0])}</strong><p>${esc(steps[i][1])}</p>`;
+    }));
+    const qs=[
+      ["What is the main purpose of the diagnostic?",["To find what I can already do and what I need to improve","To replace all practical work","To give me internet access"],0],
+      ["What should you do after receiving feedback?",["Ignore it","Retry the skill and correct the mistake","Skip the activity"],1],
+      ["Which best demonstrates mastery?",["Reading the instructions once","Watching someone else do the task","Performing the practical task independently"],2]
+    ];
+    let qIndex=0, correct=0;
+    const renderCheck=()=>{
+      const q=qs[qIndex];
+      document.getElementById(`courseCheck-${key}`).innerHTML=`
+        <p><strong>Question ${qIndex+1} of ${qs.length}</strong></p>
+        <p>${esc(q[0])}</p>
+        ${q[1].map((opt,i)=>`<label class="option"><input type="radio" name="course-${key}" value="${i}"> ${esc(opt)}</label>`).join("")}
+        <button type="button" class="primary" id="courseCheckBtn-${key}">Check Answer</button>`;
+      document.getElementById(`courseCheckBtn-${key}`).onclick=async()=>{
+        const selected=content.querySelector(`input[name="course-${key}"]:checked`);
+        const fb=document.getElementById(`courseFeedback-${key}`);
+        if(!selected){fb.className="feedback warn";fb.textContent="Choose an answer first.";return;}
+        if(Number(selected.value)===q[2]){
+          correct++;
+          fb.className="feedback ok";
+          fb.textContent="Correct. Good understanding.";
+        }else{
+          fb.className="feedback warn";
+          fb.textContent="Not quite. Review the pathway above and try this question again.";
+          return;
+        }
+        qIndex++;
+        if(qIndex<qs.length){setTimeout(renderCheck,450);}
+        else{
+          document.getElementById(`courseCheck-${key}`).innerHTML=`<div class="notice"><strong>Course pathway understood.</strong> You are ready for the diagnostic and practical learning activities.</div>`;
+          await completeActivity(key,10);
+        }
+      };
+    };
+    if(completed){
+      document.getElementById(`courseCheck-${key}`).innerHTML=`<div class="notice"><strong>Completed.</strong> You have already demonstrated understanding of the course pathway.</div>`;
+    }else renderCheck();
+    return;
+  }
+
+  /* M0 Activity 3 — Digital Safety */
+  if(moduleId==="M0" && index===2){
+    const scenarios=[
+      {
+        q:"A message from an unknown sender includes an unexpected attachment. What is the safest first action?",
+        options:["Open it immediately","Do not open it; verify the sender and context first","Forward it to classmates"],
+        a:1,
+        why:"Unexpected attachments can contain harmful files. Verify before opening."
+      },
+      {
+        q:"A classmate asks for your email password so they can help with an assignment. What should you do?",
+        options:["Share it privately","Give the password and change it later","Do not share it; keep your password private"],
+        a:2,
+        why:"Passwords are personal credentials. A helper should not need your password."
+      },
+      {
+        q:"You receive a link saying, “Urgent! Click now to confirm your account.” What is the best response?",
+        options:["Click quickly before it expires","Check the sender and destination without opening the suspicious link","Send your password in reply"],
+        a:1,
+        why:"Urgent messages can be used to trick people. Verify the source before following links."
+      },
+      {
+        q:"Someone you do not know asks you by email for your full name, password and phone number. What should you do?",
+        options:["Provide everything because they asked politely","Provide only the password","Do not disclose sensitive information; verify who is asking"],
+        a:2,
+        why:"Sensitive personal and account information should not be disclosed to an unverified person."
+      },
+      {
+        q:"You finish using your email account on a shared school computer. What should you do before leaving?",
+        options:["Leave the account open","Sign out of the account and close the session","Save the password in the browser"],
+        a:1,
+        why:"Signing out protects your account from the next person using the computer."
+      }
+    ];
+
+    content.innerHTML=`
+      <div class="notice">
+        <strong>Digital safety checkpoint</strong><br>
+        In this activity you will make safe decisions in realistic school ICT situations.
+        Choose the safest action, read the feedback, and retry any item you miss.
+      </div>
+      <div id="safetyBox-${key}"></div>
+      <div id="safetyFeedback-${key}" class="feedback" aria-live="polite"></div>
+      <div id="safetyProgress-${key}" class="small" style="margin-top:8px"></div>
+    `;
+
+    let qIndex=0, correct=0;
+    const box=document.getElementById(`safetyBox-${key}`);
+    const feedback=document.getElementById(`safetyFeedback-${key}`);
+    const progress=document.getElementById(`safetyProgress-${key}`);
+
+    const renderSafety=()=>{
+      const q=scenarios[qIndex];
+      progress.textContent=`Scenario ${qIndex+1} of ${scenarios.length}`;
+      box.innerHTML=`
+        <p><strong>${esc(q.q)}</strong></p>
+        ${q.options.map((o,i)=>`<label class="option"><input type="radio" name="safety-${key}" value="${i}"> ${esc(o)}</label>`).join("")}
+        <button type="button" class="primary" id="safetyBtn-${key}">Check Decision</button>
+      `;
+      feedback.textContent="";
+      document.getElementById(`safetyBtn-${key}`).onclick=async()=>{
+        const selected=content.querySelector(`input[name="safety-${key}"]:checked`);
+        if(!selected){feedback.className="feedback warn";feedback.textContent="Choose the safest action first.";return;}
+        if(Number(selected.value)!==q.a){
+          feedback.className="feedback warn";
+          feedback.innerHTML=`<strong>Try again.</strong> ${esc(q.why)}`;
+          return;
+        }
+        correct++;
+        feedback.className="feedback ok";
+        feedback.innerHTML=`<strong>Correct.</strong> ${esc(q.why)}`;
+        qIndex++;
+        if(qIndex<scenarios.length){
+          setTimeout(renderSafety,650);
+        }else{
+          box.innerHTML=`<div class="notice"><strong>Digital safety completed.</strong> You answered ${correct}/${scenarios.length} scenarios correctly.</div>`;
+          progress.textContent="All safety scenarios completed";
+          await completeActivity(key,15);
+        }
+      };
+    };
+
+    if(completed){
+      box.innerHTML=`<div class="notice"><strong>Completed.</strong> You have already completed the digital safety checkpoint.</div>`;
+      progress.textContent="Completed";
+    }else renderSafety();
+    return;
+  }
+
+  /* M0 Activity 4 — Adaptive Diagnostic */
+  if(moduleId==="M0" && index===3){
+    const questions=[
+      {d:1,q:"Which control is normally used to enter a website address?",o:["Refresh button","Address bar","Back button"],a:1},
+      {d:1,q:"Which item is usually used to move from one webpage to another?",o:["A hyperlink","Computer speaker","Recycle Bin"],a:0},
+      {d:2,q:"Which search query is most specific for finding help with an email attachment?",o:["email","email attachment problems","how to attach a PDF file to an email"],a:2},
+      {d:2,q:"Where can you normally check whether an email you sent was recorded successfully?",o:["Sent folder","Downloads folder","Browser settings"],a:0},
+      {d:3,q:"Before sending an email with an attachment, which sequence is safest?",o:["Send first, then check the recipient","Check recipient, subject/message, attachment and then send","Close the browser and assume it was sent"],a:1},
+      {d:3,q:"You are on a shared computer and have finished using email. Which action best protects your account?",o:["Leave the tab open","Save the password in the browser","Sign out and close the session"],a:2}
+    ];
+
+    content.innerHTML=`
+      <div class="notice">
+        <strong>Adaptive diagnostic</strong><br>
+        This is a starting-point check, not a final examination. The next question changes in difficulty according to your answer. Your teacher can verify the result through live practical performance.
+      </div>
+      <div id="adaptiveBox-${key}"></div>
+      <div id="adaptiveFeedback-${key}" class="feedback" aria-live="polite"></div>
+      <div id="adaptiveProgress-${key}" class="small" style="margin-top:8px"></div>
+    `;
+
+    let difficulty=1, asked=0, correct=0, maxDifficulty=1, minDifficulty=3;
+    const askedIds=[];
+    const box=document.getElementById(`adaptiveBox-${key}`);
+    const feedback=document.getElementById(`adaptiveFeedback-${key}`);
+    const progress=document.getElementById(`adaptiveProgress-${key}`);
+
+    const pickQuestion=()=>{
+      let pool=questions.filter(q=>q.d===difficulty && !askedIds.includes(q));
+      if(!pool.length) pool=questions.filter(q=>!askedIds.includes(q));
+      return pool[0] || questions[Math.min(asked,questions.length-1)];
+    };
+
+    const finish=async()=>{
+      const level=correct<=2 ? "beginning" : correct<=4 ? "developing" : "proficient";
+      S.diagnosticLevel=level;
+      S.quizCorrect=correct;
+      S.quizTotal=asked;
+      S.diagnosticDetails={correct,total:asked,maxDifficulty,minDifficulty,completedAt:new Date().toISOString()};
+      save();
+      const recommendation=level==="beginning"
+        ? "Start with the foundational browser and email activities and practise with teacher support."
+        : level==="developing"
+          ? "Continue through the core activities, giving extra attention to skills where you hesitate or make errors."
+          : "You appear ready for the core practical sequence; still complete the activities because the LMS diagnostic is not a substitute for live performance.";
+      box.innerHTML=`
+        <div class="notice">
+          <strong>Diagnostic result: ${correct}/${asked}</strong><br>
+          Starting level: <strong>${esc(level)}</strong><br><br>
+          <strong>Recommended pathway:</strong> ${esc(recommendation)}
+        </div>
+      `;
+      progress.textContent="Diagnostic completed";
+      await completeActivity(key,20);
+    };
+
+    const renderQuestion=()=>{
+      if(asked>=6 || asked>=questions.length){finish();return;}
+      const q=pickQuestion();
+      askedIds.push(q);
+      asked++;
+      maxDifficulty=Math.max(maxDifficulty,q.d);
+      minDifficulty=Math.min(minDifficulty,q.d);
+      progress.textContent=`Question ${asked} of 6 • Current level: ${difficulty}`;
+      feedback.textContent="";
+      box.innerHTML=`
+        <p><strong>Question ${asked} of 6</strong></p>
+        <p>${esc(q.q)}</p>
+        ${q.o.map((o,i)=>`<label class="option"><input type="radio" name="adaptive-${key}" value="${i}"> ${esc(o)}</label>`).join("")}
+        <button type="button" class="primary" id="adaptiveBtn-${key}">Check Answer</button>
+      `;
+      document.getElementById(`adaptiveBtn-${key}`).onclick=()=>{
+        const selected=content.querySelector(`input[name="adaptive-${key}"]:checked`);
+        if(!selected){feedback.className="feedback warn";feedback.textContent="Choose an answer first.";return;}
+        if(Number(selected.value)===q.a){
+          correct++;
+          feedback.className="feedback ok";
+          feedback.textContent="Correct. The next item will increase in difficulty when possible.";
+          difficulty=Math.min(3,difficulty+1);
+        }else{
+          feedback.className="feedback warn";
+          feedback.textContent="Not quite. Review the skill and the next item will provide another opportunity at an appropriate level.";
+          difficulty=Math.max(1,difficulty-1);
+        }
+        setTimeout(renderQuestion,700);
+      };
+    };
+
+    if(completed){
+      const level=S.diagnosticLevel || "assessed";
+      box.innerHTML=`<div class="notice"><strong>Completed.</strong> Previous diagnostic level: <strong>${esc(level)}</strong>. You can review the later remediation activities if needed.</div>`;
+      progress.textContent="Completed";
+    }else renderQuestion();
+    return;
+  }
+
+  /* M1 browser challenge */
+  if(moduleId==="M1" && index===1){
+    renderQuiz(
+      content,actions,key,
+      "Which browser feature is normally used to enter a website address?",
+      ["Desktop wallpaper","Address bar","Recycle Bin"],1,15
+    );
+    return;
+  }
+
+  /* M2 search challenge */
+  if(moduleId==="M2" && index===2){
+    renderQuiz(
+      content,actions,key,
+      "Which is the strongest search query?",
+      ["email","safe email communication for senior high school students","things on the Internet"],1,15
+    );
+    return;
+  }
+
+  /* M4 subject challenge */
+  if(moduleId==="M4" && index===2){
+    renderQuiz(
+      content,actions,key,
+      "Which is the strongest email subject?",
+      ["Hi","ICT Assignment Submission — Form 2","Important"],1,15
+    );
+    return;
+  }
+
+  /* M5 attachment error lab */
+  if(moduleId==="M5" && index===3){
+    renderQuiz(
+      content,actions,key,
+      "The attachment is not visible after selecting a file. What should you do?",
+      ["Send immediately","Wait for upload and confirm the attachment appears","Close the browser"],1,20
+    );
+    return;
+  }
+
+  /* M5 attachment mastery */
+  if(moduleId==="M5" && index===4){
+    content.innerHTML = `
+      <p><strong>High-priority attachment checkpoint.</strong></p>
+      <p>Complete all four steps before submitting the checklist.</p>
+      ${["Locate the correct file","Select the correct file","Wait for the upload to finish","Confirm the attachment is visible"]
+        .map((x,i)=>`<label class="option"><input type="checkbox" data-step="${i}"> ${x}</label>`).join("")}
+      <div id="attachFeedback-${key}" class="feedback"></div>
+    `;
+    const btn=document.createElement("button");
+    btn.className="primary";
+    btn.textContent=completed ? "✓ Checklist Completed" : "Submit Checklist";
+    btn.disabled=completed;
+    btn.onclick=async()=>{
+      const checked=content.querySelectorAll("input:checked").length;
+      const feedback=document.getElementById(`attachFeedback-${key}`);
+      if(checked===4){
+        await completeActivity(key,25);
+        feedback.className="feedback ok";
+        feedback.textContent="Checklist complete. Teacher should validate independent live performance.";
+        btn.disabled=true;
+        btn.textContent="✓ Checklist Completed";
+      }else{
+        feedback.className="feedback warn";
+        feedback.textContent=`${checked}/4 steps complete. Finish the sequence.`;
+      }
+    };
+    actions.appendChild(btn);
+    return;
+  }
+
+  /* M8 integrated challenge */
+  if(moduleId==="M8" && index===1){
+    content.innerHTML=`
+      <p><strong>Authentic practical task:</strong> complete the full browser-to-email sequence independently.</p>
+      <div class="step">
+        Browser/search → email login → compose → correct recipient → subject →
+        message → attach file → send → verify in Sent.
+      </div>
+      <div class="notice">
+        The teacher should score the live task using the 20-mark practical rubric.
+        Starting the LMS activity is not itself evidence of mastery.
+      </div>
+    `;
+    const btn=document.createElement("button");
+    btn.className="primary";
+    btn.textContent=completed ? "✓ Practical Task Recorded" : "Launch Practical Task";
+    btn.disabled=completed;
+    btn.onclick=async()=>{
+      await completeActivity(key,30);
+      btn.disabled=true;
+      btn.textContent="✓ Practical Task Recorded";
+      content.insertAdjacentHTML("beforeend",
+        `<div class="feedback ok">Task launched. Complete it independently and have the teacher record the practical score.</div>`);
+    };
+    actions.appendChild(btn);
+    return;
+  }
+
+  /* M9 reassessment */
+  if(moduleId==="M9" && index===2){
+    content.innerHTML=`
+      <p>Enter the teacher-awarded score for the novel equivalent practical task.</p>
+      <label>Score out of 20</label>
+      <input id="score-${key}" type="number" min="0" max="20" placeholder="e.g. 18">
+      <label class="option">
+        <input id="critical-${key}" type="checkbox">
+        No critical failure occurred
+      </label>
+      <div id="masteryFeedback-${key}" class="feedback"></div>
+    `;
+
+    const btn=document.createElement("button");
+    btn.className="primary";
+    btn.textContent="Record Mastery Decision";
+    btn.onclick=async()=>{
+      const score=Number(document.getElementById(`score-${key}`).value);
+      const noCritical=document.getElementById(`critical-${key}`).checked;
+      const feedback=document.getElementById(`masteryFeedback-${key}`);
+
+      if(!Number.isFinite(score)||score<0||score>20){
+        feedback.className="feedback warn";
+        feedback.textContent="Enter a valid score from 0 to 20.";
+        return;
+      }
+
+      S.score=score;
+      S.mastery=(score>=16 && noCritical);
+      save();
+
+      feedback.className=S.mastery ? "feedback ok" : "feedback warn";
+      feedback.textContent=S.mastery
+        ? "GREEN — Mastery achieved: at least 16/20 with no critical failure."
+        : "RED/AMBER — Remediation is recommended. Review the weak skill and reassess.";
+
+      await completeActivity(key,20);
+      updateTop();
+    };
+    actions.appendChild(btn);
+    return;
+  }
+
+  /* Generic practical activity */
+  content.innerHTML=`
+    <p><strong>Learning task:</strong> ${esc(activityInstruction(moduleId,index,title))}</p>
+    <div class="video">
+      <div class="play">▶</div>
+      <div>Interactive demonstration: ${esc(title)}</div>
+      <small>Observe → practise → receive feedback → perform independently.</small>
+    </div>
+    <div class="notice">
+      Perform the task practically, then mark the activity complete.
+    </div>
+  `;
+
+  const btn=document.createElement("button");
+  btn.className=completed ? "secondary" : "primary";
+  btn.textContent=completed ? "✓ Activity Completed" : "Mark Activity Complete";
+  btn.disabled=completed;
+
+  btn.onclick=async()=>{
+    await completeActivity(key,10);
+    btn.disabled=true;
+    btn.className="secondary";
+    btn.textContent="✓ Activity Completed";
+    cardRefreshNotice(content);
+  };
+
+  actions.appendChild(btn);
+}
+
+function cardRefreshNotice(content){
+  const old=content.querySelector(".feedback");
+  if(old) old.remove();
+  content.insertAdjacentHTML("beforeend",
+    `<div class="feedback ok">Activity completed and progress updated.</div>`);
+}
+
+function renderQuiz(content,actions,key,question,options,correctIndex,xpAmount){
+  content.innerHTML=`
+    <p><strong>${esc(question)}</strong></p>
+    ${options.map((x,i)=>`
+      <div class="option" data-answer="${i}">${esc(x)}</div>
+    `).join("")}
+    <div id="feedback-${key}" class="feedback"></div>
+  `;
+
+  content.querySelectorAll(".option").forEach(option=>{
+    option.addEventListener("click",async()=>{
+      const feedback=document.getElementById(`feedback-${key}`);
+
+      if(Number(option.dataset.answer)===correctIndex){
+        feedback.className="feedback ok";
+        feedback.textContent="Correct. Activity completed.";
+        content.querySelectorAll(".option").forEach(x=>x.style.pointerEvents="none");
+        await completeActivity(key,xpAmount);
+      }else{
+        feedback.className="feedback warn";
+        feedback.textContent="Not quite. Review the options and try again.";
+      }
+    });
+  });
+}
+
+function activityInstruction(moduleId,index,title){
+  const map={
+    "M0-0":"Read the orientation information and identify one learning goal.",
+    "M0-1":"Review how the course modules, activities, progress and assessments fit together.",
+    "M0-2":"Identify at least two safe practices for protecting accounts, devices and personal information.",
+    "M0-4":"Rate your confidence with basic computer skills from 1 (beginner) to 5 (very confident).",
+    "M0-5":"Practise clicking, double-clicking, selecting, dragging and keyboard use.",
+    "M1-0":"Identify the browser window, tabs, back, refresh, address bar and search controls.",
+    "M1-2":"Explain the difference between entering a URL and entering search keywords.",
+    "M1-3":"Follow a guided browser task and navigate back to the previous page.",
+    "M1-4":"Perform the browser task independently without step-by-step assistance.",
+    "M2-0":"Explain what a URL is and identify its main parts.",
+    "M2-1":"Enter a supplied URL accurately and confirm the intended page.",
+    "M2-3":"Choose a relevant result and explain why it is useful.",
+    "M2-4":"Find information, verify the source and retrieve the required information.",
+    "M3-0":"Explain inbox, sent messages and basic email account functions.",
+    "M3-1":"Use an authorised practice account and protect the password.",
+    "M3-2":"Identify common causes of login failure and choose an appropriate recovery step.",
+    "M3-3":"Log in independently using an authorised practice account.",
+    "M4-0":"Open a new message and identify recipient, subject and message body.",
+    "M4-1":"Check the recipient carefully before sending.",
+    "M4-3":"Compose a clear message with greeting, purpose, relevant information and closing.",
+    "M4-4":"Check recipient, subject and message before attachment.",
+    "M5-0":"Explain why the correct file must be attached and verified.",
+    "M5-1":"Locate the required file using the attachment control.",
+    "M5-2":"Attach the file and wait for the upload to finish.",
+    "M6-0":"Check recipient, subject, message and attachment before sending.",
+    "M6-1":"Send the message only after completing final checks.",
+    "M6-2":"Open Sent and verify that the message and attachment are correct.",
+    "M6-3":"Complete the full send-and-verify sequence.",
+    "M7-0":"Use respectful language and meaningful subjects in email.",
+    "M7-1":"Protect passwords and personal information and treat suspicious links cautiously.",
+    "M7-2":"Use search tools responsibly and evaluate information before using it.",
+    "M8-0":"Read the practical task and locate the required file.",
+    "M8-2":"Identify one authentic future use of the skills learned.",
+    "M9-0":"Interpret Green, Amber and Red mastery status.",
+    "M9-1":"Practise the specific procedure identified as weak by evidence.",
+    "M9-3":"Explain a troubleshooting correction without taking over a peer's task.",
+    "M9-4":"Identify a real-life context in which the skills can transfer."
+  };
+  return map[`${moduleId}-${index}`] || `Complete the activity: ${title}.`;
+}
+
+/* ---------- PEER ---------- */
+function peer(){
+  app.innerHTML=`
+    <div class="card">
+      <h2>🤝 Peer Collaboration Hub</h2>
+      <p><strong>Driver:</strong> operates the computer.
+         <strong>Navigator:</strong> checks the procedure and gives prompts.
+         Swap roles during practice.</p>
+      <textarea id="peerPost" placeholder="Share a troubleshooting tip..."></textarea>
+      <button class="primary" id="postBtn">Post Tip</button>
+      <div id="peerFeed"></div>
+    </div>
+  `;
+
+  renderPeerFeed();
+
+  document.getElementById("postBtn").onclick=()=>{
+    const value=document.getElementById("peerPost").value.trim();
+    if(!value) return;
+    S.posts.push(value);
+    S.xp+=10;
+    save();
+    document.getElementById("peerPost").value="";
+    renderPeerFeed();
+    updateTop();
+  };
+}
+
+function renderPeerFeed(){
+  const feed=document.getElementById("peerFeed");
+  if(!feed) return;
+
+  feed.innerHTML=S.posts.length
+    ? S.posts.map(x=>`<div class="step">🤝 <strong>Peer tip</strong><br>${esc(x)}</div>`).join("")
+    : `<p class="small">No tips yet.</p>`;
+}
+
+/* ---------- ANALYTICS ---------- */
+function analytics(){
+  const rows=M.map(m=>{
+    const p=moduleProgress(m[0]);
+    return `<tr><td>${esc(m[1])}</td><td>${p.completed}</td><td>${p.total}</td><td>${p.percent}%</td></tr>`;
+  }).join("");
+
+  const accuracy=S.quizTotal ? Math.round(S.quizCorrect/S.quizTotal*100) : 0;
+
+  app.innerHTML=`
+    <div class="card">
+      <h2>📊 Learner Analytics</h2>
+      <div class="grid">
+        <div class="admin-stat"><strong>Completion</strong><br><span class="kpi-number">${pct()}%</span></div>
+        <div class="admin-stat"><strong>XP</strong><br><span class="kpi-number">${S.xp}</span></div>
+        <div class="admin-stat"><strong>Quiz accuracy</strong><br><span class="kpi-number">${accuracy}%</span></div>
+        <div class="admin-stat"><strong>Mastery</strong><br><span class="badge ${status()[0]}">${status()[1]}</span></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Module Progress</h3>
+      <table>
+        <thead><tr><th>Module</th><th>Completed</th><th>Total</th><th>Progress</th></tr></thead>
+        <tbody>${rows}</tbody>
+      </table>
+    </div>
+
+    <div class="card">
+      <h3>Intervention Signal</h3>
+      <p>${
+        S.mastery===false
+        ? "🔴 Targeted remediation required. Prioritise the skill identified by practical evidence."
+        : S.mastery===true
+        ? "🟢 Mastery achieved. Assign a novel transfer/troubleshooting task."
+        : "🟠 Continue formative practice and collect live practical evidence."
+      }</p>
+    </div>
+  `;
+}
+
+/* ---------- ACHIEVEMENTS ---------- */
+function badges(){
+  const achievements=[
+    ["🚀 First Step",S.done.length>=1],
+    ["🌱 Five Activities",S.done.length>=5],
+    ["🔥 Ten Activities",S.done.length>=10],
+    ["🏆 Halfway There",pct()>=50],
+    ["🎓 Mastery Achieved",S.mastery===true],
+    ["💯 Course Complete",pct()===100]
+  ];
+
+  app.innerHTML=`
+    <div class="card">
+      <h2>🏅 Achievements</h2>
+      <p>Badges reward meaningful practice; they do not replace mastery evidence.</p>
+      <div class="grid" id="badgesGrid"></div>
+    </div>
+  `;
+
+  const grid=document.getElementById("badgesGrid");
+  achievements.forEach(([name,unlocked])=>{
+    grid.insertAdjacentHTML("beforeend",`
+      <div class="step">
+        <h3>${name}</h3>
+        <span class="badge ${unlocked?"green":"amber"}">${unlocked?"Unlocked":"Locked"}</span>
+      </div>
+    `);
+  });
+}
+
+/* ---------- DESIGN NOTES ---------- */
+function about(){
+  app.innerHTML=`
+    <div class="card">
+      <h2>ℹ️ Design Notes</h2>
+      <p>
+        This LMS is designed as a performance-support and learning decision system.
+        It combines scaffolded practice, adaptive diagnostics, peer collaboration,
+        progress tracking, mastery assessment and analytics.
+      </p>
+      <div class="grid">
+        <div class="step"><strong>Learning by doing</strong><br>Practical activities are central.</div>
+        <div class="step"><strong>Immediate feedback</strong><br>Interactive questions provide feedback.</div>
+        <div class="step"><strong>Mastery learning</strong><br>Mastery is 16/20 with no critical failure.</div>
+        <div class="step"><strong>Teacher centrality</strong><br>Live practical performance remains decisive.</div>
+      </div>
+    </div>
+  `;
+}
+
+/* =========================================================
+   PHASE 6 — TEACHER CONTROL CENTRE
+   ========================================================= */
+
+function buildAdminNav(){
+  const nav=document.getElementById("nav");
+
+  nav.innerHTML=`
+    <button data-admin="home">🏠 Administrator Dashboard</button>
+    <button data-admin="teacher">🧑‍🏫 Teacher Control Centre</button>
+    <button data-admin="users">👥 Users</button>
+    <button data-admin="about">ℹ️ System Information</button>
+    <hr>
+    <button id="adminLogout" class="danger">🚪 Sign Out</button>
+  `;
+
+  nav.querySelectorAll("[data-admin]").forEach(btn=>{
+    btn.onclick=()=>{
+      nav.querySelectorAll("[data-admin]").forEach(x=>{
+        x.classList.remove("sel");
+      });
+
+      btn.classList.add("sel");
+
+      if(btn.dataset.admin==="home") adminHome();
+      if(btn.dataset.admin==="teacher") teacherControl();
+      if(btn.dataset.admin==="users") adminUsers();
+      if(btn.dataset.admin==="about") adminAbout();
+    };
+  });
+
+  document.getElementById("adminLogout").onclick=logout;
+
+  nav.querySelector('[data-admin="home"]').classList.add("sel");
+}
+
+
+/* =========================================================
+   ADMIN DASHBOARD
+   ========================================================= */
+
+async function adminHome(){
+
+  app.innerHTML=`
+    <div class="loading">
+      Loading administrator dashboard…
+    </div>
+  `;
+
+  const {data:profiles,error}=await supabaseClient
+    .from("profiles")
+    .select("id,full_name,email,role,created_at")
+    .order("created_at",{ascending:true});
+
+  if(error){
+    app.innerHTML=`
+      <div class="card">
+        <h2>🛡️ Administrator Dashboard</h2>
+        <div class="feedback warn">
+          ${esc(error.message)}
+        </div>
+      </div>
+    `;
+    return;
+  }
+
+  const students=profiles.filter(p=>p.role==="student");
+  const admins=profiles.filter(p=>p.role==="admin");
+
+  app.innerHTML=`
+
+    <div class="card">
+
+      <h2>🛡️ Administrator Dashboard</h2>
+
+      <p>
+        Welcome,
+        <strong>
+          ${esc(currentProfile?.full_name || "Administrator")}
+        </strong>.
+      </p>
+
+      <div class="notice">
+        Welcome to the AFSHTS Teacher Administration Area.
+        Use the Teacher Control Centre to monitor learner progress,
+        identify students who need support and inspect individual
+        learning performance.
+      </div>
+
+    </div>
+
+    <div class="grid">
+
+      <div class="admin-stat">
+        <strong>Total Profiles</strong>
+        <div class="kpi-number">
+          ${profiles.length}
+        </div>
+      </div>
+
+      <div class="admin-stat">
+        <strong>Students</strong>
+        <div class="kpi-number">
+          ${students.length}
+        </div>
+      </div>
+
+      <div class="admin-stat">
+        <strong>Administrators</strong>
+        <div class="kpi-number">
+          ${admins.length}
+        </div>
+      </div>
+
+      <div class="admin-stat">
+        <strong>Course Activities</strong>
+        <div class="kpi-number">
+          ${TOTAL_ACTIVITIES}
+        </div>
+      </div>
+
+    </div>
+
+    <div class="card">
+
+      <h3>🧑‍🏫 Teacher Control Centre</h3>
+
+      <p>
+        Monitor student participation, progress and mastery.
+      </p>
+
+      <button
+        class="primary"
+        id="openTeacherCentre"
+      >
+        Open Teacher Control Centre
+      </button>
+
+    </div>
+
+    <div class="card">
+
+      <h3>👥 Registered Profiles</h3>
+
+      ${
+        profiles.map(p=>`
+
+          <div class="user-row">
+
+            <div>
+              <strong>
+                ${esc(p.full_name || "Unnamed User")}
+              </strong>
+              <br>
+
+              <span class="small">
+                ${esc(p.email || "")}
+              </span>
+            </div>
+
+            <span class="badge ${
+              p.role==="admin" ? "red" : "green"
+            }">
+              ${esc(p.role)}
+            </span>
+
+          </div>
+
+        `).join("")
+      }
+
+    </div>
+  `;
+
+  document
+    .getElementById("openTeacherCentre")
+    .onclick=()=>{
+      buildAdminNav();
+      document
+        .querySelector('[data-admin="teacher"]')
+        .classList.add("sel");
+
+      teacherControl();
+    };
+}
+
+
+/* =========================================================
+   TEACHER CONTROL CENTRE
+   ========================================================= */
+
+async function teacherControl(){
+
+  app.innerHTML=`
+    <div class="loading">
+      Loading Teacher Control Centre…
+    </div>
+  `;
+
+  const {data:profiles,error:profileError}=await supabaseClient
+    .from("profiles")
+    .select("id,full_name,email,role")
+    .eq("role","student")
+    .order("full_name",{ascending:true});
+
+  if(profileError){
+    app.innerHTML=`
+      <div class="card">
+
+        <h2>🧑‍🏫 Teacher Control Centre</h2>
+
+        <div class="feedback warn">
+          ${esc(profileError.message)}
+        </div>
+
+      </div>
+    `;
+    return;
+  }
+
+  const {data:progress,error:progressError}=await supabaseClient
+    .from("learner_progress")
+    .select(
+      "user_id,learner_name,module_id,activity_id,completed,xp"
+    );
+
+  if(progressError){
+    app.innerHTML=`
+
+      <div class="card">
+
+        <h2>🧑‍🏫 Teacher Control Centre</h2>
+
+        <div class="feedback warn">
+
+          Student profiles loaded, but learner progress
+          could not be accessed.
+
+          <br><br>
+
+          <strong>
+            ${esc(progressError.message)}
+          </strong>
+
+          <br><br>
+
+          Check the Phase 6 learner_progress administrator
+          RLS policy in Supabase.
+
+        </div>
+
+      </div>
+
+    `;
+
+    return;
+  }
+
+  const progressRows=progress || [];
+
+  const studentData=profiles.map(student=>{
+
+    const rows=progressRows.filter(
+      r=>r.user_id===student.id
+    );
+
+    const completed=new Set(
+      rows
+        .filter(r=>r.completed)
+        .map(r=>`${r.module_id}-${r.activity_id}`)
+    ).size;
+
+    const xp=rows.reduce(
+      (sum,r)=>sum+Number(r.xp || 0),
+      0
+    );
+
+    const percent=TOTAL_ACTIVITIES
+      ? Math.round(
+          completed/TOTAL_ACTIVITIES*100
+        )
+      : 0;
+
+    let status="Needs Support";
+    let badge="red";
+
+    if(percent>=80){
+      status="On Track";
+      badge="green";
+    }else if(percent>=40){
+      status="Developing";
+      badge="amber";
+    }
+
+    return {
+      ...student,
+      completed,
+      xp,
+      percent,
+      status,
+      badge
+    };
+
+  });
+
+  const totalStudents=studentData.length;
+
+  const average=totalStudents
+    ? Math.round(
+        studentData.reduce(
+          (sum,s)=>sum+s.percent,0
+        )/totalStudents
+      )
+    : 0;
+
+  const completedStudents=studentData.filter(
+    s=>s.percent===100
+  ).length;
+
+  const needsSupport=studentData.filter(
+    s=>s.percent<40
+  ).length;
+
+  app.innerHTML=`
+
+    <div class="card">
+
+      <h2>🧑‍🏫 Teacher Control Centre</h2>
+
+      <p>
+        Monitor learner participation,
+        progress, XP and mastery.
+      </p>
+
+      <div class="notice">
+
+        <strong>Teacher decision support:</strong>
+
+        Use this dashboard to identify learners
+        who require remediation and inspect their
+        individual activity history.
+
+      </div>
+
+    </div>
+
+
+    <div class="grid">
+
+      <div class="admin-stat">
+        <strong>Total Students</strong>
+        <div class="kpi-number">
+          ${totalStudents}
+        </div>
+      </div>
+
+      <div class="admin-stat">
+        <strong>Average Progress</strong>
+        <div class="kpi-number">
+          ${average}%
+        </div>
+      </div>
+
+      <div class="admin-stat">
+        <strong>Completed</strong>
+        <div class="kpi-number">
+          ${completedStudents}
+        </div>
+      </div>
+
+      <div class="admin-stat">
+        <strong>Needs Support</strong>
+        <div class="kpi-number">
+          ${needsSupport}
+        </div>
+      </div>
+
+    </div>
+
+
+    <div class="card">
+
+      <h3>📊 Student Progress Monitor</h3>
+
+      <div style="overflow-x:auto">
+
+        <table>
+
+          <thead>
+
+            <tr>
+
+              <th>Student</th>
+              <th>Progress</th>
+              <th>Completed</th>
+              <th>XP</th>
+              <th>Status</th>
+              <th>Action</th>
+
+            </tr>
+
+          </thead>
+
+          <tbody>
+
+            ${
+              studentData.map(s=>`
+
+                <tr>
+
+                  <td>
+                    <strong>
+                      ${esc(s.full_name || "Unnamed")}
+                    </strong>
+                    <br>
+                    <span class="small">
+                      ${esc(s.email || "")}
+                    </span>
+                  </td>
+
+                  <td>
+
+                    <strong>
+                      ${s.percent}%
+                    </strong>
+
+                    <div class="progress">
+                      <div
+                        class="progress-bar"
+                        style="width:${s.percent}%"
+                      ></div>
+                    </div>
+
+                  </td>
+
+                  <td>
+                    ${s.completed}/${TOTAL_ACTIVITIES}
+                  </td>
+
+                  <td>
+                    ${s.xp}
+                  </td>
+
+                  <td>
+
+                    <span class="badge ${s.badge}">
+                      ${s.status}
+                    </span>
+
+                  </td>
+
+                  <td>
+
+                    <button
+                      class="primary view-student"
+                      data-id="${s.id}"
+                    >
+                      View
+                    </button>
+
+                  </td>
+
+                </tr>
+
+              `).join("")
+            }
+
+          </tbody>
+
+        </table>
+
+      </div>
+
+    </div>
+
+  `;
+
+
+  document
+    .querySelectorAll(".view-student")
+    .forEach(button=>{
+
+      button.onclick=()=>{
+
+        const student=studentData.find(
+          s=>s.id===button.dataset.id
+        );
+
+        if(student){
+          viewStudent(student,progressRows);
+        }
+
+      };
+
+    });
+
+}
+
+
+/* =========================================================
+   INDIVIDUAL STUDENT VIEW
+   ========================================================= */
+
+function viewStudent(student,progressRows){
+
+  const rows=progressRows.filter(
+    r=>r.user_id===student.id
+  );
+
+  app.innerHTML=`
+
+    <div class="card">
+
+      <button
+        class="secondary"
+        id="backTeacherCentre"
+      >
+        ← Back to Teacher Control Centre
+      </button>
+
+      <br><br>
+
+      <h2>👤 ${esc(student.full_name)}</h2>
+
+      <p>
+        ${esc(student.email)}
+      </p>
+
+      <div class="grid">
+
+        <div class="admin-stat">
+          <strong>Progress</strong>
+          <div class="kpi-number">
+            ${student.percent}%
+          </div>
+        </div>
+
+        <div class="admin-stat">
+          <strong>XP</strong>
+          <div class="kpi-number">
+            ${student.xp}
+          </div>
+        </div>
+
+        <div class="admin-stat">
+          <strong>Completed</strong>
+          <div class="kpi-number">
+            ${student.completed}
+          </div>
+        </div>
+
+        <div class="admin-stat">
+
+          <strong>Status</strong>
+
+          <p>
+            <span class="badge ${student.badge}">
+              ${student.status}
+            </span>
+          </p>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <div class="card">
+
+      <h3>📚 Module-by-Module Progress</h3>
+
+      ${
+        M.map(module=>{
+
+          const moduleRows=rows.filter(
+            r=>r.module_id===module[0] && r.completed
+          );
+
+          const completed=moduleRows.length;
+          const total=module[2].length;
+
+          const percent=total
+            ? Math.round(completed/total*100)
+            : 0;
+
+          return `
+
+            <div class="module-card">
+
+              <h3>
+                ${module[1]}
+              </h3>
+
+              <div class="progress">
+
+                <div
+                  class="progress-bar"
+                  style="width:${percent}%"
+                ></div>
+
+              </div>
+
+              <p>
+
+                ${completed}/${total}
+                activities completed —
+
+                <strong>
+                  ${percent}%
+                </strong>
+
+              </p>
+
+            </div>
+
+          `;
+
+        }).join("")
+      }
+
+    </div>
+
+
+    <div class="card">
+
+      <h3>📝 Activity History</h3>
+
+      ${
+        rows.length
+
+        ?
+
+        `<table>
+
+          <thead>
+
+            <tr>
+              <th>Module</th>
+              <th>Activity</th>
+              <th>XP</th>
+              <th>Status</th>
+            </tr>
+
+          </thead>
+
+          <tbody>
+
+            ${
+              rows.map(r=>`
+
+                <tr>
+
+                  <td>
+                    ${esc(r.module_id)}
+                  </td>
+
+                  <td>
+                    ${esc(r.activity_id)}
+                  </td>
+
+                  <td>
+                    ${Number(r.xp || 0)}
+                  </td>
+
+                  <td>
+
+                    <span class="badge green">
+                      Completed
+                    </span>
+
+                  </td>
+
+                </tr>
+
+              `).join("")
+            }
+
+          </tbody>
+
+        </table>`
+
+        :
+
+        `<div class="notice">
+          This learner has not completed any activities yet.
+        </div>`
+
+      }
+
+    </div>
+
+  `;
+
+
+  document
+    .getElementById("backTeacherCentre")
+    .onclick=()=>{
+
+      buildAdminNav();
+
+      document
+        .querySelector('[data-admin="teacher"]')
+        .classList.add("sel");
+
+      teacherControl();
+
+    };
+
+}
+
+
+/* =========================================================
+   USERS
+   ========================================================= */
+
+async function adminUsers(){
+
+  app.innerHTML=`
+    <div class="loading">
+      Loading users…
+    </div>
+  `;
+
+  const {data,error}=await supabaseClient
+    .from("profiles")
+    .select(
+      "id,full_name,email,role,created_at"
+    )
+    .order("created_at",{ascending:true});
+
+  if(error){
+
+    app.innerHTML=`
+
+      <div class="card">
+
+        <h2>👥 Users</h2>
+
+        <div class="feedback warn">
+          ${esc(error.message)}
+        </div>
+
+      </div>
+
+    `;
+
+    return;
+  }
+
+  app.innerHTML=`
+
+    <div class="card">
+
+      <h2>👥 User Profiles</h2>
+
+      <p>
+        Accounts are created through
+        Supabase Authentication.
+      </p>
+
+      <table>
+
+        <thead>
+
+          <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Role</th>
+            <th>User ID</th>
+          </tr>
+
+        </thead>
+
+        <tbody>
+
+          ${
+            data.map(p=>`
+
+              <tr>
+
+                <td>
+                  ${esc(p.full_name || "")}
+                </td>
+
+                <td>
+                  ${esc(p.email || "")}
+                </td>
+
+                <td>
+
+                  <span class="badge ${
+                    p.role==="admin"
+                    ? "red"
+                    : "green"
+                  }">
+
+                    ${esc(p.role)}
+
+                  </span>
+
+                </td>
+
+                <td style="font-size:12px">
+                  ${esc(p.id)}
+                </td>
+
+              </tr>
+
+            `).join("")
+          }
+
+        </tbody>
+
+      </table>
+
+    </div>
+
+  `;
+}
+
+
+/* =========================================================
+   SYSTEM INFORMATION
+   ========================================================= */
+
+function adminAbout(){
+
+  app.innerHTML=`
+
+    <div class="card">
+
+      <h2>ℹ️ System Information</h2>
+
+      <p>
+        <strong>Authentication:</strong>
+        Supabase Auth
+      </p>
+
+      <p>
+        <strong>Roles:</strong>
+        admin and student
+      </p>
+
+      <p>
+        <strong>Profiles:</strong>
+        public.profiles
+      </p>
+
+      <p>
+        <strong>Learning data:</strong>
+        learner_progress
+      </p>
+
+      <p>
+        <strong>Teacher monitoring:</strong>
+        Teacher Control Centre
+      </p>
+
+      <p>
+        <strong>Security:</strong>
+        Supabase Row Level Security
+      </p>
+
+      <div class="notice">
+
+        Never place a Supabase service-role
+        or secret key in this HTML file.
+
+        The browser must use only the
+        publishable key.
+
+      </div>
+
+    </div>
+
+  `;
+}
+  
+/* ---------- START ---------- */
+/* ---------- AUTHENTICATION CONTROLS ---------- */
+
+document
+  .getElementById("loginBtn")
+  .addEventListener("click",login);
+
+
+document
+  .getElementById("loginPassword")
+  .addEventListener("keydown",e=>{
+    if(e.key === "Enter"){
+      login();
+    }
+  });
+
+
+document
+  .getElementById("showRegisterBtn")
+  .addEventListener("click",showRegisterView);
+
+
+document
+  .getElementById("backToLoginBtn")
+  .addEventListener("click",showLoginView);
+
+
+document
+  .getElementById("registerBtn")
+  .addEventListener("click",registerStudent);
+
+/* If a valid session already exists, restore it. */
+(async function restoreSession(){
+  if(!supabaseClient){
+    showLoginMessage("Supabase library could not be loaded.");
+    return;
+  }
+
+  try{
+    const {data,error}=await supabaseClient.auth.getSession();
+    if(error) throw error;
+
+    if(data.session?.user){
+      currentUser=data.session.user;
+
+      const {data:profile,error:profileError}=await supabaseClient
+        .from("profiles")
+        .select("id,full_name,email,role")
+        .eq("id",currentUser.id)
+        .maybeSingle();
+
+      if(profileError || !profile){
+        await supabaseClient.auth.signOut();
+        return;
+      }
+
+      currentProfile=profile;
+      S.learnerName=S.learnerName || profile.full_name || "";
+      save();
+
+      document.getElementById("loginScreen").classList.add("hidden");
+      document.getElementById("appShell").classList.remove("hidden");
+      setConnection("✓ Session restored.");
+
+      if(profile.role==="admin"){
+        buildAdminNav();
+        adminHome();
+      }else{
+        buildNav("home");
+        home();
+      }
+    }
+  }catch(error){
+    console.warn("Session restore failed:",error);
+  }
+})();
+</script>
+</body>
+</html>
