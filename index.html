@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ARMED FORCES SNR HIGH TECHNICAL SCHOOL PRACTICAL ICT SKILLS LAB</title>
+<title>AFSHTS Practical ICT Skills Lab</title>
 <meta name="description" content="AFSHTS Interactive ICT Skills Learning Management System">
 
 <style>
@@ -129,8 +129,8 @@ th{background:var(--light)}
     <!-- ================= LOGIN ================= -->
     <div id="loginView">
 
-      <h1>🎓 ARMED FORCES SNR HIGH TECHNICAL SCHOOL PRACTICAL ICT SKILLS LAB</h1>
-      <p>LEARN WITH COMFORT — YES YOU CAN Login</p>
+      <h1>🎓 AFSHTS Practical ICT Skills Lab</h1>
+      <p>Interactive LMS — Secure Login</p>
 
       <div id="loginMessage"></div>
 
@@ -247,50 +247,7 @@ th{background:var(--light)}
 
   </div>
 </div>
-  
-<!-- ================= LMS APPLICATION ================= -->
-<div id="appShell" class="hidden">
 
-  <header>
-    <div class="top-row">
-
-      <div>
-        <h1>AFSHTS Practical ICT Skills Lab</h1>
-
-        <div id="top">
-          Interactive LMS — Final Prototype
-        </div>
-
-        <div id="connectionStatus">
-          Checking connection…
-        </div>
-      </div>
-
-      <div class="top-progress">
-        <div class="progress">
-          <div
-            id="globalProgressBar"
-            class="progress-bar"
-          ></div>
-        </div>
-      </div>
-
-    </div>
-  </header>
-
-  <div class="layout">
-
-    <aside>
-      <nav id="nav"></nav>
-    </aside>
-
-    <main id="app"></main>
-
-  </div>
-
-</div>
-<!-- ================= END LMS APPLICATION ================= -->
-  
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <script>
@@ -1346,6 +1303,118 @@ function createActivity(moduleId,index,title){
 }
 
 function renderActivityContent(moduleId,index,title,key,content,actions,completed){
+
+  /* M0 Activity 1 — Welcome */
+  if(moduleId==="M0" && index===0){
+    const learner = S.learnerName || currentProfile?.full_name || "Learner";
+    content.innerHTML = `
+      <div class="notice">
+        <strong>Welcome, ${esc(learner)}!</strong><br>
+        You are about to build practical confidence in browser use, internet searching,
+        email communication, file attachments and digital safety.
+      </div>
+      <div class="grid">
+        <div class="card"><h4>🎯 Your goal</h4><p>Become able to complete common internet-and-email tasks accurately and safely.</p></div>
+        <div class="card"><h4>🧭 How you will learn</h4><p>Learn a skill, practise it, receive feedback, retry when needed, and then perform it independently.</p></div>
+        <div class="card"><h4>🏆 What counts as mastery</h4><p>The LMS records your learning progress, while practical performance can be verified by your teacher.</p></div>
+      </div>
+      <h4>Before you begin</h4>
+      <p>Tick all three statements to confirm that you are ready.</p>
+      ${[
+        "I understand that this course is practical and I should practise the tasks, not only read them.",
+        "I will use safe and responsible behaviour when working online or with email.",
+        "I am ready to learn, practise, receive feedback and try again when I make a mistake."
+      ].map((x,i)=>`<label class="option"><input type="checkbox" class="m0-ready-${key}" data-ready="${i}"> ${esc(x)}</label>`).join("")}
+      <div id="welcomeFeedback-${key}" class="feedback" aria-live="polite"></div>
+    `;
+    const btn=document.createElement("button");
+    btn.className=completed ? "secondary" : "primary";
+    btn.textContent=completed ? "✓ Welcome Completed" : "Confirm Readiness & Continue";
+    btn.disabled=completed;
+    btn.onclick=async()=>{
+      const checks=content.querySelectorAll(`.m0-ready-${key}:checked`).length;
+      const feedback=document.getElementById(`welcomeFeedback-${key}`);
+      if(checks<3){
+        feedback.className="feedback warn";
+        feedback.textContent=`Please confirm all three readiness statements (${checks}/3 selected).`;
+        return;
+      }
+      feedback.className="feedback ok";
+      feedback.textContent="Great. You are ready to begin the course.";
+      await completeActivity(key,10);
+      btn.disabled=true;
+      btn.className="secondary";
+      btn.textContent="✓ Welcome Completed";
+    };
+    actions.appendChild(btn);
+    return;
+  }
+
+  /* M0 Activity 2 — How the Course Works */
+  if(moduleId==="M0" && index===1){
+    const steps=[
+      ["1. Diagnose","Find out what you already know and where support is needed."],
+      ["2. Learn","Study the skill and observe the correct process."],
+      ["3. Practise","Try the task in a safe practice environment."],
+      ["4. Feedback","Check your result and understand what needs improvement."],
+      ["5. Retry","Correct the mistake and practise again."],
+      ["6. Perform","Complete the practical task independently."],
+    ];
+    content.innerHTML=`
+      <p><strong>This course follows a practical learning cycle.</strong> Click each stage below to see what you should do.</p>
+      <div class="grid" id="pathway-${key}">
+        ${steps.map((st,i)=>`<button type="button" class="card" data-path="${i}" style="text-align:left;cursor:pointer"><strong>${esc(st[0])}</strong><p class="small">Click to explore</p></button>`).join("")}
+      </div>
+      <div id="pathwayDetail-${key}" class="notice" aria-live="polite">Select a stage to explore it.</div>
+      <hr>
+      <h4>Quick check</h4>
+      <p>Answer all three questions correctly. If you miss one, you can try again immediately.</p>
+      <div id="courseCheck-${key}"></div>
+      <div id="courseFeedback-${key}" class="feedback" aria-live="polite"></div>
+    `;
+    content.querySelectorAll(`[data-path]`).forEach(btn=>btn.addEventListener("click",()=>{
+      const i=Number(btn.dataset.path);
+      document.getElementById(`pathwayDetail-${key}`).innerHTML=`<strong>${esc(steps[i][0])}</strong><p>${esc(steps[i][1])}</p>`;
+    }));
+    const qs=[
+      ["What is the main purpose of the diagnostic?",["To find what I can already do and what I need to improve","To replace all practical work","To give me internet access"],0],
+      ["What should you do after receiving feedback?",["Ignore it","Retry the skill and correct the mistake","Skip the activity"],1],
+      ["Which best demonstrates mastery?",["Reading the instructions once","Watching someone else do the task","Performing the practical task independently"],2]
+    ];
+    let qIndex=0, correct=0;
+    const renderCheck=()=>{
+      const q=qs[qIndex];
+      document.getElementById(`courseCheck-${key}`).innerHTML=`
+        <p><strong>Question ${qIndex+1} of ${qs.length}</strong></p>
+        <p>${esc(q[0])}</p>
+        ${q[1].map((opt,i)=>`<label class="option"><input type="radio" name="course-${key}" value="${i}"> ${esc(opt)}</label>`).join("")}
+        <button type="button" class="primary" id="courseCheckBtn-${key}">Check Answer</button>`;
+      document.getElementById(`courseCheckBtn-${key}`).onclick=async()=>{
+        const selected=content.querySelector(`input[name="course-${key}"]:checked`);
+        const fb=document.getElementById(`courseFeedback-${key}`);
+        if(!selected){fb.className="feedback warn";fb.textContent="Choose an answer first.";return;}
+        if(Number(selected.value)===q[2]){
+          correct++;
+          fb.className="feedback ok";
+          fb.textContent="Correct. Good understanding.";
+        }else{
+          fb.className="feedback warn";
+          fb.textContent="Not quite. Review the pathway above and try this question again.";
+          return;
+        }
+        qIndex++;
+        if(qIndex<qs.length){setTimeout(renderCheck,450);}
+        else{
+          document.getElementById(`courseCheck-${key}`).innerHTML=`<div class="notice"><strong>Course pathway understood.</strong> You are ready for the diagnostic and practical learning activities.</div>`;
+          await completeActivity(key,10);
+        }
+      };
+    };
+    if(completed){
+      document.getElementById(`courseCheck-${key}`).innerHTML=`<div class="notice"><strong>Completed.</strong> You have already demonstrated understanding of the course pathway.</div>`;
+    }else renderCheck();
+    return;
+  }
 
   /* M0 adaptive diagnostic */
   if(moduleId==="M0" && index===3){
@@ -2699,12 +2768,12 @@ document
 document
   .getElementById("backToLoginBtn")
   .addEventListener("click",showLoginView);
-  
+
 
 document
   .getElementById("registerBtn")
   .addEventListener("click",registerStudent);
-  
+
 /* If a valid session already exists, restore it. */
 (async function restoreSession(){
   if(!supabaseClient){
