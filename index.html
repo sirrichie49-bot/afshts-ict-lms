@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ARMED FORCES SNR HIGH TECHNICAL SCHOOL PRACTICAL ICT SKILLS LAB</title>
+<title>AFSHTS Practical ICT Skills Lab</title>
 <meta name="description" content="AFSHTS Interactive ICT Skills Learning Management System">
 
 <style>
@@ -129,8 +129,8 @@ th{background:var(--light)}
     <!-- ================= LOGIN ================= -->
     <div id="loginView">
 
-      <h1>🎓 ARMED FORCES SNR HIGH TECHNICAL SCHOOL PRACTICAL ICT SKILLS LAB</h1>
-      <p>LEARN WITH COMFORT — YES YOU CAN Login</p>
+      <h1>🎓 AFSHTS Practical ICT Skills Lab</h1>
+      <p>Interactive LMS — Secure Login</p>
 
       <div id="loginMessage"></div>
 
@@ -247,50 +247,7 @@ th{background:var(--light)}
 
   </div>
 </div>
-  
-<!-- ================= LMS APPLICATION ================= -->
-<div id="appShell" class="hidden">
 
-  <header>
-    <div class="top-row">
-
-      <div>
-        <h1>AFSHTS Practical ICT Skills Lab</h1>
-
-        <div id="top">
-          Interactive LMS — Final Prototype
-        </div>
-
-        <div id="connectionStatus">
-          Checking connection…
-        </div>
-      </div>
-
-      <div class="top-progress">
-        <div class="progress">
-          <div
-            id="globalProgressBar"
-            class="progress-bar"
-          ></div>
-        </div>
-      </div>
-
-    </div>
-  </header>
-
-  <div class="layout">
-
-    <aside>
-      <nav id="nav"></nav>
-    </aside>
-
-    <main id="app"></main>
-
-  </div>
-
-</div>
-<!-- ================= END LMS APPLICATION ================= -->
-  
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <script>
@@ -367,6 +324,7 @@ const DEFAULT_STATE = {
   score:null,
   posts:[],
   diagnosticLevel:"not assessed",
+  diagnosticDetails:null,
   quizCorrect:0,
   quizTotal:0
 };
@@ -1347,76 +1305,300 @@ function createActivity(moduleId,index,title){
 
 function renderActivityContent(moduleId,index,title,key,content,actions,completed){
 
-  /* M0 adaptive diagnostic */
-  if(moduleId==="M0" && index===3){
+  /* M0 Activity 1 — Welcome */
+  if(moduleId==="M0" && index===0){
+    const learner = S.learnerName || currentProfile?.full_name || "Learner";
     content.innerHTML = `
-      <p><strong>Adaptive diagnostic:</strong> answer the questions to establish a starting point.</p>
-      <div id="diagBox-${key}"></div>
-      <div id="diagFeedback-${key}" class="feedback"></div>
+      <div class="notice">
+        <strong>Welcome, ${esc(learner)}!</strong><br>
+        You are about to build practical confidence in browser use, internet searching,
+        email communication, file attachments and digital safety.
+      </div>
+      <div class="grid">
+        <div class="card"><h4>🎯 Your goal</h4><p>Become able to complete common internet-and-email tasks accurately and safely.</p></div>
+        <div class="card"><h4>🧭 How you will learn</h4><p>Learn a skill, practise it, receive feedback, retry when needed, and then perform it independently.</p></div>
+        <div class="card"><h4>🏆 What counts as mastery</h4><p>The LMS records your learning progress, while practical performance can be verified by your teacher.</p></div>
+      </div>
+      <h4>Before you begin</h4>
+      <p>Tick all three statements to confirm that you are ready.</p>
+      ${[
+        "I understand that this course is practical and I should practise the tasks, not only read them.",
+        "I will use safe and responsible behaviour when working online or with email.",
+        "I am ready to learn, practise, receive feedback and try again when I make a mistake."
+      ].map((x,i)=>`<label class="option"><input type="checkbox" class="m0-ready-${key}" data-ready="${i}"> ${esc(x)}</label>`).join("")}
+      <div id="welcomeFeedback-${key}" class="feedback" aria-live="polite"></div>
     `;
+    const btn=document.createElement("button");
+    btn.className=completed ? "secondary" : "primary";
+    btn.textContent=completed ? "✓ Welcome Completed" : "Confirm Readiness & Continue";
+    btn.disabled=completed;
+    btn.onclick=async()=>{
+      const checks=content.querySelectorAll(`.m0-ready-${key}:checked`).length;
+      const feedback=document.getElementById(`welcomeFeedback-${key}`);
+      if(checks<3){
+        feedback.className="feedback warn";
+        feedback.textContent=`Please confirm all three readiness statements (${checks}/3 selected).`;
+        return;
+      }
+      feedback.className="feedback ok";
+      feedback.textContent="Great. You are ready to begin the course.";
+      await completeActivity(key,10);
+      btn.disabled=true;
+      btn.className="secondary";
+      btn.textContent="✓ Welcome Completed";
+    };
+    actions.appendChild(btn);
+    return;
+  }
 
-    const questions = [
-      ["Which control is normally used to enter a website address?",["Refresh","Address bar","Back"],1],
-      ["Where can you verify a sent email?",["Inbox","Sent","Browser history"],1],
-      ["What should be confirmed before sending an email with an attachment?",["Only the browser","Recipient, message and attachment","Nothing"],1]
+  /* M0 Activity 2 — How the Course Works */
+  if(moduleId==="M0" && index===1){
+    const steps=[
+      ["1. Diagnose","Find out what you already know and where support is needed."],
+      ["2. Learn","Study the skill and observe the correct process."],
+      ["3. Practise","Try the task in a safe practice environment."],
+      ["4. Feedback","Check your result and understand what needs improvement."],
+      ["5. Retry","Correct the mistake and practise again."],
+      ["6. Perform","Complete the practical task independently."],
     ];
-
-    let indexQ = 0;
-    let correct = 0;
-
-    function showQuestion(){
-      const q = questions[indexQ];
-      const box = document.getElementById(`diagBox-${key}`);
-      const feedback = document.getElementById(`diagFeedback-${key}`);
-
-      box.innerHTML = `
-        <p><strong>Question ${indexQ+1} of ${questions.length}</strong></p>
+    content.innerHTML=`
+      <p><strong>This course follows a practical learning cycle.</strong> Click each stage below to see what you should do.</p>
+      <div class="grid" id="pathway-${key}">
+        ${steps.map((st,i)=>`<button type="button" class="card" data-path="${i}" style="text-align:left;cursor:pointer"><strong>${esc(st[0])}</strong><p class="small">Click to explore</p></button>`).join("")}
+      </div>
+      <div id="pathwayDetail-${key}" class="notice" aria-live="polite">Select a stage to explore it.</div>
+      <hr>
+      <h4>Quick check</h4>
+      <p>Answer all three questions correctly. If you miss one, you can try again immediately.</p>
+      <div id="courseCheck-${key}"></div>
+      <div id="courseFeedback-${key}" class="feedback" aria-live="polite"></div>
+    `;
+    content.querySelectorAll(`[data-path]`).forEach(btn=>btn.addEventListener("click",()=>{
+      const i=Number(btn.dataset.path);
+      document.getElementById(`pathwayDetail-${key}`).innerHTML=`<strong>${esc(steps[i][0])}</strong><p>${esc(steps[i][1])}</p>`;
+    }));
+    const qs=[
+      ["What is the main purpose of the diagnostic?",["To find what I can already do and what I need to improve","To replace all practical work","To give me internet access"],0],
+      ["What should you do after receiving feedback?",["Ignore it","Retry the skill and correct the mistake","Skip the activity"],1],
+      ["Which best demonstrates mastery?",["Reading the instructions once","Watching someone else do the task","Performing the practical task independently"],2]
+    ];
+    let qIndex=0, correct=0;
+    const renderCheck=()=>{
+      const q=qs[qIndex];
+      document.getElementById(`courseCheck-${key}`).innerHTML=`
+        <p><strong>Question ${qIndex+1} of ${qs.length}</strong></p>
         <p>${esc(q[0])}</p>
-        ${q[1].map((opt,i)=>`
-          <label class="option">
-            <input type="radio" name="diag-${key}" value="${i}">
-            ${esc(opt)}
-          </label>
-        `).join("")}
-        <button class="primary" id="diagCheck-${key}">Check Answer</button>
-      `;
-
-      feedback.textContent = "";
-
-      document.getElementById(`diagCheck-${key}`).onclick = async()=>{
-        const selected = document.querySelector(`input[name="diag-${key}"]:checked`);
-        if(!selected){
-          feedback.className="feedback warn";
-          feedback.textContent="Choose an answer first.";
-          return;
-        }
-
+        ${q[1].map((opt,i)=>`<label class="option"><input type="radio" name="course-${key}" value="${i}"> ${esc(opt)}</label>`).join("")}
+        <button type="button" class="primary" id="courseCheckBtn-${key}">Check Answer</button>`;
+      document.getElementById(`courseCheckBtn-${key}`).onclick=async()=>{
+        const selected=content.querySelector(`input[name="course-${key}"]:checked`);
+        const fb=document.getElementById(`courseFeedback-${key}`);
+        if(!selected){fb.className="feedback warn";fb.textContent="Choose an answer first.";return;}
         if(Number(selected.value)===q[2]){
           correct++;
-          feedback.className="feedback ok";
-          feedback.textContent="Correct.";
+          fb.className="feedback ok";
+          fb.textContent="Correct. Good understanding.";
         }else{
-          feedback.className="feedback warn";
-          feedback.textContent="Review this skill before moving on.";
+          fb.className="feedback warn";
+          fb.textContent="Not quite. Review the pathway above and try this question again.";
+          return;
         }
-
-        indexQ++;
-
-        if(indexQ<questions.length){
-          setTimeout(showQuestion,500);
-        }else{
-          S.quizCorrect = correct;
-          S.quizTotal = questions.length;
-          S.diagnosticLevel = correct===3 ? "foundation ready" : correct>=2 ? "developing" : "needs support";
-          save();
-          await completeActivity(key,20);
-          box.innerHTML = `<div class="notice"><strong>Diagnostic complete:</strong> ${correct}/${questions.length}. Suggested starting status: ${esc(S.diagnosticLevel)}.</div>`;
-          updateTop();
+        qIndex++;
+        if(qIndex<qs.length){setTimeout(renderCheck,450);}
+        else{
+          document.getElementById(`courseCheck-${key}`).innerHTML=`<div class="notice"><strong>Course pathway understood.</strong> You are ready for the diagnostic and practical learning activities.</div>`;
+          await completeActivity(key,10);
         }
       };
-    }
+    };
+    if(completed){
+      document.getElementById(`courseCheck-${key}`).innerHTML=`<div class="notice"><strong>Completed.</strong> You have already demonstrated understanding of the course pathway.</div>`;
+    }else renderCheck();
+    return;
+  }
 
-    showQuestion();
+  /* M0 Activity 3 — Digital Safety */
+  if(moduleId==="M0" && index===2){
+    const scenarios=[
+      {
+        q:"A message from an unknown sender includes an unexpected attachment. What is the safest first action?",
+        options:["Open it immediately","Do not open it; verify the sender and context first","Forward it to classmates"],
+        a:1,
+        why:"Unexpected attachments can contain harmful files. Verify before opening."
+      },
+      {
+        q:"A classmate asks for your email password so they can help with an assignment. What should you do?",
+        options:["Share it privately","Give the password and change it later","Do not share it; keep your password private"],
+        a:2,
+        why:"Passwords are personal credentials. A helper should not need your password."
+      },
+      {
+        q:"You receive a link saying, “Urgent! Click now to confirm your account.” What is the best response?",
+        options:["Click quickly before it expires","Check the sender and destination without opening the suspicious link","Send your password in reply"],
+        a:1,
+        why:"Urgent messages can be used to trick people. Verify the source before following links."
+      },
+      {
+        q:"Someone you do not know asks you by email for your full name, password and phone number. What should you do?",
+        options:["Provide everything because they asked politely","Provide only the password","Do not disclose sensitive information; verify who is asking"],
+        a:2,
+        why:"Sensitive personal and account information should not be disclosed to an unverified person."
+      },
+      {
+        q:"You finish using your email account on a shared school computer. What should you do before leaving?",
+        options:["Leave the account open","Sign out of the account and close the session","Save the password in the browser"],
+        a:1,
+        why:"Signing out protects your account from the next person using the computer."
+      }
+    ];
+
+    content.innerHTML=`
+      <div class="notice">
+        <strong>Digital safety checkpoint</strong><br>
+        In this activity you will make safe decisions in realistic school ICT situations.
+        Choose the safest action, read the feedback, and retry any item you miss.
+      </div>
+      <div id="safetyBox-${key}"></div>
+      <div id="safetyFeedback-${key}" class="feedback" aria-live="polite"></div>
+      <div id="safetyProgress-${key}" class="small" style="margin-top:8px"></div>
+    `;
+
+    let qIndex=0, correct=0;
+    const box=document.getElementById(`safetyBox-${key}`);
+    const feedback=document.getElementById(`safetyFeedback-${key}`);
+    const progress=document.getElementById(`safetyProgress-${key}`);
+
+    const renderSafety=()=>{
+      const q=scenarios[qIndex];
+      progress.textContent=`Scenario ${qIndex+1} of ${scenarios.length}`;
+      box.innerHTML=`
+        <p><strong>${esc(q.q)}</strong></p>
+        ${q.options.map((o,i)=>`<label class="option"><input type="radio" name="safety-${key}" value="${i}"> ${esc(o)}</label>`).join("")}
+        <button type="button" class="primary" id="safetyBtn-${key}">Check Decision</button>
+      `;
+      feedback.textContent="";
+      document.getElementById(`safetyBtn-${key}`).onclick=async()=>{
+        const selected=content.querySelector(`input[name="safety-${key}"]:checked`);
+        if(!selected){feedback.className="feedback warn";feedback.textContent="Choose the safest action first.";return;}
+        if(Number(selected.value)!==q.a){
+          feedback.className="feedback warn";
+          feedback.innerHTML=`<strong>Try again.</strong> ${esc(q.why)}`;
+          return;
+        }
+        correct++;
+        feedback.className="feedback ok";
+        feedback.innerHTML=`<strong>Correct.</strong> ${esc(q.why)}`;
+        qIndex++;
+        if(qIndex<scenarios.length){
+          setTimeout(renderSafety,650);
+        }else{
+          box.innerHTML=`<div class="notice"><strong>Digital safety completed.</strong> You answered ${correct}/${scenarios.length} scenarios correctly.</div>`;
+          progress.textContent="All safety scenarios completed";
+          await completeActivity(key,15);
+        }
+      };
+    };
+
+    if(completed){
+      box.innerHTML=`<div class="notice"><strong>Completed.</strong> You have already completed the digital safety checkpoint.</div>`;
+      progress.textContent="Completed";
+    }else renderSafety();
+    return;
+  }
+
+  /* M0 Activity 4 — Adaptive Diagnostic */
+  if(moduleId==="M0" && index===3){
+    const questions=[
+      {d:1,q:"Which control is normally used to enter a website address?",o:["Refresh button","Address bar","Back button"],a:1},
+      {d:1,q:"Which item is usually used to move from one webpage to another?",o:["A hyperlink","Computer speaker","Recycle Bin"],a:0},
+      {d:2,q:"Which search query is most specific for finding help with an email attachment?",o:["email","email attachment problems","how to attach a PDF file to an email"],a:2},
+      {d:2,q:"Where can you normally check whether an email you sent was recorded successfully?",o:["Sent folder","Downloads folder","Browser settings"],a:0},
+      {d:3,q:"Before sending an email with an attachment, which sequence is safest?",o:["Send first, then check the recipient","Check recipient, subject/message, attachment and then send","Close the browser and assume it was sent"],a:1},
+      {d:3,q:"You are on a shared computer and have finished using email. Which action best protects your account?",o:["Leave the tab open","Save the password in the browser","Sign out and close the session"],a:2}
+    ];
+
+    content.innerHTML=`
+      <div class="notice">
+        <strong>Adaptive diagnostic</strong><br>
+        This is a starting-point check, not a final examination. The next question changes in difficulty according to your answer. Your teacher can verify the result through live practical performance.
+      </div>
+      <div id="adaptiveBox-${key}"></div>
+      <div id="adaptiveFeedback-${key}" class="feedback" aria-live="polite"></div>
+      <div id="adaptiveProgress-${key}" class="small" style="margin-top:8px"></div>
+    `;
+
+    let difficulty=1, asked=0, correct=0, maxDifficulty=1, minDifficulty=3;
+    const askedIds=[];
+    const box=document.getElementById(`adaptiveBox-${key}`);
+    const feedback=document.getElementById(`adaptiveFeedback-${key}`);
+    const progress=document.getElementById(`adaptiveProgress-${key}`);
+
+    const pickQuestion=()=>{
+      let pool=questions.filter(q=>q.d===difficulty && !askedIds.includes(q));
+      if(!pool.length) pool=questions.filter(q=>!askedIds.includes(q));
+      return pool[0] || questions[Math.min(asked,questions.length-1)];
+    };
+
+    const finish=async()=>{
+      const level=correct<=2 ? "beginning" : correct<=4 ? "developing" : "proficient";
+      S.diagnosticLevel=level;
+      S.quizCorrect=correct;
+      S.quizTotal=asked;
+      S.diagnosticDetails={correct,total:asked,maxDifficulty,minDifficulty,completedAt:new Date().toISOString()};
+      save();
+      const recommendation=level==="beginning"
+        ? "Start with the foundational browser and email activities and practise with teacher support."
+        : level==="developing"
+          ? "Continue through the core activities, giving extra attention to skills where you hesitate or make errors."
+          : "You appear ready for the core practical sequence; still complete the activities because the LMS diagnostic is not a substitute for live performance.";
+      box.innerHTML=`
+        <div class="notice">
+          <strong>Diagnostic result: ${correct}/${asked}</strong><br>
+          Starting level: <strong>${esc(level)}</strong><br><br>
+          <strong>Recommended pathway:</strong> ${esc(recommendation)}
+        </div>
+      `;
+      progress.textContent="Diagnostic completed";
+      await completeActivity(key,20);
+    };
+
+    const renderQuestion=()=>{
+      if(asked>=6 || asked>=questions.length){finish();return;}
+      const q=pickQuestion();
+      askedIds.push(q);
+      asked++;
+      maxDifficulty=Math.max(maxDifficulty,q.d);
+      minDifficulty=Math.min(minDifficulty,q.d);
+      progress.textContent=`Question ${asked} of 6 • Current level: ${difficulty}`;
+      feedback.textContent="";
+      box.innerHTML=`
+        <p><strong>Question ${asked} of 6</strong></p>
+        <p>${esc(q.q)}</p>
+        ${q.o.map((o,i)=>`<label class="option"><input type="radio" name="adaptive-${key}" value="${i}"> ${esc(o)}</label>`).join("")}
+        <button type="button" class="primary" id="adaptiveBtn-${key}">Check Answer</button>
+      `;
+      document.getElementById(`adaptiveBtn-${key}`).onclick=()=>{
+        const selected=content.querySelector(`input[name="adaptive-${key}"]:checked`);
+        if(!selected){feedback.className="feedback warn";feedback.textContent="Choose an answer first.";return;}
+        if(Number(selected.value)===q.a){
+          correct++;
+          feedback.className="feedback ok";
+          feedback.textContent="Correct. The next item will increase in difficulty when possible.";
+          difficulty=Math.min(3,difficulty+1);
+        }else{
+          feedback.className="feedback warn";
+          feedback.textContent="Not quite. Review the skill and the next item will provide another opportunity at an appropriate level.";
+          difficulty=Math.max(1,difficulty-1);
+        }
+        setTimeout(renderQuestion,700);
+      };
+    };
+
+    if(completed){
+      const level=S.diagnosticLevel || "assessed";
+      box.innerHTML=`<div class="notice"><strong>Completed.</strong> Previous diagnostic level: <strong>${esc(level)}</strong>. You can review the later remediation activities if needed.</div>`;
+      progress.textContent="Completed";
+    }else renderQuestion();
     return;
   }
 
@@ -2699,12 +2881,12 @@ document
 document
   .getElementById("backToLoginBtn")
   .addEventListener("click",showLoginView);
-  
+
 
 document
   .getElementById("registerBtn")
   .addEventListener("click",registerStudent);
-  
+
 /* If a valid session already exists, restore it. */
 (async function restoreSession(){
   if(!supabaseClient){
