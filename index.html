@@ -2211,33 +2211,176 @@ function renderActivityContent(moduleId,index,title,key,content,actions,complete
     return;
   }
 
-  /* Generic practical activity */
-  content.innerHTML=`
-    <p><strong>Learning task:</strong> ${esc(activityInstruction(moduleId,index,title))}</p>
-    <div class="video">
-      <div class="play">▶</div>
-      <div>Interactive demonstration: ${esc(title)}</div>
-      <small>Observe → practise → receive feedback → perform independently.</small>
-    </div>
-    <div class="notice">
-      Perform the task practically, then mark the activity complete.
-    </div>
-  `;
-
-  const btn=document.createElement("button");
-  btn.className=completed ? "secondary" : "primary";
-  btn.textContent=completed ? "✓ Activity Completed" : "Mark Activity Complete";
-  btn.disabled=completed;
-
-  btn.onclick=async()=>{
-    await completeActivity(key,10);
-    btn.disabled=true;
-    btn.className="secondary";
-    btn.textContent="✓ Activity Completed";
-    cardRefreshNotice(content);
+  /* =========================================================
+     FULL COURSE ACTIVITY BANK — M2 to M9
+     These activities replace the old generic placeholders so
+     every activity is interactive and learner-facing.
+     ========================================================= */
+  const bank = {
+    "M2-0": {
+      intro:"A URL (Uniform Resource Locator) is the address used to locate a resource on the web.",
+      task:"Identify the parts of a URL and distinguish the protocol, domain and path.",
+      kind:"url"
+    },
+    "M2-1": {
+      intro:"Practise entering a supplied URL accurately. In this simulation, no external website is opened.",
+      task:"Enter the supplied address exactly and verify that it is complete.",
+      kind:"urlInput"
+    },
+    "M2-3": {
+      intro:"A useful search result should be relevant to the question, come from a credible source and provide enough information to support the task.",
+      task:"Choose the most useful result for a school ICT research question.",
+      kind:"searchResult"
+    },
+    "M2-4": {
+      intro:"Good information searching follows a simple cycle: Find → Verify → Retrieve.",
+      task:"Practise the full process from search query to verified information.",
+      kind:"findVerify"
+    },
+    "M3-0": {intro:"Email allows people to send, receive, organise and retrieve electronic messages.",task:"Recognise the main parts of an email account.",kind:"emailParts"},
+    "M3-1": {intro:"Use only an authorised practice account when practising login. Never enter another person's password.",task:"Complete a safe simulated email login.",kind:"login"},
+    "M3-2": {intro:"Login failures can have several causes. Good troubleshooting checks the simple causes first and protects account security.",task:"Diagnose common login problems and select the safest correction.",kind:"loginClinic"},
+    "M3-3": {intro:"This is a simulated independent login checkpoint. Use the practice details shown on screen.",task:"Log in independently without revealing sensitive credentials.",kind:"loginIndependent"},
+    "M4-0": {intro:"A well-formed email normally has a recipient, a meaningful subject and a clear message body.",task:"Identify the three essential parts of a new email.",kind:"composeParts"},
+    "M4-1": {intro:"Before sending, check the recipient carefully. A message sent to the wrong person may expose private information or cause confusion.",task:"Practise selecting the correct recipient.",kind:"recipient"},
+    "M4-3": {intro:"A professional school email should be clear, respectful and purposeful.",task:"Build a complete email message using the required structure.",kind:"messageBuilder"},
+    "M4-4": {intro:"A composition check catches errors before an attachment is added or a message is sent.",task:"Complete a final composition checklist.",kind:"compositionCheck"},
+    "M5-0": {intro:"Attachments are useful when a recipient needs a document, image or other file. The correct file must be selected and checked.",task:"Identify why attachment accuracy matters.",kind:"attachmentWhy"},
+    "M5-1": {intro:"Locating a file requires attention to the folder, filename and file type.",task:"Choose the correct file from a simulated file list.",kind:"locateFile"},
+    "M5-2": {intro:"After selecting a file, wait for the upload to finish and confirm that the attachment is visible.",task:"Complete the attachment sequence.",kind:"attachSequence"},
+    "M6-0": {intro:"The final check prevents avoidable errors before sending.",task:"Verify the recipient, subject, message and attachment.",kind:"finalChecks"},
+    "M6-1": {intro:"Sending should happen only after the final checks are complete.",task:"Practise the safe send decision.",kind:"send"},
+    "M6-2": {intro:"Verification means checking Sent to confirm that the correct message and attachment were actually sent.",task:"Verify a sent message in a simulation.",kind:"verifySent"},
+    "M6-3": {intro:"This challenge combines the complete browser-to-email sequence.",task:"Complete the send-and-verify sequence in the correct order.",kind:"sendVerifyChallenge"},
+    "M7-0": {intro:"Netiquette is respectful and responsible behaviour when communicating online.",task:"Choose appropriate email language and structure.",kind:"netiquette"},
+    "M7-1": {intro:"Protect credentials and personal information, and treat suspicious links cautiously.",task:"Make safe privacy and link decisions.",kind:"privacy"},
+    "M7-2": {intro:"Responsible search means using useful keywords, checking sources and avoiding unsupported claims.",task:"Evaluate search behaviour responsibly.",kind:"responsibleSearch"},
+    "M8-0": {intro:"Prepare before performing the authentic practical task. Read the instructions, identify the required file and plan the sequence.",task:"Prepare for the integrated browser-to-email task.",kind:"prepare"},
+    "M8-2": {intro:"Transfer means using a learned skill in a new but realistic situation.",task:"Identify a useful real-life application of the skills you learned.",kind:"transfer"},
+    "M9-0": {intro:"Mastery status helps you decide what to practise next. Green means the evidence indicates mastery; Amber means further practice is needed; Red indicates substantial support is needed.",task:"Interpret mastery status correctly.",kind:"masteryStatus"},
+    "M9-1": {intro:"Remediation should target the skill that evidence shows needs improvement rather than repeating everything.",task:"Select a targeted remediation pathway.",kind:"remediation"},
+    "M9-3": {intro:"Peer troubleshooting works best when the navigator gives prompts instead of taking control of the computer.",task:"Choose the best peer-support response.",kind:"peerTroubleshoot"},
+    "M9-4": {intro:"Transfer is demonstrated when you can use the skill beyond the original classroom exercise.",task:"Connect your new ICT skills to a real context.",kind:"completionTransfer"}
   };
 
-  actions.appendChild(btn);
+  const cfg=bank[`${moduleId}-${index}`];
+  if(cfg){
+    content.innerHTML=`<div class="notice"><strong>${esc(cfg.task)}</strong><br>${esc(cfg.intro)}</div><div id="fullTask-${key}"></div><div id="fullFeedback-${key}" class="feedback" aria-live="polite"></div>`;
+    const box=content.querySelector(`#fullTask-${key}`);
+    const fb=content.querySelector(`#fullFeedback-${key}`);
+    const finish=async(xp=15,msg="Activity completed successfully.")=>{
+      fb.className="feedback ok"; fb.textContent=msg;
+      await completeActivity(key,xp);
+    };
+    const doneButton=(label="✓ Activity Completed")=>{const b=document.createElement("button");b.className="secondary";b.textContent=label;b.disabled=true;actions.appendChild(b)};
+    if(completed){box.innerHTML=`<div class="notice"><strong>Completed.</strong> This activity has already been recorded in your progress.</div>`;doneButton();return;}
+
+    if(cfg.kind==="url"){
+      box.innerHTML=`<p><strong>URL example:</strong> <code>https://www.school.edu.gh/resources/ict</code></p><div class="grid"><button type="button" class="card" data-u="0"><strong>https://</strong><p class="small">Protocol</p></button><button type="button" class="card" data-u="1"><strong>www.school.edu.gh</strong><p class="small">Domain</p></button><button type="button" class="card" data-u="2"><strong>/resources/ict</strong><p class="small">Path</p></button></div><p>Click each part.</p><button type="button" class="primary" id="urlDone-${key}">Check URL Parts</button>`;
+      const seen=new Set(); content.querySelectorAll("[data-u]").forEach(b=>b.onclick=()=>{seen.add(b.dataset.u);b.classList.add("selected");fb.className="feedback ok";fb.textContent=`Identified: ${b.querySelector("strong").textContent}`});
+      content.querySelector(`#urlDone-${key}`).onclick=async()=>{if(seen.size<3){fb.className="feedback warn";fb.textContent=`Identify all three parts first (${seen.size}/3).`;return} await finish(15,"Excellent. You identified protocol, domain and path.");content.querySelector(`#urlDone-${key}`).disabled=true}; return;
+    }
+    if(cfg.kind==="urlInput"){
+      box.innerHTML=`<p><strong>Target URL:</strong> <code>https://www.school.edu.gh/ict</code></p><label>Enter the URL exactly:</label><input id="urlInput-${key}" type="text" placeholder="https://..."><button type="button" class="primary" id="urlCheck-${key}">Verify URL</button>`;
+      content.querySelector(`#urlCheck-${key}`).onclick=async()=>{const v=content.querySelector(`#urlInput-${key}`).value.trim();if(v!=="https://www.school.edu.gh/ict"){fb.className="feedback warn";fb.textContent="Not yet. Check the spelling, punctuation, protocol and path.";return} await finish(15,"Correct URL entered and verified.");content.querySelector(`#urlCheck-${key}`).disabled=true}; return;
+    }
+    if(cfg.kind==="searchResult"){
+      const opts=[
+        ["A school ICT handbook published by a recognised education organisation",0],
+        ["A random post with no author, date or supporting evidence",1],
+        ["A result whose title is unrelated to the search question",1]
+      ];
+      box.innerHTML=`<p><strong>Question:</strong> Which result is the best starting point for a school research task?</p>${opts.map((o,i)=>`<label class="option"><input type="radio" name="sr-${key}" value="${i}"> ${esc(o[0])}</label>`).join("")}<button type="button" class="primary" id="srBtn-${key}">Check Result</button>`;
+      content.querySelector(`#srBtn-${key}`).onclick=async()=>{const s=content.querySelector(`input[name="sr-${key}"]:checked`);if(!s){fb.className="feedback warn";fb.textContent="Choose a result first.";return}if(Number(s.value)!==0){fb.className="feedback warn";fb.textContent="Consider relevance, credibility and supporting evidence.";return}await finish(15,"Good choice. Relevance and source credibility matter.");content.querySelector(`#srBtn-${key}`).disabled=true};return;
+    }
+    if(cfg.kind==="findVerify"){
+      const steps=["Use focused keywords","Open a relevant result","Check the source and date","Retrieve only the information required"];let chosen=[];
+      box.innerHTML=`<p><strong>Put the steps in the correct order by clicking them.</strong></p><div id="fv-${key}">${steps.map((x,i)=>`<button type="button" class="card" data-fv="${i}" style="text-align:left;cursor:pointer">${i+1}. ${esc(x)}</button>`).join("")}</div><p id="fvOrder-${key}" class="small">Order: —</p><button type="button" class="primary" id="fvBtn-${key}">Check Sequence</button>`;
+      content.querySelectorAll("[data-fv]").forEach(b=>b.onclick=()=>{const i=Number(b.dataset.fv);if(!chosen.includes(i)){chosen.push(i);b.classList.add("selected");content.querySelector(`#fvOrder-${key}`).textContent=`Order: ${chosen.map(n=>n+1).join(" → ")}`}});
+      content.querySelector(`#fvBtn-${key}`).onclick=async()=>{if(chosen.length!==4){fb.className="feedback warn";fb.textContent="Select all four steps.";return}if(chosen.join(",")!=="0,1,2,3"){fb.className="feedback warn";fb.textContent="Try again. Find first, then open, verify, and retrieve.";return}await finish(20,"Excellent. Find → verify → retrieve is complete.");};return;
+    }
+    if(cfg.kind==="emailParts"){
+      renderLocalQuiz(["Which folder normally contains messages you have received?",["Inbox","Sent","Drafts"],0],"Inbox contains received messages."); return;
+    }
+    if(cfg.kind==="login" || cfg.kind==="loginIndependent"){
+      box.innerHTML=`<p><strong>Practice account:</strong> <code>student.practice@example.edu</code></p><p><strong>Practice password:</strong> <code>Practice123</code></p><label>Email</label><input id="le-${key}" type="email" placeholder="practice email"><label>Password</label><input id="lp-${key}" type="password" placeholder="practice password"><label class="option"><input id="ls-${key}" type="checkbox"> I understand that passwords must not be shared.</label><button type="button" class="primary" id="loginSim-${key}">Sign In to Simulation</button>`;
+      content.querySelector(`#loginSim-${key}`).onclick=async()=>{const e=content.querySelector(`#le-${key}`).value.trim();const pw=content.querySelector(`#lp-${key}`).value;const safe=content.querySelector(`#ls-${key}`).checked;if(e!=="student.practice@example.edu"||pw!=="Practice123"){fb.className="feedback warn";fb.textContent="Login details do not match the authorised practice account.";return}if(!safe){fb.className="feedback warn";fb.textContent="Confirm the password-safety statement before continuing.";return}await finish(20,"Simulation login successful. Remember: never disclose your real password.");content.querySelector(`#loginSim-${key}`).disabled=true};return;
+    }
+    if(cfg.kind==="loginClinic"){
+      const qs=[
+        ["The password is correct but Caps Lock is on. What should you check?",["Keyboard/case setting","Send the password to a friend"],0],
+        ["You cannot remember the password. What is safest?",["Use the authorised password-recovery process","Guess repeatedly or share credentials"],0],
+        ["The account is locked after several failed attempts. What should you do?",["Follow the school's authorised recovery/support process","Keep guessing"],0]
+      ]; let qi=0; const render=()=>{const q=qs[qi];box.innerHTML=`<p><strong>Case ${qi+1} of ${qs.length}</strong></p><p>${esc(q[0])}</p>${q[1].map((x,i)=>`<label class="option"><input type="radio" name="lc-${key}" value="${i}"> ${esc(x)}</label>`).join("")}<button type="button" class="primary" id="lcBtn-${key}">Check</button>`;content.querySelector(`#lcBtn-${key}`).onclick=async()=>{const s=content.querySelector(`input[name="lc-${key}"]:checked`);if(!s){fb.className="feedback warn";fb.textContent="Choose a response.";return}if(Number(s.value)!==0){fb.className="feedback warn";fb.textContent="Choose the secure troubleshooting step.";return}qi++;if(qi<qs.length){fb.className="feedback ok";fb.textContent="Correct.";setTimeout(render,300)}else await finish(20,"Login troubleshooting complete.")}};render();return;
+    }
+    if(cfg.kind==="composeParts"){
+      const qs=["Who should receive the message?","What briefly tells the reader what the email is about?","Where do you write the main information?"];const ans=[["Recipient","Subject","Message body"],["Recipient","Subject","Message body"],["Recipient","Subject","Message body"]];let qi=0;const render=()=>{box.innerHTML=`<p><strong>${esc(qs[qi])}</strong></p>${ans[qi].map((x,i)=>`<label class="option"><input type="radio" name="cp-${key}" value="${i}"> ${x}</label>`).join("")}<button type="button" class="primary" id="cpBtn-${key}">Check</button>`;content.querySelector(`#cpBtn-${key}`).onclick=async()=>{const s=content.querySelector(`input[name="cp-${key}"]:checked`);if(!s){fb.className="feedback warn";fb.textContent="Choose an answer.";return}const correct=[0,1,2][qi];if(Number(s.value)!==correct){fb.className="feedback warn";fb.textContent="Think about the function of that email part.";return}qi++;if(qi<3){fb.className="feedback ok";fb.textContent="Correct.";setTimeout(render,300)}else await finish(15,"You identified recipient, subject and message body.")}};render();return;
+    }
+    if(cfg.kind==="recipient"){
+      box.innerHTML=`<p><strong>Task:</strong> Select the intended school recipient.</p>${["ict.teacher@school.edu.gh","ict.techer@school.edu.gh","ict.teacher@school.edu.gh.example"].map((x,i)=>`<label class="option"><input type="radio" name="rec-${key}" value="${i}"> ${x}</label>`).join("")}<button type="button" class="primary" id="recBtn-${key}">Verify Recipient</button>`;
+      content.querySelector(`#recBtn-${key}`).onclick=async()=>{const s=content.querySelector(`input[name="rec-${key}"]:checked`);if(!s){fb.className="feedback warn";fb.textContent="Select a recipient.";return}if(Number(s.value)!==0){fb.className="feedback warn";fb.textContent="Check spelling and the exact domain carefully.";return}await finish(15,"Recipient verified.")};return;
+    }
+    if(cfg.kind==="messageBuilder"){
+      box.innerHTML=`<label>Greeting</label><input id="g-${key}" placeholder="Dear Sir/Madam"><label>Purpose</label><input id="p-${key}" placeholder="Purpose of the email"><label>Relevant information</label><textarea id="m-${key}" rows="4" placeholder="Write the main information..."></textarea><label>Closing</label><input id="c-${key}" placeholder="Kind regards,"><button type="button" class="primary" id="mbBtn-${key}">Check Message</button>`;
+      content.querySelector(`#mbBtn-${key}`).onclick=async()=>{const vals=["g","p","m","c"].map(x=>content.querySelector(`#${x}-${key}`).value.trim());if(vals.some(v=>v.length<3)){fb.className="feedback warn";fb.textContent="Complete all four parts with meaningful text.";return}await finish(20,"Clear email structure demonstrated.");content.querySelector(`#mbBtn-${key}`).disabled=true};return;
+    }
+    if(cfg.kind==="compositionCheck"){
+      const checks=["Recipient spelling and address are correct","Subject is specific and meaningful","Message is clear and respectful","No unnecessary private information is included"];box.innerHTML=checks.map((x,i)=>`<label class="option"><input type="checkbox" data-cc="${i}"> ${x}</label>`).join("")+`<button type="button" class="primary" id="ccBtn-${key}">Complete Check</button>`;content.querySelector(`#ccBtn-${key}`).onclick=async()=>{if(content.querySelectorAll("[data-cc]:checked").length<4){fb.className="feedback warn";fb.textContent="Complete all four final checks.";return}await finish(15,"Composition check complete.");content.querySelector(`#ccBtn-${key}`).disabled=true};return;
+    }
+    if(cfg.kind==="attachmentWhy"){
+      renderLocalQuiz(["Why should you confirm the attachment before sending?",["To make sure the intended file is included","Because every email must have two files","It is not necessary"],0],"Correct. Attachment verification prevents avoidable errors.");return;
+    }
+    if(cfg.kind==="locateFile"){
+      const files=["ICT_Assignment_Final.pdf","ICT_Assignment_old.pdf","holiday_photo.jpg","ICT_Assignment_Final.docx"];box.innerHTML=`<p>Find the required file: <strong>ICT_Assignment_Final.pdf</strong></p>${files.map((x,i)=>`<button type="button" class="card" data-file="${i}" style="text-align:left;cursor:pointer">📄 ${x}</button>`).join("")}`;content.querySelectorAll("[data-file]").forEach(b=>b.onclick=async()=>{if(Number(b.dataset.file)!==0){fb.className="feedback warn";fb.textContent="Check the exact filename and file type.";return}await finish(15,"Correct file located.");content.querySelectorAll("[data-file]").forEach(x=>x.disabled=true)});return;
+    }
+    if(cfg.kind==="attachSequence"){
+      const steps=["Select Attach file","Choose ICT_Assignment_Final.pdf","Wait for upload to finish","Confirm the attachment is visible"];let chosen=[];box.innerHTML=`<p>Click the steps in the correct order.</p><div class="grid">${steps.map((x,i)=>`<button type="button" class="card" data-as="${i}" style="text-align:left;cursor:pointer">${i+1}. ${x}</button>`).join("")}</div><p id="asOrder-${key}" class="small">Order: —</p><button type="button" class="primary" id="asBtn-${key}">Check Sequence</button>`;content.querySelectorAll("[data-as]").forEach(b=>b.onclick=()=>{const i=Number(b.dataset.as);if(!chosen.includes(i)){chosen.push(i);b.classList.add("selected");content.querySelector(`#asOrder-${key}`).textContent=`Order: ${chosen.map(n=>n+1).join(" → ")}`}});content.querySelector(`#asBtn-${key}`).onclick=async()=>{if(chosen.join(",")!=="0,1,2,3"){fb.className="feedback warn";fb.textContent="Try again: select, choose, wait, confirm.";return}await finish(20,"Attachment sequence complete.")};return;
+    }
+    if(cfg.kind==="finalChecks"){
+      const checks=["Correct recipient","Meaningful subject","Clear message","Correct attachment visible"];box.innerHTML=checks.map((x,i)=>`<label class="option"><input type="checkbox" data-fc="${i}"> ${x}</label>`).join("")+`<button type="button" class="primary" id="fcBtn-${key}">Run Final Check</button>`;content.querySelector(`#fcBtn-${key}`).onclick=async()=>{if(content.querySelectorAll("[data-fc]:checked").length<4){fb.className="feedback warn";fb.textContent="Do not send yet. Complete all four checks.";return}await finish(15,"Final pre-send check passed.")};return;
+    }
+    if(cfg.kind==="send"){
+      renderLocalQuiz(["You have completed all final checks. What should you do next?",["Send the message","Change the recipient randomly","Close the account"],0],"Correct. Send only after the final checks are complete.");return;
+    }
+    if(cfg.kind==="verifySent"){
+      box.innerHTML=`<div class="card"><strong>Sent folder simulation</strong><p>To: ict.teacher@school.edu.gh</p><p>Subject: ICT Assignment Submission</p><p>Attachment: ICT_Assignment_Final.pdf ✓</p></div><label class="option"><input id="vs-${key}" type="checkbox"> I verified the recipient, subject and attachment.</label><button type="button" class="primary" id="vsBtn-${key}">Confirm Verification</button>`;content.querySelector(`#vsBtn-${key}`).onclick=async()=>{if(!content.querySelector(`#vs-${key}`).checked){fb.className="feedback warn";fb.textContent="Confirm the verification statement.";return}await finish(15,"Sent-folder verification complete.")};return;
+    }
+    if(cfg.kind==="sendVerifyChallenge"){
+      const steps=["Check recipient","Check subject and message","Confirm attachment","Send","Open Sent and verify"];let chosen=[];box.innerHTML=`<p>Complete the full sequence in order.</p>${steps.map((x,i)=>`<button type="button" class="card" data-sv="${i}" style="text-align:left;cursor:pointer;display:block;width:100%;margin:8px 0">${i+1}. ${x}</button>`).join("")}<p id="svOrder-${key}" class="small">Order: —</p><button type="button" class="primary" id="svBtn-${key}">Submit Sequence</button>`;content.querySelectorAll("[data-sv]").forEach(b=>b.onclick=()=>{const i=Number(b.dataset.sv);if(!chosen.includes(i)){chosen.push(i);b.classList.add("selected");content.querySelector(`#svOrder-${key}`).textContent=`Order: ${chosen.map(n=>n+1).join(" → ")}`}});content.querySelector(`#svBtn-${key}`).onclick=async()=>{if(chosen.join(",")!=="0,1,2,3,4"){fb.className="feedback warn";fb.textContent="Not yet. Follow the complete check → send → verify sequence.";return}await finish(30,"Full send-and-verify sequence demonstrated.")};return;
+    }
+    if(cfg.kind==="netiquette" || cfg.kind==="privacy" || cfg.kind==="responsibleSearch" || cfg.kind==="masteryStatus" || cfg.kind==="peerTroubleshoot"){
+      const data={
+        netiquette:["Which email is most appropriate?",["Dear Madam, Please find attached my assignment. Kind regards.","SEND MY MARKS NOW!!!", "hey, see this"],0,"Respectful wording and a meaningful message are appropriate."],
+        privacy:["What is safest when an unknown message requests your password?",["Do not disclose it and verify the request","Send it quickly","Post it in the class group"],0,"Passwords should remain private."],
+        responsibleSearch:["Which search habit is most responsible?",["Use focused keywords and verify credible sources","Copy the first result without checking","Use only the headline"],0,"Good searching includes focused queries and source evaluation."],
+        masteryStatus:["Which status normally indicates that the evidence shows the learner has met the mastery criterion?",["Green","Amber","Red"],0,"Green indicates the mastery criterion has been met."],
+        peerTroubleshoot:["A partner is stuck. What should the navigator do first?",["Give a prompt that helps the partner think through the next step","Take over the mouse and finish it","Give the partner your password"],0,"Effective peer support prompts the learner without taking over." ]
+      }[cfg.kind];
+      renderLocalQuiz([data[0],data[1],data[2]],data[3]);return;
+    }
+    if(cfg.kind==="prepare"){
+      const checks=["Read the task instructions","Identify the required file","Plan the browser/search step","Plan the email and verification steps"];box.innerHTML=checks.map((x,i)=>`<label class="option"><input type="checkbox" data-pr="${i}"> ${x}</label>`).join("")+`<button type="button" class="primary" id="prBtn-${key}">Confirm Preparation</button>`;content.querySelector(`#prBtn-${key}`).onclick=async()=>{if(content.querySelectorAll("[data-pr]:checked").length<4){fb.className="feedback warn";fb.textContent="Complete all preparation steps.";return}await finish(15,"You are prepared for the authentic task.")};return;
+    }
+    if(cfg.kind==="transfer" || cfg.kind==="completionTransfer"){
+      const choices=["Submitting a school assignment by email with a correct attachment","Ignoring suspicious links","Sharing my password with a friend"];box.innerHTML=`<p><strong>Choose a realistic transfer example.</strong></p>${choices.map((x,i)=>`<label class="option"><input type="radio" name="tr-${key}" value="${i}"> ${x}</label>`).join("")}<button type="button" class="primary" id="trBtn-${key}">Check Transfer</button>`;content.querySelector(`#trBtn-${key}`).onclick=async()=>{const s=content.querySelector(`input[name="tr-${key}"]:checked`);if(!s){fb.className="feedback warn";fb.textContent="Choose an example.";return}if(Number(s.value)!==0){fb.className="feedback warn";fb.textContent="Choose an example that uses the learned skills responsibly.";return}await finish(15,"Good transfer example. These skills can support authentic school tasks.")};return;
+    }
+    if(cfg.kind==="remediation"){
+      const details=S.diagnosticDetails; const rec=details?.recommendation || "Review browser, searching and email skills in sequence.";
+      box.innerHTML=`<div class="notice"><strong>Current evidence:</strong> ${esc(rec)}</div><p>Choose the support path you need most.</p>${["Browser foundations","URLs and searching","Email and attachments"].map((x,i)=>`<button type="button" class="card" data-rem="${i}" style="text-align:left;cursor:pointer">${x}</button>`).join("")}<div id="remOut-${key}" class="feedback"></div>`;content.querySelectorAll("[data-rem]").forEach(b=>b.onclick=()=>{content.querySelector(`#remOut-${key}`).className="feedback ok";content.querySelector(`#remOut-${key}`).textContent=`Selected pathway: ${b.textContent}. Practise the weakest step, then retry the equivalent task.`});const btn=document.createElement("button");btn.className="primary";btn.textContent="Record Remediation Plan";btn.onclick=async()=>{const chosen=content.querySelector("[data-rem].selected");if(!chosen){fb.className="feedback warn";fb.textContent="Select a remediation pathway first.";return}await finish(20,"Targeted remediation plan recorded.")};actions.appendChild(btn);content.querySelectorAll("[data-rem]").forEach(b=>b.onclick=()=>{content.querySelectorAll("[data-rem]").forEach(x=>x.classList.remove("selected"));b.classList.add("selected");content.querySelector(`#remOut-${key}`).className="feedback ok";content.querySelector(`#remOut-${key}`).textContent=`Selected pathway: ${b.textContent}. Practise the weakest step, then retry the equivalent task.`});return;
+    }
+
+    function renderLocalQuiz(q,msg){
+      box.innerHTML=`<p><strong>${esc(q[0])}</strong></p>${q[1].map((x,i)=>`<label class="option"><input type="radio" name="local-${key}" value="${i}"> ${esc(x)}</label>`).join("")}<button type="button" class="primary" id="localBtn-${key}">Check Answer</button>`;
+      content.querySelector(`#localBtn-${key}`).onclick=async()=>{const s=content.querySelector(`input[name="local-${key}"]:checked`);if(!s){fb.className="feedback warn";fb.textContent="Choose an answer first.";return}if(Number(s.value)!==q[2]){fb.className="feedback warn";fb.textContent="Not quite. Review the principle and try again.";return}await finish(15,msg)};
+    }
+    return;
+  }
+
+  /* Safe fallback — should only be reached if a future activity is added without a bank entry. */
+  content.innerHTML=`<p><strong>Learning task:</strong> ${esc(activityInstruction(moduleId,index,title))}</p><div class="notice">Practise the task and discuss your performance with your teacher.</div>`;
+  const btn=document.createElement("button");btn.className=completed ? "secondary" : "primary";btn.textContent=completed ? "✓ Activity Completed" : "Mark Activity Complete";btn.disabled=completed;
+  btn.onclick=async()=>{await completeActivity(key,10);btn.disabled=true;btn.className="secondary";btn.textContent="✓ Activity Completed";cardRefreshNotice(content)};actions.appendChild(btn);
+
 }
 
 function cardRefreshNotice(content){
